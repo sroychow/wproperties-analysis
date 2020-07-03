@@ -1,6 +1,5 @@
-#ifndef MUONHISTOS_H
-#define MUONHISTOS_H
-
+#ifndef TEMPLATES_H
+#define TEMPLATES_H
 
 #include "ROOT/RDataFrame.hxx"
 #include "ROOT/RVec.hxx"
@@ -11,16 +10,16 @@
 #include "TMath.h"
 #include "interface/module.hpp"
 #include "interface/TH1weightsHelper.hpp"
-#include "interface/TH2weightsHelper.hpp"
-#include<map>
-#include<vector>
+#include "interface/TH3weightsHelper.hpp"
+#include <map>
+#include <vector>
 
 using RNode = ROOT::RDF::RNode;
 
-class muonHistos : public Module {
+class templates : public Module
+{
 
-    private:
-
+private:
     std::vector<ROOT::RDF::RResultPtr<TH1D>> _h1List;
     std::vector<ROOT::RDF::RResultPtr<TH2D>> _h2List;
     std::vector<ROOT::RDF::RResultPtr<TH3D>> _h3List;
@@ -39,17 +38,16 @@ class muonHistos : public Module {
     std::string _colvar;
     std::vector<std::string> _colvarvec;
     HistoCategory _hcat;
-    
+
     std::vector<float> _pTArr = std::vector<float>(31);
     std::vector<float> _etaArr = std::vector<float>(49);
-    std::vector<float> _MTArr = std::vector<float>(101);
     std::vector<float> _chargeArr = std::vector<float>(3);
     void setAxisarrays();
 
-    public:
-    
-    muonHistos(std::string filter, std::string weight, std::vector<std::string> syst_name, std::string syst_weight, HistoCategory hcat, std::string colvar = ""){
-        
+public:
+    templates(std::string filter, std::string weight, std::vector<std::string> syst_name, std::string syst_weight, HistoCategory hcat, std::string colvar = "")
+    {
+
         _filter = filter;
         _weight = weight;
         _syst_name = syst_name;
@@ -57,11 +55,11 @@ class muonHistos : public Module {
         _hcat = hcat;
         _colvar = colvar;
         setAxisarrays();
-
     };
 
-    muonHistos(std::vector<std::string> filtervec, std::string weight, std::vector<std::string> syst_name, std::string syst_weight, HistoCategory hcat, std::vector<std::string> colvarvec){
-        
+    templates(std::vector<std::string> filtervec, std::string weight, std::vector<std::string> syst_name, std::string syst_weight, HistoCategory hcat, std::vector<std::string> colvarvec)
+    {
+
         _filtervec = filtervec;
         _weight = weight;
         _syst_name = syst_name;
@@ -71,11 +69,10 @@ class muonHistos : public Module {
         setAxisarrays();
     };
 
-    ~muonHistos() {};
+    ~templates(){};
     RNode bookNominalhistos(RNode);
     RNode bookptCorrectedhistos(RNode);
     RNode bookJMEvarhistos(RNode);
-
 
     RNode run(RNode) override;
     std::vector<ROOT::RDF::RResultPtr<TH1D>> getTH1() override;
@@ -87,7 +84,6 @@ class muonHistos : public Module {
     std::vector<ROOT::RDF::RResultPtr<std::vector<TH3D>>> getGroupTH3() override;
 
     void reset() override;
-
 };
 
 #endif

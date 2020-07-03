@@ -1,68 +1,73 @@
 import os
 import sys
 import ROOT
+import json
 
-sys.path.append('../RDFprocessor/framework/')
 from RDFtree import RDFtree
 sys.path.append('python/')
 sys.path.append('data/')
 from systematics import systematics
-from selections import *
 
+from selections import selections, selections_bkg, selectionVars
 from getLumiWeight import getLumiWeight
 
 ROOT.gSystem.Load('bin/libAnalysisOnData.so')
 
-c=4
-		
-ROOT.ROOT.EnableImplicitMT(c)
+pretendJob = True if int(sys.argv[2]) == 1 else False
+if pretendJob:
+    print "Running a test job over a few events"
+else:
+    print "Running on full dataset"
 
+runBKG = True if int(sys.argv[1]) == 1 else False 
+outF="SingleMuonData_plots.root"
+if runBKG:
+    selections = selections_bkg
+    outF="SingleMuonData_bkginput_plots.root"
+    print "Running job for preparing inputs of background study"
+
+fvec=ROOT.vector('string')()
+
+samples={}
+with open('data/samples_2016.json') as f:
+  samples = json.load(f)
+for sample in samples:
+    if not samples[sample]['datatype']=='DATA': continue
+    #print sample
+    direc = samples[sample]['dir']
+    for dirname,fname in direc.iteritems():
+        ##check if file exists or not
+        inputFile = '/scratchssd/sroychow/NanoAOD2016-V2/{}/tree.root'.format(dirname)
+        isFile = os.path.isfile(inputFile)  
+        if not isFile:
+            print inputFile, " does not exist"
+            continue
+        fvec.push_back(inputFile)
+        #print inputFile
+
+if fvec.empty():
+    print "No files found for json provided\n"
+    sys.exit(1)
+    
+print fvec
+c = 64		
+ROOT.ROOT.EnableImplicitMT(c)
 print "running with {} cores".format(c)
 
-inputFile = '/scratchssd/sroychow/NanoAOD2016-V2/WJetsToLNu_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8/WJetsToLNu_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8/tree.root'
+weight = 'float(1)'
+p = RDFtree(outputDir = './output/', inputFile = fvec, outputFile=outF, pretend=pretendJob)
+p.branch(nodeToStart = 'input', nodeToEnd = 'defs', modules = [ROOT.baseDefinitions(0)])
 
-inputFile='/home/sroychow/wmass/v6/081594F6-3B7A-0044-B7B8-D9F44C91B6E1_Skim.root'
-cutSignal = 'Vtype==0 && HLT_SingleMu24 && Mu1_pt>25. && MT>0. && MET_filters==1 && nVetoElectrons==0' 
-regions = {}
-regions['signal'] = cutSignal
-
-weight = 'float(puWeight*lumiweight*TriggerSF*RecoSF)'
-
-fileSF = ROOT.TFile.Open("data/ScaleFactors.root")
-
-p = RDFtree(outputDir = 'TEST', inputFile = inputFile, outputFile="test.root", pretend=False)
-
-p.branch(nodeToStart = 'input', nodeToEnd = 'defs', modules = [ROOT.baseDefinitions(),ROOT.weightDefinitions(fileSF),getLumiWeight(xsec=61526.7, inputFile=inputFile)])
-
-for region,cut in selections.iteritems():
+for region,cut in selections.iteritems():    
+    print region       
     nom = ROOT.vector('string')()
-    nom.push_back("Nom")
-    #last argument refers to histo category - 0 = Nominal, 1 = corrected Pt , 2 = JER , 3 = JES, 4 = unclusEn
-    p.branch(nodeToStart = 'defs', nodeToEnd = 'prefit_{}'.format(region), modules = [ROOT.selectionDefs(cut)])
-    #one can also pass an empty cut below
-    p.branch(nodeToStart = 'prefit_{}'.format(region), nodeToEnd = 'prefit_{}_Nominal'.format(region), modules = [ROOT.muonHistos(cut, weight, nom,"Nom",0)])    
-    #weight variations
-    for s,variations in systematics.iteritems():
-        weight.replace(s, "1.")
-        vars_vec = ROOT.vector('string')()
-        for var in variations[0]:
-            vars_vec.push_back(var)
-        p.branch(nodeToStart = 'prefit_{}'.format(region), nodeToEnd = 'prefit_{}_{}Vars'.format(region,s), modules = [ROOT.muonHistos(cut, weight,vars_vec,variations[1], 0)])
-    #column variations#weight will be nominal, cut will vary
-    for vartype, vardict in selectionVars.iteritems():
-        newnode = vartype
-        selVarvec = ROOT.vector('string')()
-        for selvar, hcat in vardict.iteritems() :
-            newcut = cut.replace('MT', 'MT_'+selvar)
-            if 'corrected' in selvar:
-                newcut = newcut.replace('Mu1_pt', 'Mu1_pt_'+selvar)
-            print newcut, '\t', hcat, '\t', newnode
-            p.branch(nodeToStart = 'defs', nodeToEnd = 'prefit_{}/{}/{}'.format(region, vartype, selvar), modules = [ROOT.muonHistos(newcut, weight, nom,"Nom",hcat,selvar)])  
-      
-    
+    nom.push_back("")
+    #last argument refers to histo category - 0 = Nominal, 1 = Pt scale , 2 = MET scale
+    print "branching nominal"
+    p.branch(nodeToStart = 'defs', nodeToEnd = 'prefit_{}/Nominal'.format(region), modules = [ROOT.muonHistos(cut, weight, nom,"Nom",0)]) 
+    p.branch(nodeToStart = 'defs', nodeToEnd = 'templates_{}/Nominal'.format(region), modules = [ROOT.templates(cut, weight, nom,"Nom",0)])       
 p.getOutput()
-p.saveGraph()
-
+#p.saveGraph()
 
 
 

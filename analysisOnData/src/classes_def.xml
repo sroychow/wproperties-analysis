@@ -3,4 +3,6 @@
   <class name="fakeRate"/>
   <class name="baseDefinitions"/>
   <class name="weightDefinitions"/>
+  <class name="templates"/>
+  <class name="reweightFromZ"/>
 </lcgdict>

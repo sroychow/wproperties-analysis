@@ -1,14 +1,12 @@
 #include "interface/functions.hpp"
 #include "TMath.h"
-ROOT::VecOps::RVec<float> dummy(ULong64_t event){
 
-	ROOT::VecOps::RVec<float> v;
-	v.emplace_back(1.);
-	return v;
-}
 float getFromIdx(ROOT::VecOps::RVec<float> vec, int index){
-
 	return vec[index];
+}
+float getCharge(ROOT::VecOps::RVec<int> vec, int index)
+{
+  return float(vec[index]);
 }
 
 float W_mt(float mu_pt, float mu_phi, float met_pt, float met_phi){

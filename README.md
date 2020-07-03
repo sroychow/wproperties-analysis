@@ -10,6 +10,15 @@ cd wproperties-analysis/RDFprocessor/framework
 
 ## source root master nightlies slc7
 
-`source /cvmfs/sft-nightlies.cern.ch/lcg/views/dev3/latest/x86_64-centos7-gcc62-opt/setup.sh`
+`source /cvmfs/sft-nightlies.cern.ch/lcg/views/dev3/latest/x86_64-centos7-gcc8-opt/setup.sh`
 
 `pip install --user -e .`
+
+#To run on 2016 MC samples
+
+```
+cd wproperties-analysis/analysisOnData/
+make
+mkdir output
+python runAnalysisOnMC.py
+```

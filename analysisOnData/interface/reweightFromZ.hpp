@@ -1,5 +1,5 @@
-#ifndef BKGHISTOS_H
-#define BKGHISTOS_H
+#ifndef REWEIGHTFROMZ_H
+#define REWEIGHTFROMZ_H
 
 #include "ROOT/RDataFrame.hxx"
 #include "ROOT/RVec.hxx"
@@ -8,51 +8,50 @@
 #include "TH2D.h"
 #include "TString.h"
 #include "TMath.h"
+#include "TFile.h"
 #include "interface/module.hpp"
-#include "interface/TH1weightsHelper.hpp"
-#include "interface/functions.hpp"
 
 using RNode = ROOT::RDF::RNode;
 
-class bkgHistos : public Module
+class reweightFromZ : public Module
 {
 
 private:
     std::vector<ROOT::RDF::RResultPtr<TH1D>> _h1List;
     std::vector<ROOT::RDF::RResultPtr<TH2D>> _h2List;
     std::vector<ROOT::RDF::RResultPtr<TH3D>> _h3List;
-
+    
     // groups of histos
     std::vector<ROOT::RDF::RResultPtr<std::vector<TH1D>>> _h1Group;
     std::vector<ROOT::RDF::RResultPtr<std::vector<TH2D>>> _h2Group;
     std::vector<ROOT::RDF::RResultPtr<std::vector<TH3D>>> _h3Group;
 
-    std::vector<std::string> _syst_name;
-    std::string _syst_weight;
+    TFile *_Pt;
+    TFile *_Y;
 
-    std::string _filter;
-    std::string _weight;
+    TH1F *_hPt;
+    TH1F *_hY;
 
 public:
-    bkgHistos(std::string filter, std::string weight)
+    reweightFromZ(TFile *Pt, TFile *Y)
     {
+        _Pt = Pt;
+        _Y = Y;
 
-        _filter = filter;
-        _weight = weight;
+        _hPt = (TH1F *)_Pt->Get("unfold");
+        TH1F *hPtMC = (TH1F *)_Pt->Get("hDDilPtLL");
+        _hY = (TH1F *)_Y->Get("unfold");
+        TH1F *hYMC = (TH1F *)_Y->Get("hDDilRapLL");
+
+        _hPt->Divide(hPtMC);
+        _hPt->Scale(0.979);
+
+        hYMC->Scale(_hY->Integral() / hYMC->Integral());
+        _hY->Divide(hYMC);
     };
+    ~reweightFromZ(){};
 
-    bkgHistos(std::string filter, std::string weight, std::vector<std::string> syst_name, std::string syst_weight)
-    {
-
-        _filter = filter;
-        _weight = weight;
-        _syst_name = syst_name;
-        _syst_weight = syst_weight;
-    };
-
-    ~bkgHistos(){};
-
-    RNode run(RNode) override;
+        RNode run(RNode) override;
     std::vector<ROOT::RDF::RResultPtr<TH1D>> getTH1() override;
     std::vector<ROOT::RDF::RResultPtr<TH2D>> getTH2() override;
     std::vector<ROOT::RDF::RResultPtr<TH3D>> getTH3() override;

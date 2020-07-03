@@ -9,7 +9,6 @@
 #include "TString.h"
 #include "TMath.h"
 #include "interface/module.hpp"
-#include "interface/functions.hpp"
 
 using RNode = ROOT::RDF::RNode;
 
@@ -25,9 +24,12 @@ private:
     std::vector<ROOT::RDF::RResultPtr<std::vector<TH1D>>> _h1Group;
     std::vector<ROOT::RDF::RResultPtr<std::vector<TH2D>>> _h2Group;
     std::vector<ROOT::RDF::RResultPtr<std::vector<TH3D>>> _h3Group;
+    bool _isMC;
 
 public:
-
+    baseDefinitions(bool isMC = 1){
+      _isMC = isMC;
+    };
     ~baseDefinitions(){};
 
     RNode run(RNode) override;
