@@ -34,6 +34,7 @@ class muonHistos : public Module {
     std::string _syst_weight;
 
     std::string _filter;
+    std::string _region;
     std::vector<std::string> _filtervec;
     std::string _weight;
     std::string _colvar;
@@ -53,8 +54,8 @@ class muonHistos : public Module {
 
     public:
     
-    muonHistos(std::string filter, std::string weight, std::vector<std::string> syst_name, std::string syst_weight, HistoCategory hcat, std::string colvar = ""){
-        
+  muonHistos(std::string region, std::string filter, std::string weight, std::vector<std::string> syst_name, std::string syst_weight, HistoCategory hcat, std::string colvar = ""){        
+        _region = region;
         _filter = filter;
         _weight = weight;
         _syst_name = syst_name;
@@ -65,8 +66,8 @@ class muonHistos : public Module {
 
     };
 
-    muonHistos(std::vector<std::string> filtervec, std::string weight, std::vector<std::string> syst_name, std::string syst_weight, HistoCategory hcat, std::vector<std::string> colvarvec){
-        
+  muonHistos(std::string region, std::vector<std::string> filtervec, std::string weight, std::vector<std::string> syst_name, std::string syst_weight, HistoCategory hcat, std::vector<std::string> colvarvec){
+        _region = region;
         _filtervec = filtervec;
         _weight = weight;
         _syst_name = syst_name;

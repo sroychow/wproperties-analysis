@@ -32,6 +32,7 @@ private:
     std::vector<std::string> _syst_name;
     std::string _syst_weight;
 
+    std::string _region;
     std::string _filter;
     std::vector<std::string> _filtervec;
     std::string _weight;
@@ -45,9 +46,9 @@ private:
     void setAxisarrays();
 
 public:
-    templates(std::string filter, std::string weight, std::vector<std::string> syst_name, std::string syst_weight, HistoCategory hcat, std::string colvar = "")
+  templates(std::string region, std::string filter, std::string weight, std::vector<std::string> syst_name, std::string syst_weight, HistoCategory hcat, std::string colvar = "")
     {
-
+        _region = region;
         _filter = filter;
         _weight = weight;
         _syst_name = syst_name;
@@ -57,9 +58,9 @@ public:
         setAxisarrays();
     };
 
-    templates(std::vector<std::string> filtervec, std::string weight, std::vector<std::string> syst_name, std::string syst_weight, HistoCategory hcat, std::vector<std::string> colvarvec)
+  templates(std::string region, std::vector<std::string> filtervec, std::string weight, std::vector<std::string> syst_name, std::string syst_weight, HistoCategory hcat, std::vector<std::string> colvarvec)
     {
-
+        _region = region;
         _filtervec = filtervec;
         _weight = weight;
         _syst_name = syst_name;

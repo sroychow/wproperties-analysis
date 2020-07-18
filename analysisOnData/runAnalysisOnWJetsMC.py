@@ -83,8 +83,8 @@ for wdecay, decaycut in wdecayselections.iteritems() :
         print "branching nominal for region:", region 
         cut += decaycut
         if not runBKG:             
-            p.branch(nodeToStart = 'defs', nodeToEnd = 'prefit_{}/Nominal'.format(region), modules = [ROOT.muonHistos(cut, weight, nom,"Nom",0)])     
-        p.branch(nodeToStart = 'defs', nodeToEnd = 'templates_{}/Nominal'.format(region), modules = [ROOT.templates(cut, weight, nom,"Nom",0)])            
+            p.branch(nodeToStart = 'defs', nodeToEnd = 'prefit_{}/Nominal'.format(region), modules = [ROOT.muonHistos(region, cut, weight, nom,"Nom",0)])     
+        p.branch(nodeToStart = 'defs', nodeToEnd = 'templates_{}/Nominal'.format(region), modules = [ROOT.templates(region, cut, weight, nom,"Nom",0)])            
    
         #weight variations
         for s,variations in systematics.iteritems():
@@ -101,8 +101,8 @@ for wdecay, decaycut in wdecayselections.iteritems() :
             print weight,var_weight, "MODIFIED WEIGHT"
                 
             if not runBKG: 
-                p.branch(nodeToStart = 'defs'.format(region), nodeToEnd = 'prefit_{}/{}Vars'.format(region,s), modules = [ROOT.muonHistos(cut, var_weight,vars_vec,variations[1], 0)])
-            p.branch(nodeToStart = 'defs'.format(region), nodeToEnd = 'templates_{}/{}Vars'.format(region,s), modules = [ROOT.templates(cut, var_weight,vars_vec,variations[1], 0)])
+                p.branch(nodeToStart = 'defs'.format(region), nodeToEnd = 'prefit_{}/{}Vars'.format(region,s), modules = [ROOT.muonHistos(region, cut, var_weight,vars_vec,variations[1], 0)])
+            p.branch(nodeToStart = 'defs'.format(region), nodeToEnd = 'templates_{}/{}Vars'.format(region,s), modules = [ROOT.templates(region, cut, var_weight,vars_vec,variations[1], 0)])
                     
 
         #column variations#weight will be nominal, cut will vary
@@ -119,8 +119,8 @@ for wdecay, decaycut in wdecayselections.iteritems() :
                 var_vec.push_back(selvar)
             print "branching column variations:", vartype, " for region:", region, "\tvariations:", var_vec
             if not runBKG: 
-                p.branch(nodeToStart = 'defs', nodeToEnd = 'prefit_{}/{}Vars'.format(region,vartype), modules = [ROOT.muonHistos(cut_vec, weight, nom,"Nom",hcat,var_vec)])  
-            p.branch(nodeToStart = 'defs', nodeToEnd = 'templates_{}/{}Vars'.format(region,vartype), modules = [ROOT.templates(cut_vec, weight, nom,"Nom",hcat,var_vec)])  
+                p.branch(nodeToStart = 'defs', nodeToEnd = 'prefit_{}/{}Vars'.format(region,vartype), modules = [ROOT.muonHistos(region, cut_vec, weight, nom,"Nom",hcat,var_vec)])  
+            p.branch(nodeToStart = 'defs', nodeToEnd = 'templates_{}/{}Vars'.format(region,vartype), modules = [ROOT.templates(region, cut_vec, weight, nom,"Nom",hcat,var_vec)])  
 
     p.getOutput()
     p.saveGraph()
