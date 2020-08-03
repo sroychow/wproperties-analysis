@@ -87,13 +87,15 @@ for region,cut in selections_whelicity.iteritems():
         print "adding muon histo to graph for Signal region"
         p.branch(nodeToStart = 'defs', nodeToEnd = '{}/prefit_{}/Nominal'.format('WToMu', region), modules = [ROOT.muonHistos(wtomu_cut, weight, nom,"Nom",0)])     
         p.branch(nodeToStart = 'defs', nodeToEnd = '{}/prefit_{}/Nominal'.format('WToTau', region), modules = [ROOT.muonHistos(wtotau_cut, weight, nom,"Nom",0)])     
+
+    #Nominal templates
     p.branch(nodeToStart = 'defs', nodeToEnd = '{}/templates_{}/Nominal'.format('WToMu', region), modules = [ROOT.templates(wtomu_cut, weight, nom,"Nom",0)])            
     p.branch(nodeToStart = 'defs', nodeToEnd = '{}/templates_{}/Nominal'.format('WToTau', region), modules = [ROOT.templates(wtotau_cut, weight, nom,"Nom",0)])            
    
     #weight variations
     for s,variations in systematics.iteritems():
         print "branching weight variations", s
-        if "LHEScaleWeight" in s and samples[sample]['systematics'] != 2 :  continue
+        #if "LHEScaleWeight" in s and samples[sample]['systematics'] != 2 :  continue
         if not "LHEScaleWeight" in s:
             if 'aiso' in region: continue
             var_weight = weight.replace(s, "1.")
@@ -106,8 +108,10 @@ for region,cut in selections_whelicity.iteritems():
         if region == "Signal": 
             p.branch(nodeToStart = 'defs'.format(region), nodeToEnd = '{}/prefit_{}/{}Vars'.format('WToMu', region,s), modules = [ROOT.muonHistos(wtomu_cut, var_weight,vars_vec,variations[1], 0)])
             p.branch(nodeToStart = 'defs'.format(region), nodeToEnd = '{}/prefit_{}/{}Vars'.format('WToTau', region,s), modules = [ROOT.muonHistos(wtotau_cut, var_weight,vars_vec,variations[1], 0)])
+        #Template vars
         p.branch(nodeToStart = 'defs'.format(region), nodeToEnd = '{}/templates_{}/{}Vars'.format('WToMu', region,s), modules = [ROOT.templates(wtomu_cut, var_weight,vars_vec,variations[1], 0)])
         p.branch(nodeToStart = 'defs'.format(region), nodeToEnd = '{}/templates_{}/{}Vars'.format('WToTau', region,s), modules = [ROOT.templates(wtotau_cut, var_weight,vars_vec,variations[1], 0)])
+
     #column variations#weight will be nominal, cut will vary
     for vartype, vardict in selectionVars.iteritems():
         wtomu_cut_vec = ROOT.vector('string')()
@@ -127,7 +131,8 @@ for region,cut in selections_whelicity.iteritems():
         print "branching column variations:", vartype, " for region:", region, "\tvariations:", wtomu_var_vec
         if region == "Signal": 
             p.branch(nodeToStart = 'defs', nodeToEnd = '{}/prefit_{}/{}Vars'.format('WToMu', region,vartype), modules = [ROOT.muonHistos(wtomu_cut_vec, weight, nom,"Nom",hcat,wtomu_var_vec)])  
-            p.branch(nodeToStart = 'defs', nodeToEnd = '{}/prefit_{}/{}Vars'.format('WToTau', region,vartype), modules = [ROOT.muonHistos(wtotau_cut_vec, weight, nom,"Nom",hcat,wtotau_var_vec)])  
+            p.branch(nodeToStart = 'defs', nodeToEnd = '{}/prefit_{}/{}Vars'.format('WToTau', region,vartype), modules = [ROOT.muonHistos(wtotau_cut_vec, weight, nom,"Nom",hcat,wtotau_var_vec)])
+        #templates 
         p.branch(nodeToStart = 'defs', nodeToEnd = '{}/templates_{}/{}Vars'.format('WToMu', region,vartype), modules = [ROOT.templates(wtomu_cut_vec, weight, nom,"Nom",hcat,wtomu_var_vec)])  
         p.branch(nodeToStart = 'defs', nodeToEnd = '{}/templates_{}/{}Vars'.format('WToTau', region,vartype), modules = [ROOT.templates(wtotau_cut_vec, weight, nom,"Nom",hcat,wtotau_var_vec)])  
 

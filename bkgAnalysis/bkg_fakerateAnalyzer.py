@@ -1328,7 +1328,12 @@ class bkg_analyzer:
                 parDict[s+e+'offsetErr']=fitFake.GetParError(0)
                 parDict[s+e+'slopeErr']=fitFake.GetParError(1)
                 parDict[s+e+'offset*slope'] = ROOT.TMatrixDRow(cov,0)(1) #covarinace
-                parDict[s+e+'chi2red'] =fitFake.GetChisquare()/fitFake.GetNDF()
+                #print self.maxPt_linearFit
+                #print fitFake.GetChisquare() , '\t', fitFake.GetNDF()
+                if  fitFake.GetNDF() != 0:
+                    parDict[s+e+'chi2red'] =fitFake.GetChisquare()/fitFake.GetNDF()
+                else :
+                    parDict[s+e+'chi2red'] = 9999999.
 
                 if kind =='prompt' :
                     parDict[s+e+'2deg']=fitFake.GetParameter(2)

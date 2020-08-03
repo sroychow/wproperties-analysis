@@ -64,7 +64,7 @@ CORRFITFINAL= True #correlated fit in the final plots
 TEMPLATE = True
 NOM = ['Nominal','']
 EXTRAP = False #extrapolation syst
-NCORES=1
+NCORES=30
 if NCORES>1 :
     MULTICORE=True
 else :
@@ -132,5 +132,5 @@ if correlatedFitAna :
 if comparisonAna :
     print "--> Syst comparison plots..."
     fakeFinal = bkg_fakerateAnalyzer.bkg_analyzer(systKind=NOM[0],systName=NOM[1],correlatedFit=CORRFITFINAL,statAna=False, ptBinning=bkg_utils.ptBinning, etaBinning=bkg_utils.etaBinning, outdir=outputDir+'/bkg_'+NOM[1], inputDir=inputDir)
-    fakeFinal.syst_comparison(systDict=bkg_utils.bkg_systematics, SymBands=True, outDir=outputDir, noratio=False, statAna=STATANA)
+    #fakeFinal.syst_comparison(systDict=bkg_utils.bkg_systematics, SymBands=True, outDir=outputDir, noratio=False, statAna=STATANA)
     fakeFinal.buildOutput(outputDir=outputDir,statAna=STATANA)
