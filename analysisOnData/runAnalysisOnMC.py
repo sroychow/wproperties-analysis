@@ -91,8 +91,8 @@ for sample in samples:
         print "branching nominal"
 
         if region == "Signal": 
-            p.branch(nodeToStart = 'defs', nodeToEnd = 'prefit_{}/Nominal'.format(region), modules = [ROOT.muonHistos(cut, weight, nom,"Nom",0)])  
-        p.branch(nodeToStart = 'defs', nodeToEnd = 'templates_{}/Nominal'.format(region), modules = [ROOT.templates(cut, weight, nom,"Nom",0)])    
+            p.branch(nodeToStart = 'defs', nodeToEnd = 'prefit_{}/Nominal'.format(region), modules = [ROOT.muonHistos(region,cut, weight, nom,"Nom",0)])  
+        p.branch(nodeToStart = 'defs', nodeToEnd = 'templates_{}/Nominal'.format(region), modules = [ROOT.templates(region,cut, weight, nom,"Nom",0)])    
   
        #weight variations
         for s,variations in systematicsFinal.iteritems():
@@ -111,8 +111,8 @@ for sample in samples:
             print "branching weight variations", s
             print weight,var_weight, "MODIFIED WEIGHT"
             if region == "Signal": 
-                p.branch(nodeToStart = 'defs'.format(region), nodeToEnd = 'prefit_{}/{}Vars'.format(region,s), modules = [ROOT.muonHistos(cut,var_weight,vars_vec,variations[1], 0)])
-            p.branch(nodeToStart = 'defs'.format(region), nodeToEnd = 'templates_{}/{}Vars'.format(region,s), modules = [ROOT.templates(cut,var_weight,vars_vec,variations[1], 0)])
+                p.branch(nodeToStart = 'defs'.format(region), nodeToEnd = 'prefit_{}/{}Vars'.format(region,s), modules = [ROOT.muonHistos(region,cut,var_weight,vars_vec,variations[1], 0)])
+            p.branch(nodeToStart = 'defs'.format(region), nodeToEnd = 'templates_{}/{}Vars'.format(region,s), modules = [ROOT.templates(region,cut,var_weight,vars_vec,variations[1], 0)])
 
         #column variations#weight will be nominal, cut will vary
         for vartype, vardict in selectionVars.iteritems():
@@ -127,8 +127,8 @@ for sample in samples:
                 var_vec.push_back(selvar)
 
             if region == "Signal": 
-                p.branch(nodeToStart = 'defs', nodeToEnd = 'prefit_{}/{}Vars'.format(region,vartype), modules = [ROOT.muonHistos(cut_vec, weight, nom,"Nom",hcat,var_vec)])  
-            p.branch(nodeToStart = 'defs', nodeToEnd = 'templates_{}/{}Vars'.format(region,vartype), modules = [ROOT.templates(cut_vec, weight, nom,"Nom",hcat,var_vec)])  
+                p.branch(nodeToStart = 'defs', nodeToEnd = 'prefit_{}/{}Vars'.format(region,vartype), modules = [ROOT.muonHistos(region,cut_vec, weight, nom,"Nom",hcat,var_vec)])  
+            p.branch(nodeToStart = 'defs', nodeToEnd = 'templates_{}/{}Vars'.format(region,vartype), modules = [ROOT.templates(region,cut_vec, weight, nom,"Nom",hcat,var_vec)])  
 
     p.getOutput()
     p.saveGraph()
