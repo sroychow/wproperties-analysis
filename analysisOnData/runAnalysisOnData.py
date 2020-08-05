@@ -46,7 +46,8 @@ for sample in samples:
     direc = samples[sample]['dir']
     for dirname,fname in direc.iteritems():
         ##check if file exists or not
-        inputFile = '/scratchssd/sroychow/NanoAOD2016-V2/{}/tree.root'.format(dirname)
+        #inputFile = '/scratchssd/sroychow/NanoAOD2016-V2/{}/tree.root'.format(dirname)
+        inputFile = '/scratch/emanca/NanoAOD2016-V2/{}/tree.root'.format(dirname)
         isFile = os.path.isfile(inputFile)  
         if not isFile:
             print inputFile, " does not exist"
@@ -73,9 +74,9 @@ if runBKG : #produces templates for all regions and prefit for signal
         #last argument refers to histo category - 0 = Nominal, 1 = Pt scale , 2 = MET scale
         print "branching nominal"
         if region == "Signal":
-            p.branch(nodeToStart = 'defs', nodeToEnd = 'prefit_{}/Nominal'.format(region), modules = [ROOT.muonHistos(cut, weight, nom,"Nom",0)]) 
+            p.branch(nodeToStart = 'defs', nodeToEnd = 'prefit_{}/Nominal'.format(region), modules = [ROOT.muonHistos(region,cut, weight, nom,"Nom",0)]) 
         #nominal templates
-        p.branch(nodeToStart = 'defs', nodeToEnd = 'templates_{}/Nominal'.format(region), modules = [ROOT.templates(cut, weight, nom,"Nom",0)])       
+        p.branch(nodeToStart = 'defs', nodeToEnd = 'templates_{}/Nominal'.format(region), modules = [ROOT.templates(region,cut, weight, nom,"Nom",0)])       
     p.getOutput()
     p.saveGraph()
 else : #produces Fake contribution to prefit plots computed from data 
@@ -93,8 +94,8 @@ else : #produces Fake contribution to prefit plots computed from data
         weight = "float(fakeRate_Nominal_)"
         #last argument refers to histo category - 0 = Nominal, 1 = Pt scale , 2 = MET scale
         print "branching nominal"
-        p.branch(nodeToStart = 'defs', nodeToEnd = 'prefit_{}/Nominal'.format(region), modules = [ROOT.muonHistos(cut, weight, nom,"Nom",0)]) 
-        p.branch(nodeToStart = 'defs', nodeToEnd = 'templates_{}/Nominal'.format(region), modules = [ROOT.templates(cut, weight, nom,"Nom",0)])       
+        p.branch(nodeToStart = 'defs', nodeToEnd = 'prefit_{}/Nominal'.format(region), modules = [ROOT.muonHistos(region,cut, weight, nom,"Nom",0)]) 
+        p.branch(nodeToStart = 'defs', nodeToEnd = 'templates_{}/Nominal'.format(region), modules = [ROOT.templates(region,cut, weight, nom,"Nom",0)])       
 
         #now add fake variations
         for s,variations in systematics.iteritems():
@@ -106,8 +107,8 @@ else : #produces Fake contribution to prefit plots computed from data
                 weight="float(1)"
             print "fakeRate_"+variations[1]
             print vars_vec
-            p.branch(nodeToStart = 'defs'.format(region), nodeToEnd = 'prefit_{}/{}Vars'.format(region,s), modules = [ROOT.muonHistos(cut,weight,vars_vec,"fakeRate_"+variations[1], 0)])
-            p.branch(nodeToStart = 'defs'.format(region), nodeToEnd = 'templates_{}/{}Vars'.format(region,s), modules = [ROOT.templates(cut,weight,vars_vec,"fakeRate_"+variations[1], 0)])
+            p.branch(nodeToStart = 'defs'.format(region), nodeToEnd = 'prefit_{}/{}Vars'.format(region,s), modules = [ROOT.muonHistos(region,cut,weight,vars_vec,"fakeRate_"+variations[1], 0)])
+            p.branch(nodeToStart = 'defs'.format(region), nodeToEnd = 'templates_{}/{}Vars'.format(region,s), modules = [ROOT.templates(region,cut,weight,vars_vec,"fakeRate_"+variations[1], 0)])
         
         #fake column variations since the cut won't change in data
         for vartype, vardict in selectionVars.iteritems():
@@ -115,8 +116,8 @@ else : #produces Fake contribution to prefit plots computed from data
             for selvar, hcat in vardict.iteritems() :
                 vars_vec.push_back(selvar)
             print "branching fake column variations", vartype
-            p.branch(nodeToStart = 'defs'.format(region), nodeToEnd = 'prefit_{}/{}Vars'.format(region,vartype), modules = [ROOT.muonHistos(cut,weight,vars_vec,"fakeRate_"+vartype, 0)])
-            p.branch(nodeToStart = 'defs'.format(region), nodeToEnd = 'templates_{}/{}Vars'.format(region,vartype), modules = [ROOT.templates(cut,weight,vars_vec,"fakeRate_"+vartype, 0)])
+            p.branch(nodeToStart = 'defs'.format(region), nodeToEnd = 'prefit_{}/{}Vars'.format(region,vartype), modules = [ROOT.muonHistos(region,cut,weight,vars_vec,"fakeRate_"+vartype, 0)])
+            p.branch(nodeToStart = 'defs'.format(region), nodeToEnd = 'templates_{}/{}Vars'.format(region,vartype), modules = [ROOT.templates(region,cut,weight,vars_vec,"fakeRate_"+vartype, 0)])
 
     #save output
     p.getOutput()

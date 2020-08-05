@@ -51,7 +51,8 @@ for sample in samples:
     fvec=ROOT.vector('string')()
     for dirname,fname in direc.iteritems():
         ##check if file exists or not
-        inputFile = '/scratchssd/sroychow/NanoAOD2016-V2/{}/tree.root'.format(dirname)
+        #inputFile = '/scratchssd/sroychow/NanoAOD2016-V2/{}/tree.root'.format(dirname)
+        inputFile = '/scratch/emanca/NanoAOD2016-V2/{}/tree.root'.format(dirname)
         isFile = os.path.isfile(inputFile)  
         if not isFile:
             print inputFile, " does not exist"
