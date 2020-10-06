@@ -2,7 +2,7 @@
 systematicsDict = {
     "Nominal" : [""],
     "mass" : ["mass"],
-    "LHEPdfWeightVars" : ["LHEPdfWeightHess{}".format(i+1) for i in range(60)]
+    "LHEPdfWeightVars" : ["LHEPdfWeightHess{}".format(i+1) for i in range(60)],
     "ptScaleVars" : [ "corrected"], 
 }
 ###Mapping of nuisance to which sample they are applicable
