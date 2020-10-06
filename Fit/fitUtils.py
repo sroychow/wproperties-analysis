@@ -22,18 +22,8 @@ class fitUtils:
         self.helMetaGroups = OrderedDict()
         
         self.templSystematics = systematicsDict
-        self.systTosample = systToSampleDict
-        self.systType = systTypeDict
-        '''{
-            "Nominal" : [""],
-            "mass" : ["mass"],
-            #"WHSFVars"  : ["WHSFSyst0", "WHSFSyst1","WHSFSyst2","WHSFSystFlat"],
-            #"LHEScaleWeightVars" : ["LHEScaleWeight_muR0p5_muF0p5", "LHEScaleWeight_muR0p5_muF1p0","LHEScaleWeight_muR1p0_muF0p5","LHEScaleWeight_muR1p0_muF2p0","LHEScaleWeight_muR2p0_muF1p0", "LHEScaleWeight_muR2p0_muF2p0"],
-            "ptScaleVars" : [ "corrected"], 
-            #"jmeVars" : ["jesTotal", "unclustEn"],
-            #"LHEPdfWeightVars" : ["LHEPdfWeightHess{}".format(i+1) for i in range(60)]
-        }'''
-        
+        self.systToSampleDict = systToSampleDict
+        self.systTypeDict = systTypeDict
         #all the files that are needed
         self.fmap = ROOT.TFile.Open(fmap) #file containing the angular coefficient values and inclusive pt-y map
         self.fbkg = fbkg
@@ -118,9 +108,7 @@ class fitUtils:
             for syst in self.templSystematics:
                 print syst
                 for temp in self.templates2D[proc][syst]:
-           
                     if not temp.GetSumw2().GetSize()>0: print colored('warning: {} Sumw2 not called'.format(temp.GetName()),'red')
-                    
                     nbins = temp.GetNbinsX()*temp.GetNbinsY()
                     #temp.Sumw2() #don't think it's necessary
                     new = temp.GetName()
@@ -292,7 +280,7 @@ class fitUtils:
         #for i in range(60):
             #self.DC.systs.append(('LHEPdfWeightHess{}'.format(i+1), False, 'shape', [], aux))
         for onesyst,variations in self.templSystematics.iteritems(): #loop over systematics
-            if onesyst == mass or onesyst == 'Nominal' : continue
+            if onesyst == 'mass' or onesyst == 'Nominal' : continue
             aux1 = {}#each sys will have a separate aux dict
             aux1[self.channel] = {}
             aux1[self.channel+'_xsec'] = {}
@@ -304,7 +292,7 @@ class fitUtils:
                     aux1[self.channel][proc] = 0.0
                     aux1[self.channel+'_xsec'][proc] = 0.0
             for var in variations:
-                self.DC.systs.append((var, False, self.systTypedict[onesyst], aux1))
+                self.DC.systs.append((var, False, self.systTypeDict[onesyst], aux1))
 
         aux2 = {}
         aux2[self.channel] = {}
