@@ -31,7 +31,7 @@ parser.add_argument('-q', '--bkgPrep',type=int, default=False, help="run the bkg
 parser.add_argument('-w', '--bkgAna',type=int, default=False, help="run the bkg analysis")
 parser.add_argument('-e', '--prefit',type=int, default=False, help="run the prefit hitograms building")
 parser.add_argument('-r', '--plotter',type=int, default=False, help="run the prefit plotter, the result are saved in outputDir/plot/")
-parser.add_argument('-sb', '--SBana',type=int, default=0, help="run also on the sideband (clousure test)")
+parser.add_argument('-s', '--SBana',type=bool, default=False, help="run also on the sideband (clousure test)")
 
 
 args = parser.parse_args()
@@ -58,7 +58,7 @@ if step1 :
     print "step1: bkg input preparation... "
     os.chdir('./analysisOnData')
     if not os.path.isdir(outputDir): os.system('mkdir '+ outputDir)
-    os.system('python runAnalysis.py -p=0 -b=1 -i='+inputDir+' -c='+ncores+' -o='+outputDir + ' -sb='+SBana)
+    os.system('python runAnalysis.py -b=1 -i='+inputDir+' -c='+ncores+' -o='+outputDir + ' -s='+SBana)
     os.chdir('../')
     s1end=time.time()
     runTimes.append(s1end - s1start)
@@ -83,7 +83,7 @@ if step3 :
     os.chdir('analysisOnData')
     if not os.path.isdir(outputDir): os.system('mkdir '+ outputDir)
     #ncores is optimized and set in the config itself, so no need to pass here
-    os.system('python runAnalysis.py -b=0 -i='+inputDir+ ' -o=' +outputDir+ ' -f='+bkgFile + ' -sb='+SBana)
+    os.system('python runAnalysis.py --i='+inputDir+ ' -o=' +outputDir+ ' -f='+bkgFile + ' -sb='+SBana)
     os.chdir('../')
     s3end=time.time()
     runTimes.append(s3end - s3start)
