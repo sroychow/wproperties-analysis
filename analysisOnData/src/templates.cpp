@@ -12,6 +12,8 @@ RNode templates::run(RNode d)
         return bookptCorrectedhistos(d1);
     else if (_hcat == HistoCategory::JME)
         return bookJMEvarhistos(d1);
+    else if (_hcat == HistoCategory::Rochester)
+        return bookRochestervarhistos(d1);
     else
         std::cout << "Warning!! Histocategory undefined!!\n";
     return d1;
@@ -45,6 +47,24 @@ RNode templates::bookJMEvarhistos(RNode df)
         _h3Group.emplace_back(df.Filter(_filtervec[i]).Book<float, float, float, float, ROOT::VecOps::RVec<float>>(std::move(helper_JME), {"Mu1_eta", "Mu1_pt", "Mu1_charge", "weight", "Nom"}));
     }
     return df;
+}
+
+//Rochester variations
+RNode templates::bookRochestervarhistos(RNode df) {
+
+  //for (unsigned int i = 0; i < _syst_name.size(); i++) {
+  TH3weightsHelper helper_Pt(std::string("templates"), 
+			     std::string(" ; muon #{eta}; muon p_{T} (Rochester corr.); muon charge"), 
+			     _etaArr.size() - 1, _etaArr, 
+			     _pTArr.size() - 1, _pTArr, 
+			     _syst_name,
+			     _chargeArr.size() - 1, _chargeArr);
+  _h3Group.emplace_back(df.Filter(_filter)
+			.Book<float, float, ROOT::VecOps::RVec<float>,float,float>(std::move(helper_Pt), 
+			  {"Mu1_eta", "Mu1_pt", _syst_weight, "Mu1_charge", "weight"}));
+  //}
+
+  return df;
 }
 
 void templates::setAxisarrays()

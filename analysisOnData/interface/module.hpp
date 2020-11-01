@@ -15,7 +15,8 @@ enum HistoCategory
     Nominal = 0,
     Corrected,
     JME,
-    Weights
+    Weights,
+    Rochester
   };
 
 class Module

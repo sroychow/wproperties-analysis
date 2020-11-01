@@ -53,6 +53,7 @@ public:
     RNode bookNominalhistos(RNode);
     RNode bookptCorrectedhistos(RNode);
     RNode bookJMEvarhistos(RNode);
+    RNode bookRochestervarhistos(RNode);
 
     RNode run(RNode) override;
 

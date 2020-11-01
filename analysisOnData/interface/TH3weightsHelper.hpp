@@ -20,6 +20,7 @@ private:
    int _nbinsZ;
    std::vector<float> _zbins;
    std::vector<std::string> _weightNames;
+   std::vector<std::string> _ptvarNames;  
   
 
 public:
@@ -32,6 +33,21 @@ public:
                     std::vector<std::string> weightNames
                     );
 
+   TH3weightsHelper(std::string name, std::string title, 
+                    int nbinsX, std::vector<float> xbins,
+                    int nbinsY, std::vector<float> ybins,
+                    std::vector<std::string> varyvec,
+                    int nbinsZ, std::vector<float> zbins
+                    );
+  //needed for template builder
+   TH3weightsHelper(std::string name, std::string title, 
+                    int nbinsX, std::vector<float> xbins,
+                    int nbinsY, std::vector<float> ybins,
+                    std::vector<std::string> varyvec,
+                    int nbinsZ, std::vector<float> zbins,
+		    std::vector<std::string> weightNames
+                    );
+
    TH3weightsHelper(TH3weightsHelper &&) = default;
    TH3weightsHelper(const TH3weightsHelper &) = delete;
    std::shared_ptr<std::vector<TH3D*>> GetResultPtr() const;
@@ -40,6 +56,12 @@ public:
    /// This is a method executed at every entry
 
    void Exec(unsigned int slot, const float &var1, const float &var2,  const float &var3, const float &weight, const  ROOT::VecOps::RVec<float> &weights);
+
+  void Exec(unsigned int slot, const float &var1, const float &var2,  const  ROOT::VecOps::RVec<float> &var2weights, const float &var3, const float &weight);
+
+  void Exec(unsigned int slot, const float &var1, const float &var2,  const  ROOT::VecOps::RVec<float> &var2weights, 
+	    const float &var3, const float &weight, const  ROOT::VecOps::RVec<float> &weights);
+
    void Finalize();
    std::string GetActionName();
 };

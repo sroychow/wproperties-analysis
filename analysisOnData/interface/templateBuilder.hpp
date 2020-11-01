@@ -57,6 +57,7 @@ public:
   RNode bookptCorrectedhistos(RNode);
   RNode bookJMEvarhistos(RNode);
   RNode bookWeightVariatedhistos(RNode d);
+  RNode bookRochestervarhistos(RNode);
   RNode run(RNode) override;
   void setAxisarrays();
   std::vector<std::string> stringMultiplication(const std::vector<std::string> &v1, const std::vector<std::string> &v2);
