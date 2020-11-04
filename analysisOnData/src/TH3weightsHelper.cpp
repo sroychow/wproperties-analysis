@@ -33,10 +33,7 @@
          for (unsigned int i = 0; i < n_histos; ++i){
 
             histos.emplace_back(new TH3D(std::string(_name + _weightNames[i] + slotnum).c_str(),
-                                     std::string(_name + _weightNames[i] + slotnum).c_str(),
-                                     _nbinsX, _xbins.data(),
-                                     _nbinsY, _ybins.data(),
-                                     _nbinsZ, _zbins.data()));
+                                     std::string(_name + _weightNames[i] + slotnum).c_str(), _nbinsX, _xbins.data(), _nbinsY, _ybins.data(), _nbinsZ, _zbins.data()));
 
             histos.back()->SetDirectory(nullptr);
         }
@@ -49,7 +46,7 @@
    TH3weightsHelper::TH3weightsHelper(std::string name, std::string title, 
 				      int nbinsX, std::vector<float> xbins,
 				      int nbinsY, std::vector<float> ybins,
-				      std::vector<std::string> varyvec,
+				      std::vector<std::string> varyNames,
 				      int nbinsZ, std::vector<float> zbins
 				      )
    {
@@ -60,7 +57,7 @@
       _ybins = ybins;
       _nbinsZ = nbinsZ;
       _zbins = zbins;
-      _ptvarNames = varyvec;
+      _ptvarNames = varyNames;
 
       TH1::AddDirectory(false);
 
@@ -76,7 +73,6 @@
          slotnum = slot > 0 ? std::to_string(slot) : "";
 
          for (unsigned int i = 0; i < n_histos; ++i){
-
             histos.emplace_back(new TH3D(std::string(_name + _ptvarNames[i] + slotnum).c_str(),
                                      std::string(_name + _ptvarNames[i] + slotnum).c_str(),
                                      _nbinsX, _xbins.data(),
@@ -94,8 +90,8 @@
    TH3weightsHelper::TH3weightsHelper(std::string name, std::string title, 
 				      int nbinsX, std::vector<float> xbins,
 				      int nbinsY, std::vector<float> ybins,
-				      std::vector<std::string> varyvec,
 				      int nbinsZ, std::vector<float> zbins,
+				      std::vector<std::string> varyNames,
 				      std::vector<std::string> weightNames
 				      )
    {
@@ -106,31 +102,39 @@
       _ybins = ybins;
       _nbinsZ = nbinsZ;
       _zbins = zbins;
-      _ptvarNames = varyvec;
+      _ptvarNames = varyNames;
       _weightNames = weightNames;
+      
+      _hindices=new TH2I("hindices", ";pt;weight", _ptvarNames.size(), 0., _ptvarNames.size(), _weightNames.size(), 0, _weightNames.size());
+      unsigned int ih=0;
+      for (unsigned int ipt = 1; ipt < _ptvarNames.size()+1; ++ipt){
+	for (unsigned int iw = 1; iw < _weightNames.size()+1; ++iw){
+	  _hindices->SetBinContent(ipt, iw, ih);
+	  ih++;
+	}
+      }
 
-      TH1::AddDirectory(false);
-
+      TH1::AddDirectory(false);      
+      
       const auto nSlots = ROOT::IsImplicitMTEnabled() ? ROOT::GetThreadPoolSize() : 1;
       for (auto slot : ROOT::TSeqU(nSlots)) {
          fHistos.emplace_back(std::make_shared<std::vector<TH3D*>>());
          (void)slot;
 
          std::vector<TH3D*>& histos = *fHistos[slot];
-         auto n_histos = _ptvarNames.size()*_weightNames.size();
+         //auto n_histos = _ptvarNames.size()*_weightNames.size();
 
          std::string slotnum = "";
          slotnum = slot > 0 ? std::to_string(slot) : "";
 
          for (unsigned int ipt = 0; ipt < _ptvarNames.size(); ++ipt){
 	   for (unsigned int iw = 0; iw < _weightNames.size(); ++iw){
-
-	     histos.emplace_back(new TH3D(std::string(_name + _ptvarNames[ipt] + _weightNames[iw] + slotnum).c_str(),
-					  std::string(_name + _ptvarNames[ipt] + _weightNames[iw] + slotnum).c_str(),
+	     histos.emplace_back(new TH3D(std::string(_name + _weightNames[iw] + _ptvarNames[ipt] + slotnum).c_str(),
+					  std::string(_name + _weightNames[iw] + _ptvarNames[ipt] + slotnum).c_str(),
 					  _nbinsX, _xbins.data(),
 					  _nbinsY, _ybins.data(),
 					  _nbinsZ, _zbins.data()));
-
+           
             histos.back()->SetDirectory(nullptr);
 	   }
 	 }
@@ -152,23 +156,21 @@
        histos[i]->Fill(var1, var2, var3, weight * weights[i]);
 }
 
-void TH3weightsHelper::Exec(unsigned int slot, const float &var1, const float &var2, const ROOT::VecOps::RVec<float> &var2weights, const float &var3, const float &weight)
+void TH3weightsHelper::Exec(unsigned int slot, const float &var1, const ROOT::VecOps::RVec<float> &var2vec, const float &var3, const float &weight)
 {
     auto& histos = *fHistos[slot];
     const auto n_histos = histos.size();
     for (unsigned int i = 0; i < n_histos; ++i)
-       histos[i]->Fill(var1, var2*var2weights[i], var3, weight);
+       histos[i]->Fill(var1, var2vec[i], var3, weight);
 }
 
-void TH3weightsHelper::Exec(unsigned int slot, const float &var1, const float &var2, const ROOT::VecOps::RVec<float> &var2weights, const float &var3, const float &weight,  const  ROOT::VecOps::RVec<float> &weights)
+void TH3weightsHelper::Exec(unsigned int slot, const float &var1, const ROOT::VecOps::RVec<float> &var2vec, const float &var3, const float &weight,  const  ROOT::VecOps::RVec<float> &weights)
 {
     auto& histos = *fHistos[slot];
-    //const auto n_histos = histos.size();
-    unsigned int ih = 0;
-    for (unsigned int ipt = 0; ipt < var2weights.size(); ++ipt){
-      for (unsigned int iw = 0; iw < weights.size(); ++iw){
-	histos[ih]->Fill(var1, var2*var2weights[ipt], var3, weight*weights[iw]);
-	ih++;
+    for (unsigned int ipt = 1; ipt < var2vec.size()+1; ++ipt){
+      for (unsigned int iw = 1; iw < weights.size()+1; ++iw){
+	unsigned int ih = int(_hindices->GetBinContent(_hindices->FindBin(ipt,iw)));
+	histos[ih]->Fill(var1, var2vec[ipt], var3, weight*weights[iw]);
       }
     }
 }

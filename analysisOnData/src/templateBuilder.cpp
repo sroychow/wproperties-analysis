@@ -191,20 +191,20 @@ RNode templateBuilder::bookRochestervarhistos(RNode d) {
 
       TH3weightsHelper helperHelXsecs_plus(std::string("Wplus_")+std::string("qt_") + std::to_string(j) + std::string("_helXsecs_"), std::string("Wplus_")+std::string("qt_") + std::to_string(j) + std::string("_helXsecs_"), 
 					   nBinsEta, _etaArr, 
-					   nBinsPt, _pTArr, _syst_name,
-					   nBinsY, _yArr, helXsecs);
+					   nBinsPt, _pTArr,
+					   nBinsY, _yArr, _syst_name, helXsecs);
       auto htmp_plus = d1.Filter("Mu1_charge>0")
 	.Filter(sel, {"Wpt_preFSR"})
-	.Book<float, float, ROOT::VecOps::RVec<float>, float, float, ROOT::VecOps::RVec<float>>(std::move(helperHelXsecs_plus), {"Mu1_eta", "Mu1_pt", _syst_weight, "Wrap_preFSR_abs", "weight", "harmonicsWeights"});
+	.Book<float, ROOT::VecOps::RVec<float>, float, float, ROOT::VecOps::RVec<float>>(std::move(helperHelXsecs_plus), {"Mu1_eta", "RochesterPtVec", "Wrap_preFSR_abs", "weight", "harmonicsWeights"});
       _h3Group.push_back(htmp_plus);
 
       TH3weightsHelper helperHelXsecs_minus(std::string("Wminus_")+std::string("qt_") + std::to_string(j) + std::string("_helXsecs_"), std::string("Wminus_")+std::string("qt_") + std::to_string(j) + std::string("_helXsecs_"), 
 					    nBinsEta, _etaArr, 
-					    nBinsPt, _pTArr, _syst_name,  
-					    nBinsY, _yArr, helXsecs);
+					    nBinsPt, _pTArr,   
+					    nBinsY, _yArr, _syst_name, helXsecs);
       auto htmp_minus = d1.Filter("Mu1_charge<0")
 	.Filter(sel, {"Wpt_preFSR"})
-	.Book<float, float, ROOT::VecOps::RVec<float>, float, float, ROOT::VecOps::RVec<float>>(std::move(helperHelXsecs_minus), {"Mu1_eta", "Mu1_pt", _syst_weight, "Wrap_preFSR_abs", "weight", "harmonicsWeights"});
+	.Book<float, ROOT::VecOps::RVec<float>, float, float, ROOT::VecOps::RVec<float>>(std::move(helperHelXsecs_minus), {"Mu1_eta", "RochesterPtVec", "Wrap_preFSR_abs", "weight", "harmonicsWeights"});
       _h3Group.push_back(htmp_minus);
     }
 

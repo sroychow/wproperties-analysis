@@ -1,8 +1,9 @@
 #include "interface/functions.hpp"
 #include "interface/rochesterVariations.hpp"
+#include<vector>
 RNode rochesterVariations::run(RNode d)
 {
-  
+  /*  
   auto df = d.Define("Mu1_pt_zptsystUp", [this](float pt, float eta) { return getCorrfromhisto(_Zptcorv, pt, eta, 0); }, {"Mu1_pt", "Mu1_eta"})
                 .Define("Mu1_pt_zptsystDown", [this](float pt, float eta) { return getCorrfromhisto(_Zptcorv, pt, eta, 1); }, {"Mu1_pt", "Mu1_eta"})
                 .Define("MT_zptsystUp", W_mt, {"Mu1_pt_zptsystUp", "Mu1_phi", "MET_pt_nom", "MET_phi_nom"})
@@ -26,6 +27,8 @@ RNode rochesterVariations::run(RNode d)
     std::string mtDown = "MT_stateig" + std::to_string(idx) + "Down";
     std::string ptUp = "Mu1_pt_stateig" + std::to_string(idx) + "Up";
     std::string mtUp = "MT_stateig" + std::to_string(idx) + "Up";
+    roccoPtNames.emplace_back(ptUp);
+    roccoPtNames.emplace_back(ptDown);
 
     auto cUp = [this, idx](float pt, float eta) {
       float cpt = 1.;
@@ -54,6 +57,29 @@ RNode rochesterVariations::run(RNode d)
              .Define(ptUp, cDown, {"Mu1_pt", "Mu1_eta"})
              .Define(mtUp, W_mt, {ptUp, "Mu1_phi", "MET_pt_nom", "MET_phi_nom"});
   }
+  */
+  
+  auto getRochoPtVec = [this](float pt, float eta) {
+    ROOT::VecOps::RVec<float> roccoV;
+    roccoV.emplace_back(getCorrfromhisto(_Zptcorv, pt, eta, 0));
+    roccoV.emplace_back(getCorrfromhisto(_Zptcorv, pt, eta, 1));
+    roccoV.emplace_back(getCorrfromhisto(_Ewkcorv, pt, eta, 0));
+    roccoV.emplace_back(getCorrfromhisto(_Ewkcorv, pt, eta, 1));
+    roccoV.emplace_back(getCorrfromhisto(_deltaMcorv, pt, eta, 0));
+    roccoV.emplace_back(getCorrfromhisto(_deltaMcorv, pt, eta, 1));
+    roccoV.emplace_back(getCorrfromhisto(_Ewk2corv, pt, eta, 0));
+    roccoV.emplace_back(getCorrfromhisto(_Ewk2corv, pt, eta, 1));
+    for (unsigned int idx = 0; idx < 99; idx++) {
+      roccoV.emplace_back(getCorrfromhisto(_statUpv, pt, eta, idx));
+      roccoV.emplace_back(getCorrfromhisto(_statDownv, pt, eta, idx));
+    }
+    return roccoV;
+  };
+
+  auto df = d.Define("RochesterPtVec", getRochoPtVec, {"Mu1_pt", "Mu1_eta"});
+
+
+
   return df;
 }
 

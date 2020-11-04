@@ -21,7 +21,7 @@ private:
    std::vector<float> _zbins;
    std::vector<std::string> _weightNames;
    std::vector<std::string> _ptvarNames;  
-  
+   TH2I* _hindices;
 
 public:
    /// This constructor takes all the parameters necessary to build the THnTs. In addition, it requires the names of
@@ -36,15 +36,15 @@ public:
    TH3weightsHelper(std::string name, std::string title, 
                     int nbinsX, std::vector<float> xbins,
                     int nbinsY, std::vector<float> ybins,
-                    std::vector<std::string> varyvec,
+                    std::vector<std::string> varyNames,
                     int nbinsZ, std::vector<float> zbins
                     );
   //needed for template builder
    TH3weightsHelper(std::string name, std::string title, 
                     int nbinsX, std::vector<float> xbins,
                     int nbinsY, std::vector<float> ybins,
-                    std::vector<std::string> varyvec,
                     int nbinsZ, std::vector<float> zbins,
+                    std::vector<std::string> varyNames,
 		    std::vector<std::string> weightNames
                     );
 
@@ -57,10 +57,9 @@ public:
 
    void Exec(unsigned int slot, const float &var1, const float &var2,  const float &var3, const float &weight, const  ROOT::VecOps::RVec<float> &weights);
 
-  void Exec(unsigned int slot, const float &var1, const float &var2,  const  ROOT::VecOps::RVec<float> &var2weights, const float &var3, const float &weight);
+  void Exec(unsigned int slot, const float &var1, const  ROOT::VecOps::RVec<float> &var2vec, const float &var3, const float &weight);
 
-  void Exec(unsigned int slot, const float &var1, const float &var2,  const  ROOT::VecOps::RVec<float> &var2weights, 
-	    const float &var3, const float &weight, const  ROOT::VecOps::RVec<float> &weights);
+  void Exec(unsigned int slot, const float &var1, const  ROOT::VecOps::RVec<float> &var2vec, const float &var3, const float &weight, const  ROOT::VecOps::RVec<float> &weights);
 
    void Finalize();
    std::string GetActionName();
