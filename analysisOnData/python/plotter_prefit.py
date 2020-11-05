@@ -18,7 +18,7 @@ class plotter:
 
         self.indir = inDir # indir containig the various outputs
         self.outdir = outDir
-        self.PDFvar = 'LHEPdfWeight'
+        self.PDFvar = 'LHEPdfWeightVars'
         self.SBana = SBana
         
         if not self.SBana :
@@ -67,13 +67,13 @@ class plotter:
         # }
         
         self.groupedSystColors = {
-            "WHSF"  : [ROOT.kGreen+1, 'Scale Factors'],
-            "LHEScaleWeight" : [ROOT.kViolet-2, 'MC Scale'],
-            "ptScale" : [ROOT.kBlue-4, 'pT Scale'],
-            "jme" : [ROOT.kAzure+10, 'MET'],
-            "LHEPdfWeight" : [ROOT.kRed+1, 'PDF'],
+            "WHSFVars"  : [ROOT.kGreen+1, 'Scale Factors'],
+            "LHEScaleWeightVars" : [ROOT.kViolet-2, 'MC Scale'],
+            "ptScaleVars" : [ROOT.kBlue-4, 'pT Scale'],
+            "jmeVars" : [ROOT.kAzure+10, 'MET'],
+            "LHEPdfWeightVars" : [ROOT.kRed+1, 'PDF'],
             "Nominal" : [1, 'Stat. Unc.'],
-            "PrefireWeight" : [ROOT.kSpring+10, 'Prefire']
+            "PrefireWeightVars" : [ROOT.kSpring+10, 'Prefire']
         }
 
 
@@ -408,7 +408,7 @@ class plotter:
                     if sKind=='Nominal' :
                         delta = hdict[''].GetBinError(i)
                     if 'LHEPdf' in sKind :  
-                    # if sKind=='LHEScaleWeight' :  
+                    # if sKind=='LHEScaleWeightVars' :  
                         delta=0
                         for sName in sList :                            
                             delta+= (hdict[sName].GetBinContent(i)-hdict[''].GetBinContent(i))**2
