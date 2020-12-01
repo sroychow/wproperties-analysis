@@ -26,59 +26,15 @@ def RDFprocess(fvec, outputDir, sample, xsec, fileSF, systType, pretendJob,SBana
         p.branch(nodeToStart = 'input', nodeToEnd = 'defs', modules = [ROOT.baseDefinitions(True, False),ROOT.weightDefinitions(fileSF),getLumiWeight(xsec=xsec, inputFile=fvec)])
     else:
         p.branch(nodeToStart = 'input', nodeToEnd = 'defs', modules = [ROOT.baseDefinitions(True, False),ROOT.weightDefinitions(fileSF),getLumiWeight(xsec=xsec, inputFile=fvec),ROOT.Replica2Hessian()])
-    #selections bkg also includes Signal
-    for region,cut in list(selections_bkg.items()):
-        print("running in region {}".format(region))
-        #drop SF evaluation in anti-isolated region
-        if 'aiso' in region:
-            weight = 'float(puWeight*PrefireWeight*lumiweight)'
-        else:
-            weight = 'float(puWeight*PrefireWeight*lumiweight*WHSF)'
-        if systType == 0:
-            weight = "float(1.)"
-        
-        #nominal part of the analysis
-        nom = ROOT.vector('string')()
-        nom.push_back("")
-        #last argument refers to histo category - 0 = Nominal, 1 = Pt scale , 2 = MET scale
+    weight = 'float(puWeight*PrefireWeight*lumiweight*WHSF)'
+    if systType == 0:
+        weight = "float(1.)"
+    cut = 'HLT_SingleMu24 && MET_filters==1 && nVetoElectrons==0'
+    #nominal part of the analysis
+    nom = ROOT.vector('string')()
+    nom.push_back("")
+    p.branch(nodeToStart = 'defs', nodeToEnd = 'templates/Nominal', modules = [ROOT.templates(sample, cut, weight, nom,"Nom",0)])
 
-        if region == "Signal" or (region=='Sideband' and SBana):
-            p.branch(nodeToStart = 'defs', nodeToEnd = 'prefit_{}/Nominal'.format(region), modules = [ROOT.muonHistos(cut, weight, nom,"Nom",0)])  
-        p.branch(nodeToStart = 'defs', nodeToEnd = 'templates_{}/Nominal'.format(region), modules = [ROOT.templates(cut, weight, nom,"Nom",0)])    
-        if systType == 0: #stop data here
-            continue
-        #sample specific systematics
-        #weight variations
-        for s,variations in list(systematics.items()):
-            if "LHEScaleWeight" in s and systType != 2 :  continue
-            if "LHEPdfWeight"   in s and systType != 2 :  continue
-            if "alphaS"         in s and systType != 2 :  continue
-
-            if 'aiso' in region: continue
-            var_weight = weight.replace(s, "1.")
-
-            vars_vec = ROOT.vector('string')()
-            for var in variations[0]:
-                vars_vec.push_back(var)
-            
-            if region == "Signal" or (region=='Sideband' and SBana): 
-                p.branch(nodeToStart = 'defs'.format(region), nodeToEnd = 'prefit_{}/{}'.format(region,s), modules = [ROOT.muonHistos(cut,var_weight,vars_vec,variations[1], 0)])
-            p.branch(nodeToStart = 'defs'.format(region), nodeToEnd = 'templates_{}/{}'.format(region,s), modules = [ROOT.templates(cut,var_weight,vars_vec,variations[1], 0)])
-
-        #column variations
-        #weight will be nominal, cut will vary
-        for vartype, vardict in list(selectionVars.items()):
-            cut_vec = ROOT.vector('string')()
-            var_vec = ROOT.vector('string')()
-            for selvar, hcat in list(vardict.items()) :
-                newcut = cut.replace('MT', 'MT'+selvar)
-                if 'corrected' in selvar:
-                    newcut = newcut.replace('Mu1_pt', 'Mu1_pt'+selvar)
-                cut_vec.push_back(newcut)
-                var_vec.push_back(selvar)
-            if region == "Signal" or (region=='Sideband' and SBana):
-                p.branch(nodeToStart = 'defs', nodeToEnd = 'prefit_{}/{}'.format(region,vartype), modules = [ROOT.muonHistos(cut_vec, weight, nom,"Nom",hcat,var_vec)])  
-            p.branch(nodeToStart = 'defs', nodeToEnd = 'templates_{}/{}'.format(region,vartype), modules = [ROOT.templates(cut_vec, weight, nom,"Nom",hcat,var_vec)])  
     return p
 def main():
     parser = argparse.ArgumentParser("")
@@ -103,7 +59,7 @@ def main():
     with open('data/samples_2016.json') as f:
         samples = json.load(f)
     for sample in samples:
-        print('analysing sample: %s'%sample)
+        #print('analysing sample: %s'%sample)
         direc = samples[sample]['dir']
         xsec = samples[sample]['xsec']
         fvec=ROOT.vector('string')()
@@ -115,11 +71,18 @@ def main():
                 print(inputFile, " does not exist")
                 continue
             fvec.push_back(inputFile)
-
+            #f = ROOT.TFile(inputFile)
+            #t = f.Get('Events')
+            #it = t.GetClusterIterator(0)
+            #counter = 0
+            #n_entries = t.GetEntries()
+            #while it.Next() != n_entries:
+            #    counter += 1
+            #print('number of clusters:',counter, sample)
         if fvec.empty():
             print("No files found for directory:", samples[sample], " SKIPPING processing")
             continue
-        print(fvec) 
+        #print(fvec) 
         fileSF = ROOT.TFile.Open("data/ScaleFactors_OnTheFly.root")
         systType = samples[sample]['systematics']
         RDFtrees[sample] = RDFprocess(fvec, outputDir, sample, xsec, fileSF, systType, pretendJob, SBana)
@@ -136,7 +99,8 @@ def main():
     #now write the histograms:
     
     for sample in samples:
-        RDFtrees[sample].getOutput()
+        #RDFtrees[sample].getOutput()
+        RDFtrees[sample].gethdf5Output()
     print('all samples processed in {} s'.format(time.time()-start))
 if __name__ == "__main__":
     main()

@@ -24,8 +24,10 @@ private:
   const int nBinsPt = 60;
   const int nBinsCharge = 2;
   std::vector<float> _pTArr = std::vector<float>(61);
+  std::vector<float> _qTArr = std::vector<float>(9);
   std::vector<float> _etaArr = std::vector<float>(49);
   std::vector<float> _yArr = std::vector<float>(7);
+  std::vector<float> _chargeArr = std::vector<float>(3);
 
 public:
   templateBuilder(std::string filter, std::string weight, std::vector<std::string> syst_name, std::string syst_weight, HistoCategory hcat, std::string colvar = "")

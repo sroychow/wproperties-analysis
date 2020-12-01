@@ -1,5 +1,5 @@
 {
-    "SingleMuon_Run2016C": {
+    "data": {
         "datatype": "DATA", 
         "systematics": 0, 
         "subsel": {
@@ -10,65 +10,28 @@
         "dir": {
             "SingleMuon_Run2016C": [
                 "tree.root"
-            ]
-        }
-    }, 
-    "SingleMuon_Run2016G": {
-        "datatype": "DATA", 
-        "systematics": 0, 
-        "subsel": {
-            "none": ""
-        }, 
-        "xsec": -1, 
-        "multiprocessing": false, 
-        "dir": {
-            "SingleMuon_Run2016G": [
+            ],
+            "SingleMuon_Run2016G":[
                 "tree.root"
-            ]
-        }
-    }, 
-    "SingleMuon_Run2016F": {
-        "datatype": "DATA", 
-        "systematics": 0, 
-        "subsel": {
-            "none": ""
-        }, 
-        "xsec": -1, 
-        "multiprocessing": false, 
-        "dir": {
+            ],
             "SingleMuon_Run2016F": [
                 "tree.root"
-            ]
-        }
-    }, 
-    "SingleMuon_Run2016E": {
-        "datatype": "DATA", 
-        "systematics": 0, 
-        "subsel": {
-            "none": ""
-        }, 
-        "xsec": -1, 
-        "multiprocessing": false, 
-        "dir": {
-            "SingleMuon_Run2016E": [
+            ],
+            "SingleMuon_Run2016G": [
                 "tree.root"
-            ]
-        }
-    }, 
-    "SingleMuon_Run2016D": {
-        "datatype": "DATA", 
-        "systematics": 0, 
-        "subsel": {
-            "none": ""
-        }, 
-        "xsec": -1, 
-        "multiprocessing": false, 
-        "dir": {
+            ],
             "SingleMuon_Run2016D": [
                 "tree.root"
+            ],
+            "SingleMuon_Run2016H": [
+                "tree.root"
+            ],
+            "SingleMuon_Run2016B_ver2": [
+                "tree.root"
             ]
         }
     }, 
+
     "TTJets_SingleLeptFromT_TuneCUETP8M1_13TeV-madgraphMLM-pythia8": {
         "datatype": "MC", 
         "systematics": 1, 
@@ -86,20 +49,7 @@
             ]
         }
     }, 
-    "SingleMuon_Run2016H": {
-        "datatype": "DATA", 
-        "systematics": 0, 
-        "subsel": {
-            "none": ""
-        }, 
-        "xsec": -1, 
-        "multiprocessing": false, 
-        "dir": {
-            "SingleMuon_Run2016H": [
-                "tree.root"
-            ]
-        }
-    }, 
+
     "ZZ_TuneCUETP8M1_13TeV-pythia8": {
         "datatype": "MC", 
         "systematics": 1, 
@@ -282,20 +232,6 @@
                 "tree.root"
             ], 
             "WW_TuneCUETP8M1_13TeV-pythia8_ext1": [
-                "tree.root"
-            ]
-        }
-    }, 
-    "SingleMuon_Run2016B_ver2": {
-        "datatype": "DATA", 
-        "systematics": 0, 
-        "subsel": {
-            "none": ""
-        }, 
-        "xsec": -1, 
-        "multiprocessing": false, 
-        "dir": {
-            "SingleMuon_Run2016B_ver2": [
                 "tree.root"
             ]
         }

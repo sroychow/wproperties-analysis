@@ -8,7 +8,7 @@ class templates : public Module
 {
 
 private:
-
+    std::string _name;
     std::vector<std::string> _syst_name;
     std::string _syst_weight;
 
@@ -22,12 +22,14 @@ private:
     std::vector<float> _pTArr = std::vector<float>(61);
     std::vector<float> _etaArr = std::vector<float>(49);
     std::vector<float> _chargeArr = std::vector<float>(3);
+    std::vector<float> _mTArr = std::vector<float>(4);
+    std::vector<float> _isoArr = std::vector<float>(3);
     void setAxisarrays();
 
 public:
-    templates(std::string filter, std::string weight, std::vector<std::string> syst_name, std::string syst_weight, HistoCategory hcat, std::string colvar = "")
+    templates(std::string name, std::string filter, std::string weight, std::vector<std::string> syst_name, std::string syst_weight, HistoCategory hcat, std::string colvar = "")
     {
-
+        _name = name;
         _filter = filter;
         _weight = weight;
         _syst_name = syst_name;
