@@ -48,44 +48,44 @@ def RDFprocessWJetsMCSignalACtempl(fvec, outputDir, sample, xsec, fileSF, fileSc
     mass.push_back("_massUp")
     mass.push_back("_massDown")
     p.branch(nodeToStart = 'defsAC', nodeToEnd = 'templatesLowAcc_{}/Nominal'.format(region), modules = [ROOT.templates(wtomu_lowAcc_cut, weight, mass,"massWeights",0)])
-    #weight variations
-    for s,variations in list(systematics.items()):
-        print(("branching weight variations", s))
-        if "LHEPdfWeight" in s or "LHEScaleWeight" in s :
-            var_weight = weight
-            #        if not "LHEScaleWeight" in s :
-        else:
-            if 'aiso' in region: continue
-            var_weight = weight.replace(s, "1.")
-        vars_vec = ROOT.vector('string')()
-        for var in variations[0]:
-            vars_vec.push_back(var)
-            print((weight,"\t",var_weight, "MODIFIED WEIGHT"))
-        #reco templates with AC reweighting
-        p.branch(nodeToStart = 'defsAC', nodeToEnd = 'templatesAC_{}/{}'.format(region, s), modules = [ROOT.templateBuilder(wtomu_cut, var_weight,vars_vec,variations[1], 3)])
-        #reco templates for out of acceptance events
-        p.branch(nodeToStart = 'defsAC', nodeToEnd = 'templatesLowAcc_{}/{}'.format(region,s), modules = [ROOT.templates(wtomu_lowAcc_cut, var_weight,vars_vec,variations[1], 0)])
-    #column variations#weight will be nominal, cut will vary
-    for vartype, vardict in list(selectionVars.items()):
-        wtomu_cut_vec = ROOT.vector('string')()
-        wtomu_var_vec = ROOT.vector('string')()
-        for selvar, hcat in list(vardict.items()) :
-            wtomu_newcut = wtomu_cut.replace('MT', 'MT'+selvar)
-            if 'corrected' in selvar:
-                wtomu_newcut = wtomu_newcut.replace('Mu1_pt', 'Mu1_pt'+selvar)
-            wtomu_cut_vec.push_back(wtomu_newcut)
-            wtomu_var_vec.push_back(selvar)
-        print(("branching column variations:", vartype, " for region:", region)) #, "\tvariations:", wtomu_var_vec
-        #reco templates with AC reweighting
-        p.branch(nodeToStart = 'defsAC', nodeToEnd = 'templatesAC_{}/{}'.format(region, vartype), modules = [ROOT.templateBuilder(wtomu_cut_vec, weight, nom,"Nom",hcat,wtomu_var_vec)])
-        #reco templates for out of acceptance events
-        print('low Acc')
-        for cut in wtomu_cut_vec:
-            cut+= "&& Wpt_preFSR>32. && Wrap_preFSR_abs>2.4"
-            #print "Low acc cut vec vars:", wtomu_cut_vec
-        p.branch(nodeToStart = 'defsAC', nodeToEnd = 'templatesLowAcc_{}/{}'.format(region,vartype), modules = [ROOT.templates(wtomu_cut_vec, weight, nom,"Nom",hcat,wtomu_var_vec)])
-    p.getOutput()
-    p.saveGraph()
+    # #weight variations
+    # for s,variations in list(systematics.items()):
+    #     print(("branching weight variations", s))
+    #     if "LHEPdfWeight" in s or "LHEScaleWeight" in s :
+    #         var_weight = weight
+    #         #        if not "LHEScaleWeight" in s :
+    #     else:
+    #         if 'aiso' in region: continue
+    #         var_weight = weight.replace(s, "1.")
+    #     vars_vec = ROOT.vector('string')()
+    #     for var in variations[0]:
+    #         vars_vec.push_back(var)
+    #         print((weight,"\t",var_weight, "MODIFIED WEIGHT"))
+    #     #reco templates with AC reweighting
+    #     p.branch(nodeToStart = 'defsAC', nodeToEnd = 'templatesAC_{}/{}'.format(region, s), modules = [ROOT.templateBuilder(wtomu_cut, var_weight,vars_vec,variations[1], 3)])
+    #     #reco templates for out of acceptance events
+    #     p.branch(nodeToStart = 'defsAC', nodeToEnd = 'templatesLowAcc_{}/{}'.format(region,s), modules = [ROOT.templates(wtomu_lowAcc_cut, var_weight,vars_vec,variations[1], 0)])
+    # #column variations#weight will be nominal, cut will vary
+    # for vartype, vardict in list(selectionVars.items()):
+    #     wtomu_cut_vec = ROOT.vector('string')()
+    #     wtomu_var_vec = ROOT.vector('string')()
+    #     for selvar, hcat in list(vardict.items()) :
+    #         wtomu_newcut = wtomu_cut.replace('MT', 'MT'+selvar)
+    #         if 'corrected' in selvar:
+    #             wtomu_newcut = wtomu_newcut.replace('Mu1_pt', 'Mu1_pt'+selvar)
+    #         wtomu_cut_vec.push_back(wtomu_newcut)
+    #         wtomu_var_vec.push_back(selvar)
+    #     print(("branching column variations:", vartype, " for region:", region)) #, "\tvariations:", wtomu_var_vec
+    #     #reco templates with AC reweighting
+    #     p.branch(nodeToStart = 'defsAC', nodeToEnd = 'templatesAC_{}/{}'.format(region, vartype), modules = [ROOT.templateBuilder(wtomu_cut_vec, weight, nom,"Nom",hcat,wtomu_var_vec)])
+    #     #reco templates for out of acceptance events
+    #     print('low Acc')
+    #     for cut in wtomu_cut_vec:
+    #         cut+= "&& Wpt_preFSR>32. && Wrap_preFSR_abs>2.4"
+    #         #print "Low acc cut vec vars:", wtomu_cut_vec
+    #     p.branch(nodeToStart = 'defsAC', nodeToEnd = 'templatesLowAcc_{}/{}'.format(region,vartype), modules = [ROOT.templates(wtomu_cut_vec, weight, nom,"Nom",hcat,wtomu_var_vec)])
+    p.gethdf5Output()
+    #p.saveGraph()
 
 
 def RDFprocessWJetsMC(fvec, outputDir, sample, xsec, fileSF, fileScale, ncores, pretendJob, bkg,SBana=False):
@@ -170,7 +170,8 @@ def RDFprocessWJetsMC(fvec, outputDir, sample, xsec, fileSF, fileScale, ncores, 
                 p.branch(nodeToStart = 'defs', nodeToEnd = '{}/prefit_{}/{}'.format('WToTau', region,vartype), modules = [ROOT.muonHistos(wtotau_cut_vec, weight, nom,"Nom",hcat,wtotau_var_vec)])
    
     p.getOutput()
-    p.saveGraph()
+    p.gethdf5Output()
+    #p.saveGraph()
     #if not pretendJob:
     #split the output file into decay modes
     os.chdir(outputDir)
