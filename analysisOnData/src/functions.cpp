@@ -1,3 +1,4 @@
+#ifndef FUNCTIONS_H
 #include "interface/functions.hpp"
 #include "TMath.h"
 
@@ -46,3 +47,16 @@ float Z_y(float mu1_pt, float mu1_eta, float mu2_pt, float mu2_eta){
   float pz = mu1_pt*TMath::SinH(mu1_eta) + mu2_pt*TMath::SinH(mu2_eta);
   return 0.5*TMath::Log((e+pz)/(e-pz));
 }
+
+ROOT::VecOps::RVec<float> float2vec(float val1, float val2, float val3, float val4, float val5)
+{
+  ROOT::VecOps::RVec<float> vec;
+  vec.push_back(val1);
+  vec.push_back(val2);
+  vec.push_back(val3);
+  vec.push_back(val4);
+  vec.push_back(val5);
+  return vec;
+}
+
+#endif
