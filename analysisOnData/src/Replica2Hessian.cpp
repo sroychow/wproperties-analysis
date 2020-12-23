@@ -5,9 +5,9 @@
 #include "TH2D.h"
 #include "TString.h"
 #include "TMath.h"
-#include "interface/PDFWeightsHelper.hpp"
-#include "interface/TH1weightsHelper.hpp"
-#include "interface/Replica2Hessian.hpp"
+#include "PDFWeightsHelper.hpp"
+#include "TH1weightsHelper.hpp"
+#include "Replica2Hessian.hpp"
 
 
 RNode Replica2Hessian::run(RNode d)

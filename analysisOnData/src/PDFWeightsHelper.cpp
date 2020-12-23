@@ -1,5 +1,5 @@
 #include <fstream>
-#include "interface/PDFWeightsHelper.hpp"
+#include "PDFWeightsHelper.hpp"
 
 PDFWeightsHelper::PDFWeightsHelper() {
 
