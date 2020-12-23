@@ -5,93 +5,46 @@ import json
 import argparse
 import copy
 import time
+sys.path.append('../RDFprocessor/framework')
 from RDFtree import RDFtree
-
 sys.path.append('data/')
-from systematics import systematics
-from selections import selections, selectionVars, selections_bkg
+from samples_2016 import samples
 sys.path.append('python/')
 from getLumiWeight import getLumiWeight
 
 ROOT.gSystem.Load('bin/libAnalysisOnData.so')
 ROOT.gROOT.ProcessLine("gErrorIgnoreLevel = 2001;")
 
-def RDFprocess(fvec, outputDir, sample, xsec, fileSF, systType, pretendJob,SBana=False):
-
-    p = RDFtree(outputDir = outputDir, inputFile = fvec, outputFile="{}_plots.root".format(sample), pretend=pretendJob)
+def RDFprocess(fvec, outputDir, sample, xsec, fileSF, systType, pretendJob):
+    print("processing ", sample)
+    p = RDFtree(outputDir = outputDir, inputFile = fvec, outputFile="{}.root".format(sample), pretend=pretendJob)
     
+    ptBins = ROOT.vector('float')([25.+i*0.5 for i in range(61)])
+    etaBins = ROOT.vector('float')([-2.4+i*0.1 for i in range(49)])
+    chargeBins = ROOT.vector('float')(-2. +i*2. for i in range(3))
+    mTBins = ROOT.vector('float')([0.,30.,40.,2000.])
+    isoBins = ROOT.vector('float')([0.,0.15,1.])
+
     if systType == 0: #this is data
         p.branch(nodeToStart='input', nodeToEnd='defs', modules=[ROOT.baseDefinitions(False, False)])
+        p.Histogram(columns = ["Mu1_eta","Mu1_pt","Mu1_charge","MT","Mu1_relIso"], types = ['float']*5,node='defs',histoname=ROOT.string("test"),bins = [etaBins,ptBins,chargeBins,mTBins,isoBins])
+        return p
     elif systType < 2: #this is MC with no PDF variations
         p.branch(nodeToStart = 'input', nodeToEnd = 'defs', modules = [ROOT.baseDefinitions(True, False),ROOT.weightDefinitions(fileSF),getLumiWeight(xsec=xsec, inputFile=fvec)])
     else:
         p.branch(nodeToStart = 'input', nodeToEnd = 'defs', modules = [ROOT.baseDefinitions(True, False),ROOT.weightDefinitions(fileSF),getLumiWeight(xsec=xsec, inputFile=fvec),ROOT.Replica2Hessian()])
-    #selections bkg also includes Signal
-    for region,cut in list(selections_bkg.items()):
-        print("running in region {}".format(region))
-        #drop SF evaluation in anti-isolated region
-        if 'aiso' in region:
-            weight = 'float(puWeight*PrefireWeight*lumiweight)'
-        else:
-            weight = 'float(puWeight*PrefireWeight*lumiweight*WHSF)'
-        if systType == 0:
-            weight = "float(1.)"
-        
-        #nominal part of the analysis
-        nom = ROOT.vector('string')()
-        nom.push_back("")
-        #last argument refers to histo category - 0 = Nominal, 1 = Pt scale , 2 = MET scale
-
-        if region == "Signal" or (region=='Sideband' and SBana):
-            p.branch(nodeToStart = 'defs', nodeToEnd = 'prefit_{}/Nominal'.format(region), modules = [ROOT.muonHistos(cut, weight, nom,"Nom",0)])  
-        p.branch(nodeToStart = 'defs', nodeToEnd = 'templates_{}/Nominal'.format(region), modules = [ROOT.templates(cut, weight, nom,"Nom",0)])    
-        if systType == 0: #stop data here
-            continue
-        #sample specific systematics
-        #weight variations
-        for s,variations in list(systematics.items()):
-            if "LHEScaleWeight" in s and systType != 2 :  continue
-            if "LHEPdfWeight"   in s and systType != 2 :  continue
-            if "alphaS"         in s and systType != 2 :  continue
-
-            if 'aiso' in region: continue
-            var_weight = weight.replace(s, "1.")
-
-            vars_vec = ROOT.vector('string')()
-            for var in variations[0]:
-                vars_vec.push_back(var)
-            
-            if region == "Signal" or (region=='Sideband' and SBana): 
-                p.branch(nodeToStart = 'defs'.format(region), nodeToEnd = 'prefit_{}/{}'.format(region,s), modules = [ROOT.muonHistos(cut,var_weight,vars_vec,variations[1], 0)])
-            p.branch(nodeToStart = 'defs'.format(region), nodeToEnd = 'templates_{}/{}'.format(region,s), modules = [ROOT.templates(cut,var_weight,vars_vec,variations[1], 0)])
-
-        #column variations
-        #weight will be nominal, cut will vary
-        for vartype, vardict in list(selectionVars.items()):
-            cut_vec = ROOT.vector('string')()
-            var_vec = ROOT.vector('string')()
-            for selvar, hcat in list(vardict.items()) :
-                newcut = cut.replace('MT', 'MT'+selvar)
-                if 'corrected' in selvar:
-                    newcut = newcut.replace('Mu1_pt', 'Mu1_pt'+selvar)
-                cut_vec.push_back(newcut)
-                var_vec.push_back(selvar)
-            if region == "Signal" or (region=='Sideband' and SBana):
-                p.branch(nodeToStart = 'defs', nodeToEnd = 'prefit_{}/{}'.format(region,vartype), modules = [ROOT.muonHistos(cut_vec, weight, nom,"Nom",hcat,var_vec)])  
-            p.branch(nodeToStart = 'defs', nodeToEnd = 'templates_{}/{}'.format(region,vartype), modules = [ROOT.templates(cut_vec, weight, nom,"Nom",hcat,var_vec)])  
+    p.Histogram(columns = ["Mu1_eta","Mu1_pt","Mu1_charge","MTVars","Mu1_relIso", "lumiweight", "PrefireWeight", "puWeight", "WHSFVars"], types = ['float']*9,node='defs',histoname=ROOT.string("test"),bins = [etaBins,ptBins,chargeBins,mTBins,isoBins])
     return p
 def main():
     parser = argparse.ArgumentParser("")
     parser.add_argument('-p', '--pretend',type=bool, default=False, help="run over a small number of event")
     parser.add_argument('-o', '--outputDir',type=str, default='./output/', help="output dir name")
     parser.add_argument('-i', '--inputDir',type=str, default='/scratchnvme/wmass/NanoAOD2016-V2/', help="input dir name")    
-    parser.add_argument('-s', '--SBana',type=bool, default=False, help="run also on the sideband (clousure test)")
 
     args = parser.parse_args()
     pretendJob = args.pretend
     outputDir = args.outputDir
     inDir = args.inputDir
-    SBana = args.SBana
 
     if pretendJob:
         print("Running a test job over a few events")
@@ -99,30 +52,36 @@ def main():
         print("Running on full dataset")
     ROOT.ROOT.EnableImplicitMT(64)
     RDFtrees = {}
-    samples={}
-    with open('data/samples_2016.json') as f:
-        samples = json.load(f)
+    
     for sample in samples:
-        print('analysing sample: %s'%sample)
+        #print('analysing sample: %s'%sample)
+
         direc = samples[sample]['dir']
         xsec = samples[sample]['xsec']
         fvec=ROOT.vector('string')()
-        for dirname,fname in list(direc.items()):
+        for d in direc:
             ##check if file exists or not
-            inputFile = '{}/{}/tree.root'.format(inDir, dirname)
-            isFile = os.path.isfile(inputFile)  
+            inputFile = '{}/{}/tree.root'.format(inDir, d)
+            isFile = os.path.isfile(inputFile)
             if not isFile:
                 print(inputFile, " does not exist")
                 continue
             fvec.push_back(inputFile)
-
+            #f = ROOT.TFile(inputFile)
+            #t = f.Get('Events')
+            #it = t.GetClusterIterator(0)
+            #counter = 0
+            #n_entries = t.GetEntries()
+            #while it.Next() != n_entries:
+            #    counter += 1
+            #print('number of clusters:',counter, sample)
         if fvec.empty():
             print("No files found for directory:", samples[sample], " SKIPPING processing")
             continue
-        print(fvec) 
+        #print(fvec) 
         fileSF = ROOT.TFile.Open("data/ScaleFactors_OnTheFly.root")
-        systType = samples[sample]['systematics']
-        RDFtrees[sample] = RDFprocess(fvec, outputDir, sample, xsec, fileSF, systType, pretendJob, SBana)
+        systType = samples[sample]['nsyst']
+        RDFtrees[sample] = RDFprocess(fvec, outputDir, sample, xsec, fileSF, systType, pretendJob)
 
     #now trigger all the event loops at the same time:
     objList = []
@@ -136,7 +95,9 @@ def main():
     #now write the histograms:
     
     for sample in samples:
-        RDFtrees[sample].getOutput()
+        print(sample)
+        #RDFtrees[sample].getOutput()
+        RDFtrees[sample].gethdf5Output()
     print('all samples processed in {} s'.format(time.time()-start))
 if __name__ == "__main__":
     main()

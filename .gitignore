@@ -11,3 +11,4 @@ __init__.py
 screenlog.*
 *.o
 dict.*
+*.bak
