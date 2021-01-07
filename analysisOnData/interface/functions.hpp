@@ -11,3 +11,4 @@ float W_hpt(float,float,float,float);
 float Z_qt(float,float,float,float);
 float Z_mass(float,float,float,float,float,float);
 float Z_y(float,float,float,float);
+ROOT::VecOps::RVec<float> float2vec(float val1, float val2, float val3, float val4, float val5);

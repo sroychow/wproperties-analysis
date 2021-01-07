@@ -1,7 +1,7 @@
 #include "ROOT/RDataFrame.hxx"
 #include "ROOT/RVec.hxx"
 #include "ROOT/RDF/RInterface.hxx"
-#include "interface/accMap.hpp"
+#include "accMap.hpp"
 
 RNode accMap::run(RNode d){
     

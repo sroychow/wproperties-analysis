@@ -1,7 +1,7 @@
 #include "ROOT/RDataFrame.hxx"
 #include "ROOT/RVec.hxx"
 #include "ROOT/RDF/RInterface.hxx"
-#include "interface/getMassWeights.hpp"
+#include "getMassWeights.hpp"
 
 RNode getMassWeights::run(RNode d)
 {

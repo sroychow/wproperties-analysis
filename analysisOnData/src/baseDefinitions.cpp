@@ -1,5 +1,5 @@
-#include "interface/baseDefinitions.hpp"
-#include "interface/functions.hpp"
+#include "baseDefinitions.hpp"
+#include "functions.hpp"
 
 RNode baseDefinitions::run(RNode d)
 {

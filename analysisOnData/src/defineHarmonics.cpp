@@ -1,7 +1,7 @@
 #include "ROOT/RDataFrame.hxx"
 #include "ROOT/RVec.hxx"
 #include "ROOT/RDF/RInterface.hxx"
-#include "interface/defineHarmonics.hpp"
+#include "defineHarmonics.hpp"
 
 RNode defineHarmonics::run(RNode d)
 {
