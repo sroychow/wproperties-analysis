@@ -1,0 +1,8 @@
+<lcgdict>
+  <class name="defineHarmonics"/>
+  <class name="genDefinitions"/>
+  <class name="recoDefinitions"/>
+  <class name="getACValues"/>
+  <class name="getMassWeights"/>
+  <class name="getWeights"/>
+</lcgdict>
