@@ -7,3 +7,4 @@
 #include "getMassWeights.hpp"
 #include "getWeights.hpp"
 #include "defineHarmonics.hpp"
+#include "filter.hpp"

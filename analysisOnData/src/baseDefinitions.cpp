@@ -5,9 +5,7 @@ RNode baseDefinitions::run(RNode d)
 {
     //define all nominal quantities // true for data and MC
 
-    auto d1 = d.Filter("(Vtype==0 || Vtype==1) && HLT_SingleMu24 && MET_filters==1 && nVetoElectrons==0")
-                  .Filter("Idx_mu1>-1")
-                  .Define("Mu1_eta", getFromIdx, {"Muon_eta", "Idx_mu1"})
+    auto d1 = d.Define("Mu1_eta", getFromIdx, {"Muon_eta", "Idx_mu1"})
                   .Define("Mu1_phi", getFromIdx, {"Muon_phi", "Idx_mu1"})
                   .Define("Mu1_charge", getCharge, {"Muon_charge", "Idx_mu1"})
                   .Define("Mu1_relIso", getFromIdx, {"Muon_pfRelIso04_all", "Idx_mu1"})
