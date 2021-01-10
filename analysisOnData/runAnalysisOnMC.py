@@ -27,17 +27,34 @@ def RDFprocess(fvec, outputDir, sample, xsec, fileSF, systType, pretendJob):
 
     if systType == 0: #this is data
         p.branch(nodeToStart='input', nodeToEnd='defs', modules=[ROOT.baseDefinitions(False, False)])
+        p.EventFilter(nodeToStart='defs', nodeToEnd='filtered', evfilter="HLT_SingleMu24", filtername="{:20s}".format("Pass HLT"))
+        p.EventFilter(nodeToStart='defs', nodeToEnd='defs', evfilter="(Vtype==0 || Vtype==1)", filtername="{:20s}".format("Vtype selection"))
+        p.EventFilter(nodeToStart='defs', nodeToEnd='defs', evfilter="HLT_SingleMu24", filtername="{:20s}".format("Pass HLT"))
+        p.EventFilter(nodeToStart='defs', nodeToEnd='defs', evfilter="MET_filters==1", filtername="{:20s}".format("Pass MET filter"))
+        p.EventFilter(nodeToStart='defs', nodeToEnd='defs', evfilter="nVetoElectrons==0", filtername="{:20s}".format("Electron veto"))
+        p.EventFilter(nodeToStart='defs', nodeToEnd='defs', evfilter="Idx_mu1>-1", filtername="{:20s}".format("Atleast 1 mu"))
+
         p.Histogram(columns = ["Mu1_eta","Mu1_pt","Mu1_charge","MT","Mu1_relIso"], types = ['float']*5,node='defs',histoname=ROOT.string("test"),bins = [etaBins,ptBins,chargeBins,mTBins,isoBins])
         return p
     elif systType < 2: #this is MC with no PDF variations
         p.branch(nodeToStart = 'input', nodeToEnd = 'defs', modules = [ROOT.baseDefinitions(True, False),ROOT.weightDefinitions(fileSF),getLumiWeight(xsec=xsec, inputFile=fvec)])
     else:
         p.branch(nodeToStart = 'input', nodeToEnd = 'defs', modules = [ROOT.baseDefinitions(True, False),ROOT.weightDefinitions(fileSF),getLumiWeight(xsec=xsec, inputFile=fvec),ROOT.Replica2Hessian()])
+    
+    p.EventFilter(nodeToStart='defs', nodeToEnd='defs', evfilter="HLT_SingleMu24", filtername="{:20s}".format("Pass HLT"))
+    p.EventFilter(nodeToStart='defs', nodeToEnd='defs', evfilter="(Vtype==0 || Vtype==1)", filtername="{:20s}".format("Vtype selection"))
+    p.EventFilter(nodeToStart='defs', nodeToEnd='defs', evfilter="HLT_SingleMu24", filtername="{:20s}".format("Pass HLT"))
+    p.EventFilter(nodeToStart='defs', nodeToEnd='defs', evfilter="MET_filters==1", filtername="{:20s}".format("Pass MET filter"))
+    p.EventFilter(nodeToStart='defs', nodeToEnd='defs', evfilter="nVetoElectrons==0", filtername="{:20s}".format("Electron veto"))
+    p.EventFilter(nodeToStart='defs', nodeToEnd='defs', evfilter="Idx_mu1>-1", filtername="{:20s}".format("Aleast 1 mu"))
+
     p.Histogram(columns = ["Mu1_eta","Mu1_pt","Mu1_charge","MTVars","Mu1_relIso", "lumiweight", "PrefireWeight", "puWeight", "WHSFVars"], types = ['float']*9,node='defs',histoname=ROOT.string("test"),bins = [etaBins,ptBins,chargeBins,mTBins,isoBins])
     return p
+
 def main():
     parser = argparse.ArgumentParser("")
     parser.add_argument('-p', '--pretend',type=bool, default=False, help="run over a small number of event")
+    parser.add_argument('-r', '--report',type=bool, default=False, help="Prints the cut flow report for all named filters")
     parser.add_argument('-o', '--outputDir',type=str, default='./output/', help="output dir name")
     parser.add_argument('-i', '--inputDir',type=str, default='/scratchnvme/wmass/NanoAOD2016-V2/', help="input dir name")    
 
@@ -45,7 +62,6 @@ def main():
     pretendJob = args.pretend
     outputDir = args.outputDir
     inDir = args.inputDir
-
     if pretendJob:
         print("Running a test job over a few events")
     else:
@@ -98,6 +114,8 @@ def main():
         print(sample)
         #RDFtrees[sample].getOutput()
         RDFtrees[sample].gethdf5Output()
+        if args.report: RDFtrees[sample].getCutFlowReport()
+
     print('all samples processed in {} s'.format(time.time()-start))
 if __name__ == "__main__":
     main()
