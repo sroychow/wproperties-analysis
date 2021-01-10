@@ -5,4 +5,7 @@
   <class name="getACValues"/>
   <class name="getMassWeights"/>
   <class name="getWeights"/>
+  <class name="recoWeightDefinitions"/>
+  <class name="reweightFromZ"/>
+  <class name="Replica2Hessian"/>
 </lcgdict>

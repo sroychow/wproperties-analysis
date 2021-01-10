@@ -12,11 +12,10 @@ RNode getMassWeights::run(RNode d)
 
   auto getBWVec = [&](float Q) {
     ROOT::VecOps::RVec<float> v;
-
+    v.emplace_back(1.);
     float w1 = BreitWigner(Q * Q, 80.419002 * 80.419002, 2.0476 * 2.0476) /
          BreitWigner(Q * Q, 80.319002 * 80.319002, 2.0476 * 2.0476);
     v.emplace_back(w1);
-    v.emplace_back(1.);
     float w2 = BreitWigner(Q * Q, 80.419002 * 80.419002, 2.0476 * 2.0476) /
          BreitWigner(Q * Q, 80.519002 * 80.519002, 2.0476 * 2.0476);
     v.emplace_back(w2);
@@ -25,5 +24,9 @@ RNode getMassWeights::run(RNode d)
   };
 
   auto d1 = d.Define("massWeights", getBWVec, {"Wmass_preFSR"});
+
+  //define mass weights as variations
+  std::vector<std::string> masses = {"", "massUp", "massDown"};
+  getMassWeights::vary("massWeights", true, masses);
   return d1;
 }

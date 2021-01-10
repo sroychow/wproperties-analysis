@@ -29,7 +29,6 @@ RNode getACValues::run(RNode d)
       AngCoeff.push_back(_hA6_minus->GetBinContent(bin)/(2. * TMath::Sqrt(2)));
       AngCoeff.push_back(_hA7_minus->GetBinContent(bin)/(4. * TMath::Sqrt(2)));
     }
-    AngCoeff.push_back(1.); // UL doesn't have any coefficient
     return AngCoeff;
   };
 

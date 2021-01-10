@@ -17,6 +17,9 @@ sys.path.append('../RDFprocessor/framework')
 from RDFtree import RDFtree
 sys.path.append('python/')
 from getLumiWeight import getLumiWeight
+sys.path.append('data/')
+from binning import qtBins, yBins, ptBins, etaBins
+from externals import filePt, fileY, fileSF
 
 ROOT.gSystem.Load('bin/libAnalysisOnData.so')
 ROOT.gROOT.ProcessLine("gErrorIgnoreLevel = 2001;")
@@ -26,17 +29,17 @@ ROOT.ROOT.EnableImplicitMT(64)
 outputDir = 'PLOTS'
 inputFile = '/scratchnvme/wmass/WJetsNoCUT_v2/tree_*_*.root'
 
-qtBins = ROOT.vector('float')([0., 4., 8., 12., 16., 20., 24., 28., 32., 40., 60., 100., 200.])
-yBins = ROOT.vector('float')([0, 0.4, 0.8, 1.2, 1.6, 2.0, 2.4, 3.0, 6.0])
-ptBins = ROOT.vector('float')([25.+i*0.5 for i in range(61)])
-etaBins = ROOT.vector('float')([-2.4+i*0.1 for i in range(49)])
-
 # p = RDFtree(outputDir = outputDir, inputFile = inputFile, outputFile="test.root", pretend=False)
-# p.branch(nodeToStart='input', nodeToEnd='defs', modules=[getLumiWeight(xsec=61526.7, inputFile=inputFile),ROOT.genDefinitions(),ROOT.defineHarmonics()])
-# p.Histogram(columns = ["Wrap_preFSR_abs","Wpt_preFSR","harmonicsVec","lumiweight"], types = ['float']*4,node='defs',histoname=ROOT.string("xsecs"),bins = [yBins,qtBins])
-# p.gethdf5Output()
-
+# p.branch(nodeToStart='input', nodeToEnd='defs', modules=[getLumiWeight(xsec=61526.7, inputFile=inputFile),ROOT.reweightFromZ(filePt,fileY), ROOT.genDefinitions(),ROOT.defineHarmonics(), ROOT.Replica2Hessian()])
 # harmonics = {"P0" : (20./3., 1./10),"P1": (5.,0.), "P2": (20.,0.), "P3": (4.,0.),"P4":(4.,0.),"P5":(5.,0.),"P6":(5.,0.),"P7":(4.,0.)}
+
+# for harm in harmonics:
+#     if "P5" in harm or "P6" in harm or "P7" in harm: # don't make variations
+#         p.Histogram(columns = ["Wrap_preFSR_abs","Wpt_preFSR","{}".format(harm),"lumiweight", "weightPt"], types = ['float']*5,node='defs',histoname=ROOT.string("xsecs_{}".format(harm)),bins = [yBins,qtBins])
+#     else:
+#         p.Histogram(columns = ["Wrap_preFSR_abs","Wpt_preFSR","{}".format(harm),"lumiweight", "weightPt"], types = ['float']*5,node='defs',histoname=ROOT.string("xsecs_{}".format(harm)),bins = [yBins,qtBins])
+# p.Histogram(columns = ["Wrap_preFSR_abs","Wpt_preFSR","lumiweight", "weightPt"], types = ['float']*4,node='defs',histoname=ROOT.string("xsecs"),bins = [yBins,qtBins])
+# p.gethdf5Output()
 
 # shape = (len(yBins)-1) * (len(qtBins)-1) 
 
@@ -66,8 +69,12 @@ etaBins = ROOT.vector('float')([-2.4+i*0.1 for i in range(49)])
 
 f = ROOT.TFile.Open('PLOTS/angcoeff.root')
 
+helicities = ["L", "I", "T", "A", "P", "UL"]
+
 p = RDFtree(outputDir = outputDir, inputFile = inputFile, outputFile="SignalTemplates.root", pretend=False)
-p.branch(nodeToStart='input', nodeToEnd='defs', modules=[getLumiWeight(xsec=61526.7, inputFile=inputFile),ROOT.genDefinitions(),ROOT.defineHarmonics()])
-p.branch(nodeToStart='defs', nodeToEnd='signalTemplates', modules=[ROOT.recoDefinitions(True,True),ROOT.getACValues(f,f), ROOT.getMassWeights(), ROOT.getWeights()])
-p.Histogram(columns = ["Mu1_eta", "Mu1_pt", "Wrap_preFSR_abs","Wpt_preFSR","harmonicsWeights","lumiweight"], types = ['float']*6,node='signalTemplates',histoname=ROOT.string("xsecs"),bins = [etaBins, ptBins, yBins,qtBins])
+p.branch(nodeToStart='input', nodeToEnd='defs', modules=[getLumiWeight(xsec=61526.7, inputFile=inputFile),ROOT.reweightFromZ(filePt,fileY), ROOT.genDefinitions(),ROOT.defineHarmonics(), ROOT.Replica2Hessian()])
+p.branch(nodeToStart='defs', nodeToEnd='signalTemplates', modules=[ROOT.recoDefinitions(True,True),ROOT.recoWeightDefinitions(fileSF), ROOT.getACValues(f,f), ROOT.getMassWeights(), ROOT.getWeights()])
+
+for helicity in helicities:
+    p.Histogram(columns = ["Mu1_eta", "Mu1_pt", "Wrap_preFSR_abs","Wpt_preFSR","weight{}".format(helicity),"lumiweight", "weightPt", "massWeights", "alphaSVars", "LHEPdfWeightHess"], types = ['float']*10,node='signalTemplates',histoname=ROOT.string("xsecs_{}".format(helicity)),bins = [etaBins, ptBins, yBins,qtBins])
 p.gethdf5Output()

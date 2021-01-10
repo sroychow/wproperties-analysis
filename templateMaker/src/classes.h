@@ -5,3 +5,6 @@
 #include "interface/getACValues.hpp"
 #include "interface/getMassWeights.hpp"
 #include "interface/getWeights.hpp"
+#include "interface/recoWeightDefinitions.hpp"
+#include "interface/reweightFromZ.hpp"
+#include "interface/Replica2Hessian.hpp"
