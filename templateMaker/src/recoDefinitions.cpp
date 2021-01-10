@@ -1,5 +1,5 @@
-#include "interface/recoDefinitions.hpp"
-#include "interface/functions.hpp"
+#include "recoDefinitions.hpp"
+#include "functions.hpp"
 
 RNode recoDefinitions::run(RNode d)
 {

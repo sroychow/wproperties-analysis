@@ -1,5 +1,5 @@
-#include "interface/PDFWeightsHelper.hpp"
-#include "interface/Replica2Hessian.hpp"
+#include "PDFWeightsHelper.hpp"
+#include "Replica2Hessian.hpp"
 
 
 RNode Replica2Hessian::run(RNode d)

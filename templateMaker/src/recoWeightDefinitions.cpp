@@ -1,5 +1,5 @@
-#include "interface/recoWeightDefinitions.hpp"
-#include "interface/functions.hpp"
+#include "recoWeightDefinitions.hpp"
+#include "functions.hpp"
 RNode recoWeightDefinitions::run(RNode d)
 {
 

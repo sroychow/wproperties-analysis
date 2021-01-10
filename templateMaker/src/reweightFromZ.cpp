@@ -1,5 +1,4 @@
-#include "interface/reweightFromZ.hpp"
-// #include "interface/functions.hpp"
+#include "reweightFromZ.hpp"
 
 RNode reweightFromZ::run(RNode d)
 {
