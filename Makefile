@@ -1,25 +1,22 @@
 
 CORE := RDFprocessor/framework/
-ANALYSISONDATA := analysisOnData
-ANALYSISONGEN := analysisOnGen
+TEMPL := templateMaker
 
-.PHONY: all $(CORE) $(ANALYSISONDATA) $(ANALYSISONGEN)
-all:$(CORE) $(ANALYSISONDATA) $(ANALYSISONGEN)
+.PHONY: all $(CORE) $(TEMPL) 
+all:$(CORE) $(TEMPL)
 
-$(CORE) $(ANALYSISONDATA) $(ANALYSISONGEN):
+$(CORE) $(TEMPL):
 	$(MAKE) --directory=$@
 
-$(ANALYSISONDATA): $(CORE)
-$(ANALYSISONGEN): $(CORE)
+$(TEMPL): $(CORE)
 
 .PHONY: fast
 fast:
 	$(MAKE) --directory=$(CORE) fast
-	$(MAKE) --directory=$(ANALYSISONDATA)  fast
-	$(MAKE) --directory=$(ANALYSISONGEN)  fast
+	$(MAKE) --directory=$(TEMPL)  fast
+	
 
 .PHONY: clean
 clean:
 	$(MAKE) --directory=$(CORE)  clean
-	$(MAKE) --directory=$(ANALYSISONDATA)  clean
-	$(MAKE) --directory=$(ANALYSISONGEN)  clean
+	$(MAKE) --directory=$(TEMPL)  clean

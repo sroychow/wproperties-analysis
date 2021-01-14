@@ -12,3 +12,4 @@ screenlog.*
 *.o
 dict.*
 *.bak
+*.hdf5
