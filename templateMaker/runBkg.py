@@ -1,14 +1,13 @@
 import os
 import sys
 import ROOT
-import json
 import argparse
 import copy
 import time
 from datetime import datetime
 sys.path.append('../RDFprocessor/framework')
+sys.path.append('../Common/data')
 from RDFtree import RDFtree
-sys.path.append('data/')
 from samples_2016 import samples
 sys.path.append('python/')
 from getLumiWeight import getLumiWeight
@@ -24,14 +23,14 @@ def RDFprocess(fvec, outputDir, sample, xsec, systType, pretendJob):
 
     if systType == 0: #this is data
         p.branch(nodeToStart='input', nodeToEnd='defs', modules=[ROOT.recoDefinitions(False, False)])
-        p.EventFilter(nodeToStart='defs', nodeToEnd='filtered', evfilter="HLT_SingleMu24", filtername="{:20s}".format("Pass HLT"))
+        p.EventFilter(nodeToStart='defs', nodeToEnd='defs', evfilter="HLT_SingleMu24", filtername="{:20s}".format("Pass HLT"))
         p.EventFilter(nodeToStart='defs', nodeToEnd='defs', evfilter="(Vtype==0 || Vtype==1)", filtername="{:20s}".format("Vtype selection"))
         p.EventFilter(nodeToStart='defs', nodeToEnd='defs', evfilter="HLT_SingleMu24", filtername="{:20s}".format("Pass HLT"))
         p.EventFilter(nodeToStart='defs', nodeToEnd='defs', evfilter="MET_filters==1", filtername="{:20s}".format("Pass MET filter"))
         p.EventFilter(nodeToStart='defs', nodeToEnd='defs', evfilter="nVetoElectrons==0", filtername="{:20s}".format("Electron veto"))
         p.EventFilter(nodeToStart='defs', nodeToEnd='defs', evfilter="Idx_mu1>-1", filtername="{:20s}".format("Atleast 1 mu"))
 
-        p.Histogram(columns = ["Mu1_eta","Mu1_pt","Mu1_charge","MT","Mu1_relIso"], types = ['float']*5,node='defs',histoname=ROOT.string("test"),bins = [etaBins,ptBins,chargeBins,mTBins,isoBins])
+        p.Histogram(columns = ["Mu1_eta","Mu1_pt","Mu1_charge","MT","Mu1_relIso"], types = ['float']*5,node='defs',histoname=ROOT.string('data_obs'),bins = [etaBins,ptBins,chargeBins,mTBins,isoBins])
         return p
     elif systType < 2: #this is MC with no PDF variations
         p.branch(nodeToStart = 'input', nodeToEnd = 'defs', modules = [ROOT.recoDefinitions(True, False),ROOT.recoWeightDefinitions(fileSF),getLumiWeight(xsec=xsec, inputFile=fvec, genEvsbranch = "genEventSumw_")])
@@ -45,7 +44,7 @@ def RDFprocess(fvec, outputDir, sample, xsec, systType, pretendJob):
     p.EventFilter(nodeToStart='defs', nodeToEnd='defs', evfilter="nVetoElectrons==0", filtername="{:20s}".format("Electron veto"))
     p.EventFilter(nodeToStart='defs', nodeToEnd='defs', evfilter="Idx_mu1>-1", filtername="{:20s}".format("Aleast 1 mu"))
 
-    p.Histogram(columns = ["Mu1_eta","Mu1_pt","Mu1_charge","MTVars","Mu1_relIso", "lumiweight", "PrefireWeight", "puWeight", "WHSFVars"], types = ['float']*9,node='defs',histoname=ROOT.string("test"),bins = [etaBins,ptBins,chargeBins,mTBins,isoBins])
+    p.Histogram(columns = ["Mu1_eta","Mu1_pt","Mu1_charge","MTVars","Mu1_relIso", "lumiweight", "PrefireWeight", "puWeight", "WHSFVars"], types = ['float']*9,node='defs',histoname=ROOT.string('ewk'),bins = [etaBins,ptBins,chargeBins,mTBins,isoBins])
     return p
 
 def main():
@@ -60,13 +59,12 @@ def main():
     now = datetime.now()
     dt_string = now.strftime("_%d_%m_%Y_%H_%M_%S")
     outputDir = args.outputDir + dt_string
-    print(outputDir)
     inDir = args.inputDir
     if pretendJob:
         print("Running a test job over a few events")
     else:
         print("Running on full dataset")
-    ROOT.ROOT.EnableImplicitMT(64)
+    ROOT.ROOT.EnableImplicitMT(128)
     RDFtrees = {}
     
     for sample in samples:
