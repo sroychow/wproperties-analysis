@@ -13,6 +13,8 @@ private:
     TH1F *_hPt;
     TH1F *_hY;
 
+    bool _WJets;
+
 public:
     reweightFromZ(TFile *Pt, TFile *Y)
     {
@@ -24,16 +26,16 @@ public:
         _hY = (TH1F *)_Y->Get("unfold");
         TH1F *hYMC = (TH1F *)_Y->Get("hDDilRapLL");
 
+        hPtMC->Scale(_hPt->Integral() / hPtMC->Integral());
         _hPt->Divide(hPtMC);
-        _hPt->Scale(0.979);
 
         hYMC->Scale(_hY->Integral() / hYMC->Integral());
         _hY->Divide(hYMC);
+
     };
     ~reweightFromZ(){};
 
     RNode run(RNode) override;
-
 };
 
 #endif

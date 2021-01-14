@@ -35,16 +35,24 @@ def RDFprocess(fvec, outputDir, sample, xsec, systType, pretendJob):
     elif systType < 2: #this is MC with no PDF variations
         p.branch(nodeToStart = 'input', nodeToEnd = 'defs', modules = [ROOT.recoDefinitions(True, False),ROOT.recoWeightDefinitions(fileSF),getLumiWeight(xsec=xsec, inputFile=fvec, genEvsbranch = "genEventSumw_")])
     else:
-        p.branch(nodeToStart = 'input', nodeToEnd = 'defs', modules = [ROOT.recoDefinitions(True, False),ROOT.recoWeightDefinitions(fileSF),getLumiWeight(xsec=xsec, inputFile=fvec, genEvsbranch = "genEventSumw_"),ROOT.Replica2Hessian()])
-    
-    p.EventFilter(nodeToStart='defs', nodeToEnd='defs', evfilter="HLT_SingleMu24", filtername="{:20s}".format("Pass HLT"))
-    p.EventFilter(nodeToStart='defs', nodeToEnd='defs', evfilter="(Vtype==0 || Vtype==1)", filtername="{:20s}".format("Vtype selection"))
-    p.EventFilter(nodeToStart='defs', nodeToEnd='defs', evfilter="HLT_SingleMu24", filtername="{:20s}".format("Pass HLT"))
-    p.EventFilter(nodeToStart='defs', nodeToEnd='defs', evfilter="MET_filters==1", filtername="{:20s}".format("Pass MET filter"))
-    p.EventFilter(nodeToStart='defs', nodeToEnd='defs', evfilter="nVetoElectrons==0", filtername="{:20s}".format("Electron veto"))
-    p.EventFilter(nodeToStart='defs', nodeToEnd='defs', evfilter="Idx_mu1>-1", filtername="{:20s}".format("Aleast 1 mu"))
-
-    p.Histogram(columns = ["Mu1_eta","Mu1_pt","Mu1_charge","MTVars","Mu1_relIso", "lumiweight", "PrefireWeight", "puWeight", "WHSFVars"], types = ['float']*9,node='defs',histoname=ROOT.string('ewk'),bins = [etaBins,ptBins,chargeBins,mTBins,isoBins])
+        if 'DY' in sample: #reweight full Z kinematics
+            p.branch(nodeToStart = 'input', nodeToEnd = 'defs', modules = [ROOT.recoDefinitions(True, False),ROOT.recoWeightDefinitions(fileSF),getLumiWeight(xsec=xsec, inputFile=fvec, genEvsbranch = "genEventSumw_"),ROOT.Replica2Hessian(),ROOT.reweightFromZ(filePt,fileY)])
+            p.EventFilter(nodeToStart='defs', nodeToEnd='defs', evfilter="HLT_SingleMu24", filtername="{:20s}".format("Pass HLT"))
+            p.EventFilter(nodeToStart='defs', nodeToEnd='defs', evfilter="(Vtype==0 || Vtype==1)", filtername="{:20s}".format("Vtype selection"))
+            p.EventFilter(nodeToStart='defs', nodeToEnd='defs', evfilter="HLT_SingleMu24", filtername="{:20s}".format("Pass HLT"))
+            p.EventFilter(nodeToStart='defs', nodeToEnd='defs', evfilter="MET_filters==1", filtername="{:20s}".format("Pass MET filter"))
+            p.EventFilter(nodeToStart='defs', nodeToEnd='defs', evfilter="nVetoElectrons==0", filtername="{:20s}".format("Electron veto"))
+            p.EventFilter(nodeToStart='defs', nodeToEnd='defs', evfilter="Idx_mu1>-1", filtername="{:20s}".format("Aleast 1 mu"))
+            p.Histogram(columns = ["Mu1_eta","Mu1_pt","Mu1_charge","MTVars","Mu1_relIso", "lumiweight", "weightPt", "weightY", "PrefireWeight", "puWeight", "WHSFVars"], types = ['float']*11,node='defs',histoname=ROOT.string('ewk'),bins = [etaBins,ptBins,chargeBins,mTBins,isoBins])
+        else:
+            p.branch(nodeToStart = 'input', nodeToEnd = 'defs', modules = [ROOT.recoDefinitions(True, False),ROOT.recoWeightDefinitions(fileSF),getLumiWeight(xsec=xsec, inputFile=fvec, genEvsbranch = "genEventSumw_"),ROOT.Replica2Hessian(),ROOT.reweightFromZ(filePt,fileY)])
+            p.EventFilter(nodeToStart='defs', nodeToEnd='defs', evfilter="HLT_SingleMu24", filtername="{:20s}".format("Pass HLT"))
+            p.EventFilter(nodeToStart='defs', nodeToEnd='defs', evfilter="(Vtype==0 || Vtype==1)", filtername="{:20s}".format("Vtype selection"))
+            p.EventFilter(nodeToStart='defs', nodeToEnd='defs', evfilter="HLT_SingleMu24", filtername="{:20s}".format("Pass HLT"))
+            p.EventFilter(nodeToStart='defs', nodeToEnd='defs', evfilter="MET_filters==1", filtername="{:20s}".format("Pass MET filter"))
+            p.EventFilter(nodeToStart='defs', nodeToEnd='defs', evfilter="nVetoElectrons==0", filtername="{:20s}".format("Electron veto"))
+            p.EventFilter(nodeToStart='defs', nodeToEnd='defs', evfilter="Idx_mu1>-1", filtername="{:20s}".format("Aleast 1 mu"))
+            p.Histogram(columns = ["Mu1_eta","Mu1_pt","Mu1_charge","MTVars","Mu1_relIso", "lumiweight", "weightPt", "PrefireWeight", "puWeight", "WHSFVars"], types = ['float']*10,node='defs',histoname=ROOT.string('ewk'),bins = [etaBins,ptBins,chargeBins,mTBins,isoBins])
     return p
 
 def main():
