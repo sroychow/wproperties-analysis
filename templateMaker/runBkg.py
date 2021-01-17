@@ -36,7 +36,7 @@ def RDFprocess(fvec, outputDir, sample, xsec, systType, pretendJob):
         p.branch(nodeToStart = 'input', nodeToEnd = 'defs', modules = [ROOT.recoDefinitions(True, False),ROOT.recoWeightDefinitions(fileSF),getLumiWeight(xsec=xsec, inputFile=fvec, genEvsbranch = "genEventSumw_")])
     else:
         if 'DY' in sample: #reweight full Z kinematics
-            p.branch(nodeToStart = 'input', nodeToEnd = 'defs', modules = [ROOT.recoDefinitions(True, False),ROOT.recoWeightDefinitions(fileSF),getLumiWeight(xsec=xsec, inputFile=fvec, genEvsbranch = "genEventSumw_"),ROOT.Replica2Hessian(),ROOT.reweightFromZ(filePt,fileY)])
+            p.branch(nodeToStart = 'input', nodeToEnd = 'defs', modules = [ROOT.recoDefinitions(True, False),ROOT.recoWeightDefinitions(fileSF),getLumiWeight(xsec=xsec, inputFile=fvec, genEvsbranch = "genEventSumw_"),ROOT.Replica2Hessian(),ROOT.reweightFromZ(filePt,fileY,False,False)])
             p.EventFilter(nodeToStart='defs', nodeToEnd='defs', evfilter="HLT_SingleMu24", filtername="{:20s}".format("Pass HLT"))
             p.EventFilter(nodeToStart='defs', nodeToEnd='defs', evfilter="(Vtype==0 || Vtype==1)", filtername="{:20s}".format("Vtype selection"))
             p.EventFilter(nodeToStart='defs', nodeToEnd='defs', evfilter="HLT_SingleMu24", filtername="{:20s}".format("Pass HLT"))
@@ -45,7 +45,7 @@ def RDFprocess(fvec, outputDir, sample, xsec, systType, pretendJob):
             p.EventFilter(nodeToStart='defs', nodeToEnd='defs', evfilter="Idx_mu1>-1", filtername="{:20s}".format("Aleast 1 mu"))
             p.Histogram(columns = ["Mu1_eta","Mu1_pt","Mu1_charge","MTVars","Mu1_relIso", "lumiweight", "weightPt", "weightY", "PrefireWeight", "puWeight", "WHSFVars"], types = ['float']*11,node='defs',histoname=ROOT.string('ewk'),bins = [etaBins,ptBins,chargeBins,mTBins,isoBins])
         else:
-            p.branch(nodeToStart = 'input', nodeToEnd = 'defs', modules = [ROOT.recoDefinitions(True, False),ROOT.recoWeightDefinitions(fileSF),getLumiWeight(xsec=xsec, inputFile=fvec, genEvsbranch = "genEventSumw_"),ROOT.Replica2Hessian(),ROOT.reweightFromZ(filePt,fileY)])
+            p.branch(nodeToStart = 'input', nodeToEnd = 'defs', modules = [ROOT.recoDefinitions(True, False),ROOT.recoWeightDefinitions(fileSF),getLumiWeight(xsec=xsec, inputFile=fvec, genEvsbranch = "genEventSumw_"),ROOT.Replica2Hessian(),ROOT.reweightFromZ(filePt,fileY,True,False)])
             p.EventFilter(nodeToStart='defs', nodeToEnd='defs', evfilter="HLT_SingleMu24", filtername="{:20s}".format("Pass HLT"))
             p.EventFilter(nodeToStart='defs', nodeToEnd='defs', evfilter="(Vtype==0 || Vtype==1)", filtername="{:20s}".format("Vtype selection"))
             p.EventFilter(nodeToStart='defs', nodeToEnd='defs', evfilter="HLT_SingleMu24", filtername="{:20s}".format("Pass HLT"))
