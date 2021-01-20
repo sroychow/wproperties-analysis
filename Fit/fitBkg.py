@@ -48,16 +48,30 @@ class fitUtils:
             self.DC.systs.append(('fakeShapeBin{}'.format(i), False, 'shapeNoConstraint', [], aux))
         aux = {} #each sys will have a separate aux dict
         aux[self.channel] = {}
-        aux[self.channel]['fakesLowMt'] = 1.5
-        aux[self.channel]['fakesHighMt'] = 0
-        aux[self.channel]['ewk'] = 0.
-        self.DC.systs.append(('fakesNormLowMt', False, 'lnNNoConstraint', [], aux))
+        for i in range(48*30):
+            aux[self.channel]['fakesLowMt'] = 1.
+            aux[self.channel]['fakesHighMt'] = 0.
+            aux[self.channel]['ewk'] = 0.
+            self.DC.systs.append(('fakeNormLowMtBin{}'.format(i), False, 'shapeNoConstraint', [], aux))
         aux = {} #each sys will have a separate aux dict
         aux[self.channel] = {}
-        aux[self.channel]['fakesLowMt'] = 0.
-        aux[self.channel]['fakesHighMt'] = 1.5
-        aux[self.channel]['ewk'] = 0.
-        self.DC.systs.append(('fakesNormHighMt', False, 'lnNNoConstraint', [], aux))
+        for i in range(48*30):
+            aux[self.channel]['fakesLowMt'] = 0.
+            aux[self.channel]['fakesHighMt'] = 1.
+            aux[self.channel]['ewk'] = 0.
+            self.DC.systs.append(('fakeNormHighMtBin{}'.format(i), False, 'shapeNoConstraint', [], aux))
+        # aux = {} #each sys will have a separate aux dict
+        # aux[self.channel] = {}
+        # aux[self.channel]['fakesLowMt'] = 1.5
+        # aux[self.channel]['fakesHighMt'] = 0
+        # aux[self.channel]['ewk'] = 0.
+        # self.DC.systs.append(('fakesNormLowMt', False, 'lnNNoConstraint', [], aux))
+        # aux = {} #each sys will have a separate aux dict
+        # aux[self.channel] = {}
+        # aux[self.channel]['fakesLowMt'] = 0.
+        # aux[self.channel]['fakesHighMt'] = 1.5
+        # aux[self.channel]['ewk'] = 0.
+        # self.DC.systs.append(('fakesNormHighMt', False, 'lnNNoConstraint', [], aux))
         self.DC.groups = {'fakes': set(['fakeShapeBin{}'.format(i) for i in range(48*30)])}
         self.DC.shapeMap = 	{self.channel: {'*': [self.channel+'.root', '$PROCESS', '$PROCESS_$SYSTEMATIC']}}
         self.DC.hasShapes =  True # <type 'bool'>

@@ -9,4 +9,5 @@
   <class name="reweightFromZ"/>
   <class name="Replica2Hessian"/>
   <class name="customizeforUL"/>
+  <class name="lumiWeight"/>
 </lcgdict>
