@@ -75,7 +75,7 @@ f = ROOT.TFile.Open('PLOTS/angcoeff.root')
 helicities = ["L", "I", "T", "A", "P", "UL"]
 
 p = RDFtree(outputDir = outputDir, inputFile = inputFile, outputFile="SignalTemplates.root", pretend=False)
-p.branch(nodeToStart='input', nodeToEnd='defs', modules=[getLumiWeight(xsec=61526.7, inputFile=inputFile),ROOT.reweightFromZ(filePt,fileY), ROOT.genDefinitions(),ROOT.defineHarmonics(), ROOT.Replica2Hessian()])
+p.branch(nodeToStart='input', nodeToEnd='defs', modules=[getLumiWeight(xsec=61526.7, inputFile=inputFile),ROOT.reweightFromZ(filePt,fileY,True,False), ROOT.genDefinitions(),ROOT.defineHarmonics(), ROOT.Replica2Hessian()])
 p.EventFilter(nodeToStart='defs', nodeToEnd='filtered', evfilter="GenPart_preFSRMuonIdx>-99", filtername="{:20s}".format("only muon-type events"))
 p.EventFilter(nodeToStart='defs', nodeToEnd='defs', evfilter="HLT_SingleMu24", filtername="{:20s}".format("Pass HLT"))
 p.EventFilter(nodeToStart='defs', nodeToEnd='defs', evfilter="(Vtype==0 || Vtype==1)", filtername="{:20s}".format("Vtype selection"))
