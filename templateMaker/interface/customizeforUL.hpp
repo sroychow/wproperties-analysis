@@ -7,11 +7,13 @@ class customizeforUL : public Module
 {
 
 private:
+    bool isMC_;
     bool isWorZMC_;
 
 public:
-  customizeforUL(bool isWorZMC = true)
+  customizeforUL(bool isMC = true, bool isWorZMC = false)//changing isWorZMC to false so that we are aware in the configs!
   {
+    isMC_ = isMC;
     isWorZMC_ = isWorZMC;
   };
 
