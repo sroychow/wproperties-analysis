@@ -42,11 +42,11 @@ RNode Replica2Hessian::run(RNode d)
   std::vector<std::string> PDFVars;
   PDFVars.push_back("");
   for(int i=1;i<61;i++) PDFVars.push_back("pdf_"+ std::to_string(i));
-  Replica2Hessian::vary("LHEPdfWeightHess", true, PDFVars);
+  //Replica2Hessian::vary("LHEPdfWeightHess", true, PDFVars);
 
   // add variations for alphaS
   std::vector<std::string> alphaS = {"", "alphaSUp", "alphaSDown"};
-  Replica2Hessian::vary("alphaSVars", true, alphaS);
+  //Replica2Hessian::vary("alphaSVars", true, alphaS);
 
   return d1;
 }
