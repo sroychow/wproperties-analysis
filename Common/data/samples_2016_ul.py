@@ -29,16 +29,6 @@ samplespreVFP = {
         "xsec": 8562.66, 
         "dir": ["WminusJetsToTauNu"]
     },
-    "TTToSemiLeptonic": {
-        "nsyst": 1,  
-        "xsec": 365.641, 
-        "dir": ["TTToSemiLeptonic_TuneCP5_13TeV-powheg-pythia8"]
-    }, 
-    "TTTo2L2Nu": {
-        "nsyst": 1,  
-        "xsec": 88.29, 
-        "dir": ["TTTo2L2Nu_TuneCP5_13TeV-powheg-pythia8"]
-    }, 
     "WZ": {
         "nsyst": 1,  
         "xsec": 27.6, 
@@ -94,3 +84,16 @@ samplesPostVFP = {
         "dir": ["WminusJetsToTauNu_postVFP_addVars", "WplusJetsToTauNu_postVFP_addVars"]
     }
 }
+
+'''
+    "TTToSemiLeptonic": {
+        "nsyst": 1,  
+        "xsec": 365.641, 
+        "dir": ["TTToSemiLeptonic_TuneCP5_13TeV-powheg-pythia8"]
+    }, 
+    "TTTo2L2Nu": {
+        "nsyst": 1,  
+        "xsec": 88.29, 
+        "dir": ["TTTo2L2Nu_TuneCP5_13TeV-powheg-pythia8"]
+    }, 
+'''

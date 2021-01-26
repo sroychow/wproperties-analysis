@@ -4,19 +4,25 @@
 
 RNode customizeforUL::run(RNode d)
 {
+    //for both data/mc
     auto d1 = d.Alias("MET_pt_nom", "MET_T1_pt")
-                  .Alias("MET_phi_nom", "MET_T1_phi")
-                  .Alias("MET_pt_jesTotalUp", "MET_T1_pt_jesTotalUp")
-                  .Alias("MET_phi_jesTotalUp", "MET_T1_phi_jesTotalUp")
-                  .Alias("MET_pt_jesTotalDown", "MET_T1_pt_jesTotalDown")
-                  .Alias("MET_phi_jesTotalDown", "MET_T1_phi_jesTotalDown");
-
+               .Alias("MET_phi_nom", "MET_T1_phi");
+    
+    //for all MC
+    if(isMC_) {
+      d1 = d1.Alias("MET_pt_jesTotalUp", "MET_T1_pt_jesTotalUp")
+	     .Alias("MET_phi_jesTotalUp", "MET_T1_phi_jesTotalUp")
+	     .Alias("MET_pt_jesTotalDown", "MET_T1_pt_jesTotalDown")
+	     .Alias("MET_phi_jesTotalDown", "MET_T1_phi_jesTotalDown");
+    }
+    //For only W&Z MC
     if (isWorZMC_)
     { //basic gen
         d1 = d1.Alias("Wrap_preFSR", "Vrap_preFSR")
                  .Alias("Wpt_preFSR", "Vpt_preFSR")
 	         .Alias("Wmass_preFSR", "Vmass_preFSR")
-                 .Alias("GenPart_preFSRMuonIdx", "GenPart_preFSRLepIdx1");
+	         .Alias("GenPart_preFSRMuonIdx", "GenPart_preFSRLepIdx1");
+
 
 	auto getSameVec = [](ROOT::VecOps::RVec<float> red) {
 	  return red;
