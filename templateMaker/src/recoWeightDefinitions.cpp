@@ -74,7 +74,7 @@ RNode recoWeightDefinitions::run(RNode d)
 
     // add variations for SF
     std::vector<std::string> WHSFVars = {"", "WHSFVars0Up", "WHSFVars1Up", "WHSFVars2Up", "WHSFVarsFlatUp", "WHSFVars0Down", "WHSFVars1Down", "WHSFVars2Down", "WHSFVarsFlatDown"};
-    recoWeightDefinitions::vary("WHSFVars", true, WHSFVars);
+    // recoWeightDefinitions::vary("WHSFVars", true, WHSFVars);
 
     return d1;
 }
