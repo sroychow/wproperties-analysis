@@ -7,14 +7,13 @@ class customizeforUL : public Module
 {
 
 private:
-    bool isMC_;
-    bool isWJets_;
+    bool isWorZMC_;
 
 public:
-    customizeforUL(bool isMC = 1, bool isWJets = true){
-      isMC_ = isMC;
-      isWJets_ = isWJets;
-    };
+  customizeforUL(bool isWorZMC = true)
+  {
+    isWorZMC_ = isWorZMC;
+  };
 
     ~customizeforUL(){};
 

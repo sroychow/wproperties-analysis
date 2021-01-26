@@ -27,37 +27,17 @@ ROOT.gROOT.ProcessLine("gErrorIgnoreLevel = 2001;")
 ROOT.ROOT.EnableImplicitMT(128)
 
 outputDir = 'PLOTS'
-inputFile = '/scratchnvme/wmass/NanoAOD2016-UL/postNanoDec2020/WplusJetsToMuNu_preVFP_addVars/*.root'
+inputFile = '/scratchnvme/wmass/NanoAOD2016-UL/postNanoDec2020/WplusJetsToMuNu_preVFP_addVars/merged/*.root'
 
-# p = RDFtree(outputDir = outputDir, inputFile = inputFile, outputFile="test.root", pretend=False)
-# p.branch(nodeToStart='input', nodeToEnd='defs', modules=[ROOT.lumiWeight(xsec=11572.19), ROOT.customizeforUL(True, True), ROOT.genDefinitions(), ROOT.defineHarmonics()])
-# harmonics = {"P0" : (20./3., 1./10),"P1": (5.,0.), "P2": (20.,0.), "P3": (4.,0.),"P4":(4.,0.),"P5":(5.,0.),"P6":(5.,0.),"P7":(4.,0.)}
-# p.Histogram(columns = ["Wrap_preFSR_abs","lumiweight"], types = ['float']*2,node='defs',histoname=ROOT.string("Wrap"), bins = [yBins])
-# p.Histogram(columns = ["Vpt_preFSR","lumiweight"], types = ['float']*2,node='defs',histoname=ROOT.string("Wpt"),bins = [qtBins])
-
-# p.gethdf5Output()
-
-fewk = h5py.File('PLOTS/test.hdf5', mode='r+')
-hy = np.array(fewk['Wrap'][:].reshape((len(yBins)-1),order='F'),order='C')
-hep.histplot(hy,yBins)
-plt.savefig('PLOTS/Wy.png')
-plt.clf()
-
-hpt = np.array(fewk['Wpt'][:].reshape((len(qtBins)-1),order='F'),order='C')
-hep.histplot(hpt, qtBins)
-plt.savefig('PLOTS/Wpt.png')
-plt.clf()
-
-assert(0)
+p = RDFtree(outputDir = outputDir, inputFile = inputFile, outputFile="test.root", pretend=False)
+p.branch(nodeToStart='input', nodeToEnd='defs', modules=[ROOT.lumiWeight(xsec=11572.19), ROOT.customizeforUL(), ROOT.genDefinitions(), ROOT.defineHarmonics()])
+harmonics = {"P0" : (20./3., 1./10),"P1": (5.,0.), "P2": (20.,0.), "P3": (4.,0.),"P4":(4.,0.),"P5":(5.,0.),"P6":(5.,0.),"P7":(4.,0.)}
 
 for harm in harmonics:
-    if "P5" in harm or "P6" in harm or "P7" in harm: # don't make variations
-        p.Histogram(columns = ["Wrap_preFSR_abs","Vpt_preFSR","{}".format(harm), "lumiweight"], types = ['float']*4,node='defs',histoname=ROOT.string("xsecs_{}".format(harm)),bins = [yBins,qtBins])
-    else:
-        p.Histogram(columns = ["Wrap_preFSR_abs","Vpt_preFSR","{}".format(harm),"lumiweight"], types = ['float']*4,node='defs',histoname=ROOT.string("xsecs_{}".format(harm)),bins = [yBins,qtBins])
-p.Histogram(columns = ["Wrap_preFSR_abs","Vpt_preFSR","lumiweight"], types = ['float']*3,node='defs',histoname=ROOT.string("xsecs"),bins = [yBins,qtBins])
+    p.Histogram(columns = ["Wrap_preFSR_abs","Vpt_preFSR","{}".format(harm),"lumiweight","pdfWeightNNPDF0"], types = ['float']*5,node='defs',histoname=ROOT.string("xsecs_{}".format(harm)),bins = [yBins,qtBins], variations = {"pdfWeightNNPDF0":"LHEPdfWeight"})
+p.Histogram(columns = ["Wrap_preFSR_abs","Vpt_preFSR","lumiweight","pdfWeightNNPDF0"], types = ['float']*4,node='defs',histoname=ROOT.string("xsecs"),bins = [yBins,qtBins], variations = {"pdfWeightNNPDF0":"LHEPdfWeight"})
 p.gethdf5Output()
-
+assert(0)
 fewk = h5py.File('PLOTS/test.hdf5', mode='r+')
 htot = np.array(fewk['xsecs'][:].reshape((len(yBins)-1,len(qtBins)-1),order='F'),order='C')
 

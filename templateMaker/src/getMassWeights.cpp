@@ -24,6 +24,6 @@ RNode getMassWeights::run(RNode d)
 
   //define mass weights as variations
   std::vector<std::string> masses = {"", "massUp", "massDown"};
-  getMassWeights::vary("massWeights", true, masses);
+  // getMassWeights::vary("massWeights", true, masses);
   return d1;
 }
