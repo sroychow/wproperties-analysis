@@ -13,3 +13,4 @@ screenlog.*
 dict.*
 *.bak
 *.hdf5
+*.pcm
