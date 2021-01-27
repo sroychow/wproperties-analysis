@@ -10,4 +10,5 @@
   <class name="Replica2Hessian"/>
   <class name="customizeforUL"/>
   <class name="lumiWeight"/>
+  <class name="getZmass"/>
 </lcgdict>
