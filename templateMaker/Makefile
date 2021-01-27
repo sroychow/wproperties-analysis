@@ -7,7 +7,7 @@ BINDIR=bin
 HPPDIR=interface
 AUXDIR=aux
 COREDIR=../RDFprocessor/framework
-PATHFLAGS=-I$(COREDIR)/ -I$(COREDIR)/interface/ -I./interface/ -I /scratchnvme/wmass/eigen-3.3.7/ -I./
+PATHFLAGS=-I$(COREDIR)/ -I$(COREDIR)/interface/ -I./interface/ -I/scratchnvme/wmass/eigen-3.3.7/ -I.
 CORELIB=$(COREDIR)/lib/libRDFProcessorCore.so
 
 SRC=$(wildcard $(SRCDIR)/*.cpp)
