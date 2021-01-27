@@ -24,8 +24,8 @@ ax1.set_title("mass_iso1_1_iso2_1", fontsize=18)
 ax1.set_ylabel('number of events')
 ax2.set_ylabel('data/prediction')
 ax2.set_xlabel('dimuon mass')
-massdata = np.sum(hdata,axis=(1,2,3,4))[:]/np.sum(hdata)
-massDY = np.sum(hDY,axis=(1,2,3,4))[:]/np.sum(hDY)
+massdata = np.sum(hdata,axis=(1,2,3,4))[:]
+massDY = np.sum(hDY,axis=(1,2,3,4))[:]
 hep.histplot([massdata],bins = zmassBins, histtype = 'errorbar', color = "k", stack = False, ax=ax1, label = ["data"])
 hep.histplot([massDY],bins = zmassBins, histtype = 'fill',linestyle = 'solid', color =["orange"], label=["DY"], stack = True, ax=ax1)
 ax2.set_ylim([0.9, 1.1])
@@ -40,8 +40,8 @@ ax1.set_title("eta_iso1_1_iso2_1", fontsize=18)
 ax1.set_ylabel('number of events')
 ax2.set_ylabel('data/prediction')
 ax2.set_xlabel('muon $\eta$')
-etadata = np.sum(hdata,axis=(0,2))[:,0,0]/np.sum(hdata)
-etaDY = np.sum(hDY,axis=(0,2))[:,0,0]/np.sum(hDY)
+etadata = np.sum(hdata,axis=(0,2))[:,0,0]
+etaDY = np.sum(hDY,axis=(0,2))[:,0,0]
 hep.histplot([etadata],bins = etaBins, histtype = 'errorbar', color = "k", stack = False, ax=ax1, label = ["data"])
 hep.histplot([etaDY],bins = etaBins, histtype = 'fill',linestyle = 'solid', color =["orange"], label=["DY"], stack = True, ax=ax1)
 ax2.set_ylim([0.9, 1.1])
@@ -56,8 +56,8 @@ ax1.set_title("pt_iso1_1_iso2_1", fontsize=18)
 ax1.set_ylabel('number of events')
 ax2.set_ylabel('data/prediction')
 ax2.set_xlabel('muon $p_T$')
-ptdata = np.sum(hdata,axis=(0,1,3,4))[:]/np.sum(hdata)
-ptDY = np.sum(hDY,axis=(0,1,3,4))[:]/np.sum(hDY)
+ptdata = np.sum(hdata,axis=(0,1,3,4))[:]
+ptDY = np.sum(hDY,axis=(0,1,3,4))[:]
 hep.histplot([ptdata],bins = ptBins, histtype = 'errorbar', color = "k", stack = False, ax=ax1, label = ["data"])
 hep.histplot([ptDY],bins = ptBins, histtype = 'fill',linestyle = 'solid', color =["orange"], label=["DY"], stack = True, ax=ax1)
 ax2.set_ylim([0.9, 1.1])
