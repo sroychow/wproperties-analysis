@@ -10,7 +10,7 @@ sys.path.append('../Common/data')
 from RDFtree import RDFtree
 from samples_2016_ul import samplespreVFP
 sys.path.append('python/')
-from binning import ptBins, etaBins, mTBins, isoBins, chargeBins
+from binning import ptBins, etaBins, mTBins, zmassBins, isoBins, chargeBins
 from externals import fileSFul
 
 ROOT.gSystem.Load('bin/libAnalysisOnData.so')
@@ -26,7 +26,8 @@ def RDFprocess(fvec, outputDir, sample, xsec, systType, pretendJob):
         p.EventFilter(nodeToStart='defs', nodeToEnd='defs', evfilter="Vtype==2", filtername="{:20s}".format("Vtype multilepton selection"))
         p.EventFilter(nodeToStart='defs', nodeToEnd='defs', evfilter="MET_filters==1", filtername="{:20s}".format("Pass MET filter"))
         p.EventFilter(nodeToStart='defs', nodeToEnd='defs', evfilter="Idx_mu1>-1 && Idx_mu2>-1", filtername="{:20s}".format("Atleast 2 mu"))
-        p.Histogram(columns = ["Mu1_eta","Mu1_pt","Mu1_charge","MT","Mu1_relIso"], types = ['float']*5,node='defs',histoname=ROOT.string('data_obs'),bins = [etaBins,ptBins,chargeBins,mTBins,isoBins], variations = [])
+        p.branch(nodeToStart='defs', nodeToEnd='defs', modules=[ROOT.getZmass()])
+        p.Histogram(columns = ["dimuonMass", "Mu1_eta", "Mu2_eta", "Mu1_pt", "Mu2_pt", "Mu1_relIso", "Mu2_relIso"], types = ['float']*7,node='defs',histoname=ROOT.string('data_obs'),bins = [zmassBins,etaBins,etaBins,ptBins, ptBins,isoBins, isoBins], variations = [])
         return p
     else:
         p.branch(nodeToStart = 'input', nodeToEnd = 'defs', modules = [ROOT.lumiWeight(xsec=xsec), ROOT.customizeforUL(True, True), ROOT.recoDefinitions(True, False)])
@@ -34,8 +35,9 @@ def RDFprocess(fvec, outputDir, sample, xsec, systType, pretendJob):
         p.EventFilter(nodeToStart='defs', nodeToEnd='defs', evfilter="Vtype==2", filtername="{:20s}".format("Vtype multilepton selection"))
         p.EventFilter(nodeToStart='defs', nodeToEnd='defs', evfilter="MET_filters==1", filtername="{:20s}".format("Pass MET filter"))
         p.EventFilter(nodeToStart='defs', nodeToEnd='defs', evfilter="Idx_mu1>-1 && Idx_mu2>-1", filtername="{:20s}".format("Atleast 2 mu"))
-        p.Histogram(columns = ["Mu1_eta","Mu1_pt","Mu1_charge","MT","Mu1_relIso", "lumiweight", "puWeight"], types = ['float']*7,node='defs',histoname=ROOT.string('DY'),bins = [etaBins,ptBins,chargeBins,mTBins,isoBins], variations = [])
-    return p
+        p.branch(nodeToStart='defs', nodeToEnd='defs', modules=[ROOT.getZmass()])
+        p.Histogram(columns = ["dimuonMass", "Mu1_eta", "Mu2_eta", "Mu1_pt", "Mu2_pt", "Mu1_relIso", "Mu2_relIso", "lumiweight", "puWeight"], types = ['float']*9,node='defs',histoname=ROOT.string('DY'),bins = [zmassBins,etaBins,etaBins,ptBins, ptBins,isoBins, isoBins], variations = [])
+        return p
 
 def main():
     parser = argparse.ArgumentParser("")
