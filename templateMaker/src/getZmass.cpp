@@ -8,7 +8,7 @@ RNode getZmass::run(RNode d) {
     TLorentzVector mu1P;
     mu1P.SetPtEtaPhiM(mu_pt[mu1idx], mu_eta[mu1idx], mu_phi[mu1idx], mu_mass[mu1idx]);
     TLorentzVector mu2P;
-    mu1P.SetPtEtaPhiM(mu_pt[mu1idx], mu_eta[mu1idx], mu_phi[mu1idx], mu_mass[mu2idx]);
+    mu2P.SetPtEtaPhiM(mu_pt[mu2idx], mu_eta[mu2idx], mu_phi[mu2idx], mu_mass[mu2idx]);
     float mass = (mu1P + mu2P).M();
     return mass;
   };
