@@ -32,7 +32,7 @@ def RDFprocess(fvec, outputDir, sample, xsec, systType, pretendJob):
         p.Histogram(columns = ["dimuonMass", "Mu1_eta", "Mu1_pt", "Mu1_relIso", "Mu2_relIso"], types = ['float']*5,node='defs',histoname=ROOT.string('data_obs'),bins = [zmassBins,etaBins, ptBins,isoBins, isoBins], variations = [])
         return p
     else:
-        p.branch(nodeToStart = 'input', nodeToEnd = 'defs', modules = [ROOT.lumiWeight(xsec=xsec, targetLumi = 19.3), ROOT.customizeforUL(True, True), ROOT.recoDefinitions(True, False), ROOT.getZmass(), ROOT.SF_ul(fileSFul)])
+        p.branch(nodeToStart = 'input', nodeToEnd = 'defs', modules = [ROOT.lumiWeight(xsec=xsec, targetLumi = 19.3), ROOT.customizeforUL(True, True), ROOT.recoDefinitions(True, False), ROOT.getZmass(), ROOT.SF_ul(fileSFul, isZ=True)])
         p.EventFilter(nodeToStart='defs', nodeToEnd='defs', evfilter="HLT_SingleMu24", filtername="{:20s}".format("Pass HLT"))
         p.EventFilter(nodeToStart='defs', nodeToEnd='defs', evfilter="Vtype==2", filtername="{:20s}".format("Vtype multilepton selection"))
         p.EventFilter(nodeToStart='defs', nodeToEnd='defs', evfilter="MET_filters==1", filtername="{:20s}".format("Pass MET filter"))

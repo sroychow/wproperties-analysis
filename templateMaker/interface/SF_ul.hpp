@@ -13,11 +13,13 @@ private:
     TH2D * _trigger_plus;
     TH2D * _trigger_minus;
     TH2D * _iso;
+    bool _isZ;
 
 public:
-    SF_ul(TFile *SF, std::string era = "preVFP")
+    SF_ul(TFile *SF, std::string era = "preVFP", bool isZ = false)
     {
         _SF = SF;
+        _isZ = isZ;
         _tracking = (TH2D *)_SF->Get("SF2D_tracking_BtoF_both");
         _idip = (TH2D *)_SF->Get("SF2D_idip_BtoF_both");
         _trigger_plus = (TH2D *)_SF->Get("SF2D_trigger_BtoF_plus");
