@@ -10,7 +10,7 @@ plt.style.use([hep.style.ROOT])
 #hep.cms.label(loc=0, year=2016, lumi=35.9, data=True)
 #hep.cms.text('Simulation')
 
-folder = "../templateMaker/outputDY_27_01_2021_22_22_31/"
+folder = "../templateMaker/outputDY_27_01_2021_23_31_36/"
 
 fdata = h5py.File(folder+'data.hdf5', mode='r')
 fDY = h5py.File(folder+'DYJetsToLL_M50.hdf5', mode='r')
@@ -40,8 +40,8 @@ ax1.set_title("eta_iso1_1_iso2_1", fontsize=18)
 ax1.set_ylabel('number of events')
 ax2.set_ylabel('data/prediction')
 ax2.set_xlabel('muon $\eta$')
-etadata = np.sum(hdata,axis=(0,2))[:,0,0]
-etaDY = np.sum(hDY,axis=(0,2))[:,0,0]
+etadata = np.sum(hdata,axis=(0,2,3,4))[:]
+etaDY = np.sum(hDY,axis=(0,2,3,4))[:]
 hep.histplot([etadata],bins = etaBins, histtype = 'errorbar', color = "k", stack = False, ax=ax1, label = ["data"])
 hep.histplot([etaDY],bins = etaBins, histtype = 'fill',linestyle = 'solid', color =["orange"], label=["DY"], stack = True, ax=ax1)
 ax2.set_ylim([0.9, 1.1])

@@ -2,7 +2,7 @@
 #include "functions.hpp"
 RNode SF_ul::run(RNode d){
 
-    auto defineSF = [this](float pt1, float eta1, float charge1, float iso1, float pt2, float eta2, float charge2, float iso2) {
+    auto defineSFZ = [this](float pt1, float eta1, float charge1, float iso1, float pt2, float eta2, float charge2, float iso2) {
         int binTracking1 = _tracking->FindBin(eta1, pt1);
         int binTrigger1 = _trigger_plus->FindBin(eta1, pt1);
         int binIso1 = _iso->FindBin(eta1, pt1);
@@ -43,7 +43,36 @@ RNode SF_ul::run(RNode d){
         return SFtracking1 * SFtrigger1 * SFidip1 * SFiso1 * SFtracking2 * SFtrigger2 * SFidip2 * SFiso2;
     };
 
-    auto d1 = d.Define("SF", defineSF, {"Mu1_pt", "Mu1_eta", "Mu1_charge", "Mu1_relIso", "Mu2_pt", "Mu2_eta", "Mu2_charge", "Mu2_relIso"});
+    auto defineSF = [this](float pt1, float eta1, float charge1, float iso1){
+        int binTracking1 = _tracking->FindBin(eta1, pt1);
+        int binTrigger1 = _trigger_plus->FindBin(eta1, pt1);
+        int binIso1 = _iso->FindBin(eta1, pt1);
+        int binIdip1 = _idip->FindBin(eta1, pt1);
 
-    return d1;
+        float SFiso1 = -9999999.;
+        if (iso1 > 0.15)
+            SFiso1 = 1. - _iso->GetBinContent(binIso1);
+        else
+            SFiso1 = _iso->GetBinContent(binIso1);
+
+        float SFtrigger1 = -9999999.;
+        if (charge1 > 0.)
+            SFtrigger1 = _trigger_plus->GetBinContent(binTrigger1);
+        else
+            SFtrigger1 = _trigger_minus->GetBinContent(binTrigger1);
+
+        float SFtracking1 = _tracking->GetBinContent(binTracking1);
+        float SFidip1 = _idip->GetBinContent(binIdip1);
+
+        return SFtracking1 * SFtrigger1 * SFidip1 * SFiso1;
+    };
+
+    if(_isZ){
+        auto d1 = d.Define("SF", defineSFZ, {"Mu1_pt", "Mu1_eta", "Mu1_charge", "Mu1_relIso", "Mu2_pt", "Mu2_eta", "Mu2_charge", "Mu2_relIso"});
+        return d1;
+    }
+    else{
+        auto d1 = d.Define("SF", defineSF, {"Mu1_pt", "Mu1_eta", "Mu1_charge", "Mu1_relIso"});
+        return d1;
+    }
 }

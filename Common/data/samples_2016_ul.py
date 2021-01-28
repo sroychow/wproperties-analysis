@@ -7,7 +7,7 @@ samplespreVFP = {
     "DYJetsToLL_M50": {
         "nsyst": 2, 
         "xsec": 1976.17, 
-        "dir": ["DYJetsToMuMu","DYJetsToTauTau"]
+        "dir": ["DYJetsToMuMu"]
     }, 
     "WPlusJetsToMuNu": {
         "nsyst": 2, 
