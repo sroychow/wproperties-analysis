@@ -29,12 +29,13 @@ ROOT.ROOT.EnableImplicitMT(128)
 outputDir = 'PLOTS'
 inputFile = '/scratchnvme/wmass/NanoAOD2016-UL/postNanoDec2020/WplusJetsToMuNu_preVFP_addVars/merged/*.root'
 
-p = RDFtree(outputDir = outputDir, inputFile = inputFile, outputFile="test.root", pretend=False)
-p.branch(nodeToStart='input', nodeToEnd='defs', modules=[ROOT.lumiWeight(xsec=11572.19), ROOT.customizeforUL(), ROOT.genDefinitions(), ROOT.defineHarmonics()])
+p = RDFtree(outputDir = outputDir, inputFile = inputFile, outputFile="test.root", pretend=True)
+p.branch(nodeToStart='input', nodeToEnd='defs', modules=[ROOT.lumiWeight(xsec=11572.19), ROOT.customizeforUL(True,True), ROOT.genDefinitions(), ROOT.defineHarmonics()])
 harmonics = {"P0" : (20./3., 1./10),"P1": (5.,0.), "P2": (20.,0.), "P3": (4.,0.),"P4":(4.,0.),"P5":(5.,0.),"P6":(5.,0.),"P7":(4.,0.)}
 
 for harm in harmonics:
-    p.Histogram(columns = ["Wrap_preFSR_abs","Vpt_preFSR","{}".format(harm),"lumiweight","pdfWeightNNPDF0"], types = ['float']*5,node='defs',histoname=ROOT.string("xsecs_{}".format(harm)),bins = [yBins,qtBins], variations = {"pdfWeightNNPDF0":"LHEPdfWeight"})
+    pass
+    # p.Histogram(columns = ["Wrap_preFSR_abs","Vpt_preFSR","{}".format(harm),"lumiweight","pdfWeightNNPDF0"], types = ['float']*5,node='defs',histoname=ROOT.string("xsecs_{}".format(harm)),bins = [yBins,qtBins], variations = {"pdfWeightNNPDF0":"LHEPdfWeight"})
 p.Histogram(columns = ["Wrap_preFSR_abs","Vpt_preFSR","lumiweight","pdfWeightNNPDF0"], types = ['float']*4,node='defs',histoname=ROOT.string("xsecs"),bins = [yBins,qtBins], variations = {"pdfWeightNNPDF0":"LHEPdfWeight"})
 p.gethdf5Output()
 assert(0)
