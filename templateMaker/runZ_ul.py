@@ -12,7 +12,6 @@ from samples_2016_ul import samplespreVFP
 sys.path.append('python/')
 from binning import ptBins, etaBins, mTBins, etaBins, isoBins, chargeBins, zmassBins
 from externals import fileSFul
-
 ROOT.gSystem.Load('bin/libAnalysisOnData.so')
 ROOT.gROOT.ProcessLine("gErrorIgnoreLevel = 2001;")
 
@@ -22,24 +21,44 @@ def RDFprocess(fvec, outputDir, sample, xsec, systType, pretendJob):
     #not for customizeforUL(isMC=true, isWorZ=false)
     if systType == 0: #this is data
         p.branch(nodeToStart='input', nodeToEnd='defs', modules=[ROOT.customizeforUL(False, False), ROOT.recoDefinitions(False, False)])
-        p.EventFilter(nodeToStart='defs', nodeToEnd='defs', evfilter="HLT_SingleMu24", filtername="{:20s}".format("Pass HLT"))
         p.EventFilter(nodeToStart='defs', nodeToEnd='defs', evfilter="Vtype==2", filtername="{:20s}".format("Vtype multilepton selection"))
-        p.EventFilter(nodeToStart='defs', nodeToEnd='defs', evfilter="MET_filters==1", filtername="{:20s}".format("Pass MET filter"))
-        p.EventFilter(nodeToStart='defs', nodeToEnd='defs', evfilter="nVetoElectrons==0", filtername="{:20s}".format("Electron veto"))
         p.EventFilter(nodeToStart='defs', nodeToEnd='defs', evfilter="Idx_mu1>-1 && Idx_mu2>-1", filtername="{:20s}".format("Atleast 2 mu"))
+        p.EventFilter(nodeToStart='defs', nodeToEnd='defs', evfilter="nVetoElectrons==0", filtername="{:20s}".format("Electron veto"))
+        p.EventFilter(nodeToStart='defs', nodeToEnd='defs', evfilter="HLT_SingleMu24", filtername="{:20s}".format("Pass HLT"))
+        p.EventFilter(nodeToStart='defs', nodeToEnd='defs', evfilter="Muon_hasTriggerMatch[Idx_mu1] && Muon_hasTriggerMatch[Idx_mu2]", filtername="{:20s}".format("Both mu trigger matched"))
+        p.EventFilter(nodeToStart='defs', nodeToEnd='defs', evfilter="Muon_pdgId[Idx_mu1] * Muon_pdgId[Idx_mu2] == -169", filtername="{:20s}".format("Opposite Charge"))
+        p.EventFilter(nodeToStart='defs', nodeToEnd='defs', evfilter="(Muon_pt[Idx_mu1] > 25. && Muon_pt[Idx_mu1] < 55.) && (Muon_pt[Idx_mu2] > 25. && Muon_pt[Idx_mu2] < 55.) && abs(Muon_eta[Idx_mu1]) < 2.4 && abs(Muon_eta[Idx_mu2]) < 2.4", filtername="{:20s}".format("Muon acceptance"))
+        p.EventFilter(nodeToStart='defs', nodeToEnd='defs', evfilter="Muon_mediumId[Idx_mu1] == 1 && Muon_mediumId[Idx_mu2] == 1", filtername="{:20s}".format("MuonID"))
+        p.EventFilter(nodeToStart='defs', nodeToEnd='defs', evfilter="abs(Muon_dxy[Idx_mu1]) < 0.05 && abs(Muon_dxy[Idx_mu2]) < 0.05", filtername="{:20s}".format("Muon dxy"))
+        p.EventFilter(nodeToStart='defs', nodeToEnd='defs', evfilter="abs(Muon_dxy[Idx_mu1]) < 0.05 && abs(Muon_dxy[Idx_mu2]) < 0.05", filtername="{:20s}".format("Muon dz"))
+        p.EventFilter(nodeToStart='defs', nodeToEnd='defs', evfilter="Muon_pfRelIso04_all[Idx_mu1] < 0.15 && Muon_pfRelIso04_all[Idx_mu2] < 0.15", filtername="{:20s}".format("Both muon pass ISO"))  
+
         p.branch(nodeToStart='defs', nodeToEnd='defs', modules=[ROOT.getZmass()])
+
+        p.EventFilter(nodeToStart='defs', nodeToEnd='defs', evfilter="dimuonMass > 60. && dimuonMass < 120.", filtername="{:20s}".format("Mass range"))
         #p.displayColumn(node="defs", columname="dimuonMass")
         p.Histogram(columns = ["dimuonMass", "Mu1_eta", "Mu1_pt", "Mu1_relIso", "Mu2_relIso"], types = ['float']*5,node='defs',histoname=ROOT.string('data_obs'),bins = [zmassBins,etaBins, ptBins,isoBins, isoBins], variations = [])
         return p
     else:
-        p.branch(nodeToStart = 'input', nodeToEnd = 'defs', modules = [ROOT.lumiWeight(xsec=xsec, targetLumi = 19.3), ROOT.customizeforUL(True, True), ROOT.recoDefinitions(True, False), ROOT.getZmass(), ROOT.SF_ul(fileSFul, isZ=True)])
-        p.EventFilter(nodeToStart='defs', nodeToEnd='defs', evfilter="HLT_SingleMu24", filtername="{:20s}".format("Pass HLT"))
+        p.branch(nodeToStart = 'input', nodeToEnd = 'defs', modules = [ROOT.lumiWeight(xsec=xsec, sumwclipped=236002045557.625, targetLumi = 19.28503), ROOT.customizeforUL(True, True), ROOT.recoDefinitions(True, False)])
+
         p.EventFilter(nodeToStart='defs', nodeToEnd='defs', evfilter="Vtype==2", filtername="{:20s}".format("Vtype multilepton selection"))
-        p.EventFilter(nodeToStart='defs', nodeToEnd='defs', evfilter="MET_filters==1", filtername="{:20s}".format("Pass MET filter"))
-        p.EventFilter(nodeToStart='defs', nodeToEnd='defs', evfilter="nVetoElectrons==0", filtername="{:20s}".format("Electron veto"))
         p.EventFilter(nodeToStart='defs', nodeToEnd='defs', evfilter="Idx_mu1>-1 && Idx_mu2>-1", filtername="{:20s}".format("Atleast 2 mu"))
-        #p.displayColumn(node="defs", columname="dimuonMass")
-        p.Histogram(columns = ["dimuonMass", "Mu1_eta", "Mu1_pt", "Mu1_relIso", "Mu2_relIso", "lumiweight", "puWeight", "SF"], types = ['float']*8,node='defs',histoname=ROOT.string('DY'),bins = [zmassBins,etaBins,ptBins,isoBins, isoBins], variations = [])
+        p.EventFilter(nodeToStart='defs', nodeToEnd='defs', evfilter="nVetoElectrons==0", filtername="{:20s}".format("Electron veto"))
+        p.EventFilter(nodeToStart='defs', nodeToEnd='defs', evfilter="HLT_SingleMu24", filtername="{:20s}".format("Pass HLT"))
+        p.EventFilter(nodeToStart='defs', nodeToEnd='defs', evfilter="Muon_hasTriggerMatch[Idx_mu1] &&  Muon_hasTriggerMatch[Idx_mu2]", filtername="{:20s}".format("Both mu trigger matched"))
+        p.EventFilter(nodeToStart='defs', nodeToEnd='defs', evfilter="Muon_pdgId[Idx_mu1] * Muon_pdgId[Idx_mu2] == -169", filtername="{:20s}".format("Opposite Charge"))
+        p.EventFilter(nodeToStart='defs', nodeToEnd='defs', evfilter="(Muon_pt[Idx_mu1] > 25. && Muon_pt[Idx_mu1] < 55.) && (Muon_pt[Idx_mu2] > 25. && Muon_pt[Idx_mu2] < 55.) && abs(Muon_eta[Idx_mu1]) < 2.4 && abs(Muon_eta[Idx_mu1]) < 2.4", filtername="{:20s}".format("Muon acceptance"))
+        p.EventFilter(nodeToStart='defs', nodeToEnd='defs', evfilter="Muon_mediumId[Idx_mu1] == 1 && Muon_mediumId[Idx_mu2] == 1", filtername="{:20s}".format("MuonID"))
+        p.EventFilter(nodeToStart='defs', nodeToEnd='defs', evfilter="abs(Muon_dxy[Idx_mu1]) < 0.05 && abs(Muon_dxy[Idx_mu2]) < 0.05", filtername="{:20s}".format("Muon dxy"))
+        p.EventFilter(nodeToStart='defs', nodeToEnd='defs', evfilter="abs(Muon_dxy[Idx_mu1]) < 0.05 && abs(Muon_dxy[Idx_mu2]) < 0.05", filtername="{:20s}".format("Muon dz"))
+        p.EventFilter(nodeToStart='defs', nodeToEnd='defs', evfilter="Muon_pfRelIso04_all[Idx_mu1] < 0.15 && Muon_pfRelIso04_all[Idx_mu2] < 0.15", filtername="{:20s}".format("Both muon pass ISO"))  
+
+        p.branch(nodeToStart='defs', nodeToEnd='defs', modules=[ROOT.getZmass(),ROOT.SF_ul(fileSFul)])
+
+        p.EventFilter(nodeToStart='defs', nodeToEnd='defs', evfilter="dimuonMass > 60. && dimuonMass < 120.", filtername="{:20s}".format("Mass range"))
+        #p.displayColumn(node="defs", columname={"dimuonMass", "lumiweight", "puWeight", "SF"})
+        p.Histogram(columns = ["dimuonMass", "Mu1_eta", "Mu1_pt", "Mu1_relIso", "Mu2_relIso", "lumiweight", "puWeight", "SF", "PrefireWeight"], types = ['float']*9,node='defs',histoname=ROOT.string('DY'),bins = [zmassBins,etaBins,ptBins,isoBins, isoBins], variations = [])
         return p
 
 def main():
@@ -69,7 +88,7 @@ def main():
     samples = samplespreVFP
     for sample in samples:
         #print('analysing sample: %s'%sample)
-        if not 'DY' in sample and not 'data' in sample: continue
+        if not 'DYJetsToMuMu' in sample and not 'data' in sample: continue
         direc = samples[sample]['dir']
         xsec = samples[sample]['xsec']
         fvec=ROOT.vector('string')()
@@ -89,22 +108,25 @@ def main():
     #sys.exit(0)
     #now trigger all the event loops at the same time:
     objList = []
+    cutFlowreportDict = {}
     for sample in samples:
-        if not 'DY' in sample and not 'data' in sample: continue
+        if not 'DYJetsToMuMu' in sample and not 'data' in sample: continue
         RDFtreeDict = RDFtrees[sample].getObjects()
+        if args.report: cutFlowreportDict[sample] = RDFtrees[sample].getCutFlowReport()
         for node in RDFtreeDict:
             objList.extend(RDFtreeDict[node])
+
     #magic happens here
     start = time.time()
     ROOT.RDF.RunGraphs(objList)
     #now write the histograms:
     
     for sample in samples:
-        if not 'DY' in sample and not 'data' in sample: continue
+        if not 'DYJetsToMuMu' in sample and not 'data' in sample: continue
         print(sample)
         #RDFtrees[sample].getOutput()
         RDFtrees[sample].gethdf5Output()
-        if args.report: RDFtrees[sample].getCutFlowReport()
+        if args.report: cutFlowreportDict[sample].Print()
 
     print('all samples processed in {} s'.format(time.time()-start))
 if __name__ == "__main__":
