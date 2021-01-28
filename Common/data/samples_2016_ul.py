@@ -4,10 +4,15 @@ samplespreVFP = {
         "xsec": -1, 
         "dir": ["Run2016B", "Run2016C", "Run2016D", "Run2016E", "Run2016F"]
     },
-    "DYJetsToLL_M50": {
+    "DYJetsToMuMu_M50": {
         "nsyst": 2, 
         "xsec": 1976.17, 
         "dir": ["DYJetsToMuMu"]
+    }, 
+    "DYJetsToTauTau_M50": {
+        "nsyst": 2, 
+        "xsec": 0.5802*1976.17, 
+        "dir": ["DYJetsToTauTau"]
     }, 
     "WPlusJetsToMuNu": {
         "nsyst": 2, 
