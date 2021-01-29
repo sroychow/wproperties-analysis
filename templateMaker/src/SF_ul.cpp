@@ -47,11 +47,12 @@ RNode SF_ul::run(RNode d){
         int binTracking1 = _tracking->FindBin(eta1, pt1);
         int binTrigger1 = _trigger_plus->FindBin(eta1, pt1);
         int binIso1 = _iso->FindBin(eta1, pt1);
+        int binAntiiso1 = _antiiso->FindBin(eta1, pt1);
         int binIdip1 = _idip->FindBin(eta1, pt1);
 
         float SFiso1 = -9999999.;
         if (iso1 > 0.15)
-            SFiso1 = 1. - _iso->GetBinContent(binIso1);
+            SFiso1 = _antiiso->GetBinContent(binAntiiso1);
         else
             SFiso1 = _iso->GetBinContent(binIso1);
 
