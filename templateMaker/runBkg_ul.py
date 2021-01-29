@@ -21,39 +21,30 @@ ROOT.gROOT.ProcessLine("gErrorIgnoreLevel = 2001;")
 def RDFprocess(fvec, outputDir, sample, xsec, systType, sumwClipped, pretendJob):
     print("processing ", sample)
     p = RDFtree(outputDir = outputDir, inputFile = fvec, outputFile="{}.root".format(sample), pretend=pretendJob)
+    p.EventFilter(nodeToStart='input', nodeToEnd='defs', evfilter="HLT_SingleMu24", filtername="{:20s}".format("Pass HLT"))
+    p.EventFilter(nodeToStart='defs', nodeToEnd='defs', evfilter="(Vtype==0 || Vtype==1)", filtername="{:20s}".format("Vtype selection"))
+    p.EventFilter(nodeToStart='defs', nodeToEnd='defs', evfilter="HLT_SingleMu24", filtername="{:20s}".format("Pass HLT"))
+    p.EventFilter(nodeToStart='defs', nodeToEnd='defs', evfilter="MET_filters==1", filtername="{:20s}".format("Pass MET filter"))
+    p.EventFilter(nodeToStart='defs', nodeToEnd='defs', evfilter="nVetoElectrons==0", filtername="{:20s}".format("Electron veto"))
+    p.EventFilter(nodeToStart='defs', nodeToEnd='defs', evfilter="Idx_mu1>-1", filtername="{:20s}".format("Atleast 1 mu"))
+
     #not for customizeforUL(isMC=true, isWorZ=false)
     if systType == 0: #this is data
-        p.branch(nodeToStart='input', nodeToEnd='defs', modules=[ROOT.customizeforUL(False, False), ROOT.recoDefinitions(False, False)])
-        p.EventFilter(nodeToStart='defs', nodeToEnd='defs', evfilter="HLT_SingleMu24", filtername="{:20s}".format("Pass HLT"))
-        p.EventFilter(nodeToStart='defs', nodeToEnd='defs', evfilter="(Vtype==0 || Vtype==1)", filtername="{:20s}".format("Vtype selection"))
-        p.EventFilter(nodeToStart='defs', nodeToEnd='defs', evfilter="HLT_SingleMu24", filtername="{:20s}".format("Pass HLT"))
-        p.EventFilter(nodeToStart='defs', nodeToEnd='defs', evfilter="MET_filters==1", filtername="{:20s}".format("Pass MET filter"))
-        p.EventFilter(nodeToStart='defs', nodeToEnd='defs', evfilter="nVetoElectrons==0", filtername="{:20s}".format("Electron veto"))
-        p.EventFilter(nodeToStart='defs', nodeToEnd='defs', evfilter="Idx_mu1>-1", filtername="{:20s}".format("Atleast 1 mu"))
-
+        p.branch(nodeToStart='defs', nodeToEnd='defs', modules=[ROOT.customizeforUL(False, False), ROOT.recoDefinitions(False, False)])
         p.Histogram(columns = ["Mu1_eta","Mu1_pt","Mu1_charge","MT","Mu1_relIso"], types = ['float']*5,node='defs',histoname=ROOT.string('data_obs'),bins = [etaBins,ptBins,chargeBins,mTBins,isoBins], variations = [])
         return p
     elif systType < 2: #this is MC with no PDF variations
-        p.branch(nodeToStart = 'input', nodeToEnd = 'defs', modules = [ROOT.customizeforUL(True,False), ROOT.recoDefinitions(True, False),ROOT.recoWeightDefinitions(fileSF),ROOT.lumiWeight(xsec=xsec, sumwclipped=sumwClipped, targetLumi = 19.3)])
+        p.branch(nodeToStart = 'defs', nodeToEnd = 'defs', modules = [ROOT.customizeforUL(True,False), ROOT.recoDefinitions(True, False),ROOT.recoWeightDefinitions(fileSF), getLumiWeight(xsec=xsec, inputFile = fvec, genEvsbranch = "genEventSumw", targetLumi = 19.3)]) #
+
+        p.Histogram(columns = ["Mu1_eta","Mu1_pt","Mu1_charge","MTVars","Mu1_relIso", "lumiweight", "PrefireWeight", "puWeight", "WHSFVars"], types = ['float']*9,node='defs',histoname=ROOT.string('ewk'),bins = [etaBins,ptBins,chargeBins,mTBins,isoBins], variations = [])
     else:
         if 'DY' in sample: #reweight full Z kinematics
-            p.branch(nodeToStart = 'input', nodeToEnd = 'defs', modules = [ROOT.customizeforUL(True, True), ROOT.recoDefinitions(True, False),ROOT.recoWeightDefinitions(fileSF),ROOT.lumiWeight(xsec=xsec, sumwclipped=sumwClipped, targetLumi = 19.3),ROOT.Replica2Hessian(),ROOT.reweightFromZ(filePt,fileY,False,True)])
-            p.EventFilter(nodeToStart='defs', nodeToEnd='defs', evfilter="HLT_SingleMu24", filtername="{:20s}".format("Pass HLT"))
-            p.EventFilter(nodeToStart='defs', nodeToEnd='defs', evfilter="(Vtype==0 || Vtype==1)", filtername="{:20s}".format("Vtype selection"))
-            p.EventFilter(nodeToStart='defs', nodeToEnd='defs', evfilter="HLT_SingleMu24", filtername="{:20s}".format("Pass HLT"))
-            p.EventFilter(nodeToStart='defs', nodeToEnd='defs', evfilter="MET_filters==1", filtername="{:20s}".format("Pass MET filter"))
-            p.EventFilter(nodeToStart='defs', nodeToEnd='defs', evfilter="nVetoElectrons==0", filtername="{:20s}".format("Electron veto"))
-            p.EventFilter(nodeToStart='defs', nodeToEnd='defs', evfilter="Idx_mu1>-1", filtername="{:20s}".format("Aleast 1 mu"))
+            p.branch(nodeToStart = 'defs', nodeToEnd = 'defs', modules = [ROOT.customizeforUL(True, True), ROOT.recoDefinitions(True, False),ROOT.recoWeightDefinitions(fileSF),ROOT.lumiWeight(xsec=xsec, sumwclipped=sumwClipped, targetLumi = 19.3),ROOT.Replica2Hessian(),ROOT.reweightFromZ(filePt,fileY,False,True)])
             p.Histogram(columns = ["Mu1_eta","Mu1_pt","Mu1_charge","MTVars","Mu1_relIso", "lumiweight", "weightPt", "weightY", "PrefireWeight", "puWeight", "WHSFVars"], types = ['float']*11,node='defs',histoname=ROOT.string('ewk'),bins = [etaBins,ptBins,chargeBins,mTBins,isoBins], variations = [])
         else:
-            p.branch(nodeToStart = 'input', nodeToEnd = 'defs', modules = [ROOT.customizeforUL(True, True), ROOT.recoDefinitions(True, False),ROOT.recoWeightDefinitions(fileSF),ROOT.lumiWeight(xsec=xsec, sumwclipped=sumwClipped, targetLumi = 19.3),ROOT.Replica2Hessian(),ROOT.reweightFromZ(filePt,fileY,True,True)])
-            p.EventFilter(nodeToStart='defs', nodeToEnd='defs', evfilter="HLT_SingleMu24", filtername="{:20s}".format("Pass HLT"))
-            p.EventFilter(nodeToStart='defs', nodeToEnd='defs', evfilter="(Vtype==0 || Vtype==1)", filtername="{:20s}".format("Vtype selection"))
-            p.EventFilter(nodeToStart='defs', nodeToEnd='defs', evfilter="HLT_SingleMu24", filtername="{:20s}".format("Pass HLT"))
-            p.EventFilter(nodeToStart='defs', nodeToEnd='defs', evfilter="MET_filters==1", filtername="{:20s}".format("Pass MET filter"))
-            p.EventFilter(nodeToStart='defs', nodeToEnd='defs', evfilter="nVetoElectrons==0", filtername="{:20s}".format("Electron veto"))
-            p.EventFilter(nodeToStart='defs', nodeToEnd='defs', evfilter="Idx_mu1>-1", filtername="{:20s}".format("Aleast 1 mu"))
+            p.branch(nodeToStart = 'defs', nodeToEnd = 'defs', modules = [ROOT.customizeforUL(True, True), ROOT.recoDefinitions(True, False),ROOT.recoWeightDefinitions(fileSF),ROOT.lumiWeight(xsec=xsec, sumwclipped=sumwClipped, targetLumi = 19.3),ROOT.Replica2Hessian(),ROOT.reweightFromZ(filePt,fileY,True,True)])
             p.Histogram(columns = ["Mu1_eta","Mu1_pt","Mu1_charge","MTVars","Mu1_relIso", "lumiweight", "weightPt", "PrefireWeight", "puWeight", "WHSFVars"], types = ['float']*10,node='defs',histoname=ROOT.string('ewk'),bins = [etaBins,ptBins,chargeBins,mTBins,isoBins], variations = [])
+
     return p
 
 def main():
@@ -83,12 +74,9 @@ def main():
     samples = samplespreVFP
     for sample in samples:
         #print('analysing sample: %s'%sample)
-        if 'TTTo' in sample: continue
+        #if 'TTTo' in sample: continue
         direc = samples[sample]['dir']
         xsec = samples[sample]['xsec']
-        sumwClipped=1.
-        if not 'data' in sample:
-            sumwClipped=sumwClippedDict[sample]
         fvec=ROOT.vector('string')()
         for d in direc:
             targetDir='{}/{}/merged/'.format(inDir, d)
@@ -102,6 +90,9 @@ def main():
             continue
         print(fvec)         
         systType = samples[sample]['nsyst']
+        sumwClipped=1.
+        if systType == 2:
+            sumwClipped=sumwClippedDict[sample]
         RDFtrees[sample] = RDFprocess(fvec, outputDir, sample, xsec, systType, sumwClipped, pretendJob)
     #sys.exit(0)
     #now trigger all the event loops at the same time:

@@ -64,7 +64,16 @@ samplespreVFP = {
         "xsec": 3.74, 
         "dir": ["ST_s-channel_4f_leptonDecays_TuneCP5_13TeV-amcatnlo-pythia8"]
     }, 
-
+    "TTToSemiLeptonic": {
+        "nsyst": 1,  
+        "xsec": 365.34, 
+        "dir": ["TTToSemiLeptonic_TuneCP5_13TeV-powheg-pythia8"]
+    }, 
+    "TTTo2L2Nu": {
+        "nsyst": 1,  
+        "xsec": 88.29, 
+        "dir": ["TTTo2L2Nu_TuneCP5_13TeV-powheg-pythia8"]
+    }, 
 }
 
 samplesPostVFP = {
@@ -91,14 +100,4 @@ samplesPostVFP = {
 }
 
 '''
-    "TTToSemiLeptonic": {
-        "nsyst": 1,  
-        "xsec": 365.641, 
-        "dir": ["TTToSemiLeptonic_TuneCP5_13TeV-powheg-pythia8"]
-    }, 
-    "TTTo2L2Nu": {
-        "nsyst": 1,  
-        "xsec": 88.29, 
-        "dir": ["TTTo2L2Nu_TuneCP5_13TeV-powheg-pythia8"]
-    }, 
 '''
