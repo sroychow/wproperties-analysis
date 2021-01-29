@@ -12,6 +12,8 @@ from samples_2016_ul import samplespreVFP
 sys.path.append('python/')
 from binning import ptBins, etaBins, mTBins, etaBins, isoBins, chargeBins, zmassBins
 from externals import fileSFul
+from genSumWClipped import sumwClippedDict
+
 ROOT.gSystem.Load('bin/libAnalysisOnData.so')
 ROOT.gROOT.ProcessLine("gErrorIgnoreLevel = 2001;")
 

@@ -13,15 +13,25 @@ sys.path.append('../Common/data')
 from RDFtree import RDFtree
 sys.path.append('python/')
 from getLumiWeight import getLumiWeight
+print('before')
+print("ROOT.gSystem.GetIncludePath()",ROOT.gSystem.GetIncludePath())
+print("ROOT.gInterpreter.GetIncludePath()",ROOT.gInterpreter.GetIncludePath())
 from binning import qtBins, yBins, ptBins, etaBins, chargeBins
+print('after')
+print("ROOT.gSystem.GetIncludePath()",ROOT.gSystem.GetIncludePath())
+print("ROOT.gInterpreter.GetIncludePath()",ROOT.gInterpreter.GetIncludePath())
 from externals import filePt, fileY, fileSF
+
 
 # matplotlib stuff
 plt.style.use([hep.style.ROOT, hep.style.firamath])
 #hep.cms.label(loc=0)
 hep.cms.text('Simulation')
 
+
+
 ROOT.gSystem.Load('bin/libAnalysisOnData.so')
+
 ROOT.gROOT.ProcessLine("gErrorIgnoreLevel = 2001;")
 
 ROOT.ROOT.EnableImplicitMT(128)
@@ -30,7 +40,7 @@ outputDir = 'PLOTS'
 inputFile = '/scratchnvme/wmass/NanoAOD2016-UL/postNanoDec2020/WplusJetsToMuNu_preVFP_addVars/merged/*.root'
 
 p = RDFtree(outputDir = outputDir, inputFile = inputFile, outputFile="test.root", pretend=True)
-p.branch(nodeToStart='input', nodeToEnd='defs', modules=[ROOT.lumiWeight(xsec=11572.19), ROOT.customizeforUL(True,True), ROOT.genDefinitions(), ROOT.defineHarmonics()])
+p.branch(nodeToStart='input', nodeToEnd='defs', modules=[ROOT.lumiWeight(xsec=11572.19, sumwclipped=5895447715506.5, targetLumi = 19.3), ROOT.customizeforUL(True,True), ROOT.genDefinitions(), ROOT.defineHarmonics()])
 harmonics = {"P0" : (20./3., 1./10),"P1": (5.,0.), "P2": (20.,0.), "P3": (4.,0.),"P4":(4.,0.),"P5":(5.,0.),"P6":(5.,0.),"P7":(4.,0.)}
 
 for harm in harmonics:

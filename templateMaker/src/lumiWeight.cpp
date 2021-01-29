@@ -9,7 +9,9 @@ RNode lumiWeight::run(RNode d)
     };
 
     //auto d1 = d.Define("Generator_weight_clipped", clipGenWeight, {"Generator_weight"}).Define("lumiweight", Form("float((%f*%f*Generator_weight_clipped)/(%f))", _targetLumi, _xsec, genEventSumw));
-    //_genEventSumwClipped=3.53746e+10;
     auto d1 = d.Define("Generator_weight_clipped", clipGenWeight, {"Generator_weight"}).Define("lumiweight", Form("float((%f*%f*Generator_weight_clipped)/(%f))", _targetLumi, _xsec, _genEventSumwClipped));
+    // auto d2 = d1.Display({"lumiweight"});
+    // std::cout << " xsec " << _xsec << " _targetLumi" << _targetLumi << " _genEventSumwClipped " << _genEventSumwClipped << std::endl;
+    // d2->Print();
     return d1;
 }
