@@ -117,8 +117,10 @@ def main():
     #sys.exit(0)
     #now trigger all the event loops at the same time:
     objList = []
+    cutFlowreportDict = {}
     for sample in samples:
         RDFtreeDict = RDFtrees[sample].getObjects()
+        if args.report: cutFlowreportDict[sample] = RDFtrees[sample].getCutFlowReport()
         for node in RDFtreeDict:
             objList.extend(RDFtreeDict[node])
     #magic happens here
@@ -130,7 +132,7 @@ def main():
         print(sample)
         #RDFtrees[sample].getOutput()
         RDFtrees[sample].gethdf5Output()
-        if args.report: RDFtrees[sample].getCutFlowReport()
+        if args.report: cutFlowreportDict[sample].Print()
 
     print('all samples processed in {} s'.format(time.time()-start))
 if __name__ == "__main__":
