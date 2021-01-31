@@ -10,7 +10,8 @@ sys.path.append('../Common/data')
 from RDFtree import RDFtree
 from samples_2016_ul import samplespreVFP
 sys.path.append('python/')
-from binning import ptBins, etaBins, mTBins, etaBins, isoBins, chargeBins, zmassBins
+#from binning import ptBins, etaBins, mTBins, etaBins, isoBins, chargeBins, zmassBins
+import binning
 from externals import fileSFul
 from genSumWClipped import sumwClippedDict
 

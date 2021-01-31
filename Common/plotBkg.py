@@ -10,7 +10,7 @@ plt.style.use([hep.style.ROOT])
 #hep.cms.label(loc=0, year=2016, lumi=35.9, data=True)
 #hep.cms.text('Simulation')
 
-folder = "../templateMaker/output_28_01_2021_18_20_54/"
+folder = "../templateMaker/output_29_01_2021_19_53_24/"
 
 # ewkFiles = ["DYJetsToLL_M10to50.hdf5", "ST_t-channel_antitop_4f_inclusiveDecays.hdf5","ST_tW_top_5f_inclusiveDecays.hdf5","TTJets_SingleLeptFromTbar.hdf5","WZ.hdf5",\
 # "DYJetsToLL_M50.hdf5","ST_t-channel_top_4f_inclusiveDecays_13TeV.hdf5","TTJets_DiLept.hdf5","WJetsToLNu.hdf5","ZZ.hdf5",\
@@ -18,7 +18,7 @@ folder = "../templateMaker/output_28_01_2021_18_20_54/"
 
 WFiles = ["WMinusJetsToMuNu.hdf5","WPlusJetsToTauNu.hdf5","WMinusJetsToTauNu.hdf5","WPlusJetsToMuNu.hdf5"]
 DYFiles = ["DYJetsToMuMu_M50.hdf5","DYJetsToTauTau_M50.hdf5"]
-TopFiles = ["ST_t-channel_muDecays.hdf5", "ST_t-channel_tauDecays.hdf5","ST_s-channel_4f_leptonDecays.hdf5","ST_t-channel_top_5f_InclusiveDecays.hdf5"]
+TopFiles = ["ST_t-channel_muDecays.hdf5", "ST_t-channel_tauDecays.hdf5","ST_s-channel_4f_leptonDecays.hdf5","ST_t-channel_top_5f_InclusiveDecays.hdf5","TTToSemiLeptonic.hdf5", "TTTo2L2Nu.hdf5"]
 DibosonFiles = ["WW.hdf5","WZ.hdf5"]
 
 histonames = ['ewk', 'ewk_sumw2']
@@ -171,7 +171,7 @@ for i in range(2):
     etaDiboson = np.sum(hDiboson,axis=1)[:,-1,-1,i]
     etafake = np.sum(hfakesHighMt,axis=1)[:,-1,i]
     hep.histplot([etadata],bins = etaBins, histtype = 'errorbar', color = "k", stack = False, ax=ax1, label = ["data"])
-    hep.histplot([etafake,etaDiboson,etaTop,etaDY,etaW],bins = etaBins, histtype = 'fill',linestyle = 'solid', color =["grey","magenta","orange","blue","red"], label=["fake","Diboson","Top","DY","W"], stack = True, ax=ax1)
+    hep.histplot([etaDiboson,etaTop,etaDY,etafake,etaW],bins = etaBins, histtype = 'fill',linestyle = 'solid', color =["grey","magenta","orange","blue","red"], label=["Diboson","Top","DY","fake","W"], stack = True, ax=ax1)
     ax2.set_ylim([0.7, 1.3])
     hep.histplot([etadata/(etafake+etaewk)], bins = etaBins, histtype = 'errorbar', color = "k", stack = False, ax=ax2)
     ax1.legend(loc='upper right', frameon=True)
@@ -191,7 +191,8 @@ for i in range(2):
     ptDiboson = np.sum(hDiboson,axis=0)[:,-1,-1,i]
     ptfake = np.sum(hfakesHighMt,axis=0)[:,-1,i]
     hep.histplot([ptdata],bins = ptBins, histtype = 'errorbar', color = "k", stack = False, ax=ax1,label = ["data"])
-    hep.histplot([ptfake,ptDiboson,ptTop,ptDY,ptW],bins = ptBins, histtype = 'fill',linestyle = 'solid', color =["grey","magenta","orange","blue","red"], label=["fake","Diboson","Top","DY","W"], stack = True, ax=ax1)
+    #hep.histplot([ptDiboson,ptTop,ptDY,ptfake,ptW],bins = ptBins, histtype = 'fill',linestyle = 'solid', color =["grey","magenta","orange","blue","red"], label=["Diboson","Top","DY","fake","W"], stack = True, ax=ax1)
+    hep.histplot([ptW],bins = ptBins, histtype = 'fill',linestyle = 'solid', color =["red"], label=["W"], stack = True, ax=ax1)
     ax2.set_ylim([0.7, 1.3])
     hep.histplot([ptdata/(ptfake+ptewk)],bins = ptBins, histtype = 'errorbar', color = "k", stack = False, ax=ax2)
     ax1.legend(loc='upper right', frameon=True)
@@ -211,7 +212,7 @@ for i in range(2):
     etaDiboson = np.sum(hDiboson,axis=1)[:,-1,0,i]
     etafake = np.sum(hfakesLowMt,axis=1)[:,0,i]
     hep.histplot([etadata],bins = etaBins, histtype = 'errorbar', color = "k", stack = False, ax=ax1,label = ["data"])
-    hep.histplot([etafake,etaDiboson,etaTop,etaDY,etaW],bins = etaBins, histtype = 'fill',linestyle = 'solid', color =["grey","magenta","orange","blue","red"], label=["fake","Diboson","Top","DY","W"], stack = True, ax=ax1)
+    hep.histplot([etaDiboson,etaTop,etaDY,etafake,etaW],bins = etaBins, histtype = 'fill',linestyle = 'solid', color =["grey","magenta","orange","blue","red"], label=["Diboson","Top","DY","fake","W"], stack = True, ax=ax1)
     ax2.set_ylim([0.7, 1.3])
     hep.histplot([etadata/(etafake+etaewk)],bins = etaBins, histtype = 'errorbar', color = "k", stack = False, ax=ax2)
     ax1.legend(loc='upper right', frameon=True)
@@ -231,7 +232,7 @@ for i in range(2):
     ptDiboson = np.sum(hDiboson,axis=0)[:,-1,0,i]
     ptfake = np.sum(hfakesLowMt,axis=0)[:,0,i]
     hep.histplot([ptdata],bins = ptBins, histtype = 'errorbar', color = "k", stack = False, ax=ax1,label = ["data"])
-    hep.histplot([ptfake,ptDiboson,ptTop,ptDY,ptW],bins = ptBins, histtype = 'fill',linestyle = 'solid', color =["grey","magenta","orange","blue","red"], label=["fake","Diboson","Top","DY","W"], stack = True, ax=ax1)
+    hep.histplot([ptDiboson,ptTop,ptDY,ptfake,ptW],bins = ptBins, histtype = 'fill',linestyle = 'solid', color =["grey","magenta","orange","blue","red"], label=["Diboson","Top","DY","fake","W"], stack = True, ax=ax1)
     ax2.set_ylim([0.7, 1.3])
     hep.histplot([ptdata/(ptfake+ptewk)],bins = ptBins, histtype = 'errorbar', color = "k", stack = False, ax=ax2)
     ax1.legend(loc='upper right', frameon=True)

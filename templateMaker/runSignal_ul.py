@@ -13,13 +13,7 @@ sys.path.append('../Common/data')
 from RDFtree import RDFtree
 sys.path.append('python/')
 from getLumiWeight import getLumiWeight
-print('before')
-print("ROOT.gSystem.GetIncludePath()",ROOT.gSystem.GetIncludePath())
-print("ROOT.gInterpreter.GetIncludePath()",ROOT.gInterpreter.GetIncludePath())
-from binning import qtBins, yBins, ptBins, etaBins, chargeBins
-print('after')
-print("ROOT.gSystem.GetIncludePath()",ROOT.gSystem.GetIncludePath())
-print("ROOT.gInterpreter.GetIncludePath()",ROOT.gInterpreter.GetIncludePath())
+#from binning import ptBins, etaBins, mTBins, etaBins, isoBins, chargeBins, zmassBins
 from externals import filePt, fileY, fileSF
 
 
@@ -39,14 +33,14 @@ ROOT.ROOT.EnableImplicitMT(128)
 outputDir = 'PLOTS'
 inputFile = '/scratchnvme/wmass/NanoAOD2016-UL/postNanoDec2020/WplusJetsToMuNu_preVFP_addVars/merged/*.root'
 
-p = RDFtree(outputDir = outputDir, inputFile = inputFile, outputFile="test.root", pretend=True)
+p = RDFtree(outputDir = outputDir, inputFile = inputFile, outputFile="test.root", pretend=False)
 p.branch(nodeToStart='input', nodeToEnd='defs', modules=[ROOT.lumiWeight(xsec=11572.19, sumwclipped=5895447715506.5, targetLumi = 19.3), ROOT.customizeforUL(True,True), ROOT.genDefinitions(), ROOT.defineHarmonics()])
 harmonics = {"P0" : (20./3., 1./10),"P1": (5.,0.), "P2": (20.,0.), "P3": (4.,0.),"P4":(4.,0.),"P5":(5.,0.),"P6":(5.,0.),"P7":(4.,0.)}
 
 for harm in harmonics:
     pass
     # p.Histogram(columns = ["Wrap_preFSR_abs","Vpt_preFSR","{}".format(harm),"lumiweight","pdfWeightNNPDF0"], types = ['float']*5,node='defs',histoname=ROOT.string("xsecs_{}".format(harm)),bins = [yBins,qtBins], variations = {"pdfWeightNNPDF0":"LHEPdfWeight"})
-p.Histogram(columns = ["Wrap_preFSR_abs","Vpt_preFSR","lumiweight","pdfWeightNNPDF0"], types = ['float']*4,node='defs',histoname=ROOT.string("xsecs"),bins = [yBins,qtBins], variations = {"pdfWeightNNPDF0":"LHEPdfWeight"})
+p.Histogram(columns = ["Wrap_preFSR_abs","Vpt_preFSR","lumiweight","pdfWeightNNPDF0"], types = ['float']*4,node='defs',histoname=ROOT.string("xsecs"),ncols=2, variations = {"pdfWeightNNPDF0":"LHEPdfWeight"})
 p.gethdf5Output()
 assert(0)
 fewk = h5py.File('PLOTS/test.hdf5', mode='r+')
