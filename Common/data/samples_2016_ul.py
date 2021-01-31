@@ -74,6 +74,16 @@ samplespreVFP = {
         "xsec": 88.29, 
         "dir": ["TTTo2L2Nu_TuneCP5_13TeV-powheg-pythia8"]
     }, 
+    "DYJetsToLL_M50_NLO": {
+        "nsyst": 1, 
+        "xsec": 7181.0, 
+        "dir": ["alternate/DYJetsToLL-M50"]
+    }, 
+    "WJetsToLNu_NLO": {
+        "nsyst": 1, 
+        "xsec": 60890.0, 
+        "dir": ["alternate/WJetsToLNu_madgraph"]
+    },
 }
 
 samplesPostVFP = {
