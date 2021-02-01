@@ -17,7 +17,7 @@ private:
     bool _isZ;
 
 public:
-    SF_ul(TFile *SF, std::string era = "preVFP", bool isZ = false)
+    SF_ul(TFile *SF, bool isZ = false)
     {
         _SF = SF;
         _isZ = isZ;

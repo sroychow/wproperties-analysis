@@ -26,7 +26,7 @@ def RDFprocess(fvec, outputDir, sample, xsec, systType, sumwClipped, pretendJob)
     p.EventFilter(nodeToStart='defs', nodeToEnd='defs', evfilter="MET_filters==1", filtername="{:20s}".format("Pass MET filter"))
     p.EventFilter(nodeToStart='defs', nodeToEnd='defs', evfilter="nVetoElectrons==0", filtername="{:20s}".format("Electron veto"))
     p.EventFilter(nodeToStart='defs', nodeToEnd='defs', evfilter="Idx_mu1>-1", filtername="{:20s}".format("Atleast 1 mu"))
-    p.EventFilter(nodeToStart='defs', nodeToEnd='defs', evfilter="Muon_hasTriggerMatch[Idx_mu1]", filtername="{:20s}".format("mu trigger matched"))
+    #p.EventFilter(nodeToStart='defs', nodeToEnd='defs', evfilter="Muon_hasTriggerMatch[Idx_mu1]", filtername="{:20s}".format("mu trigger matched"))
     #not for customizeforUL(isMC=true, isWorZ=false)
     if systType == 0: #this is data
         p.branch(nodeToStart='defs', nodeToEnd='defs', modules=[ROOT.customizeforUL(False, False), ROOT.recoDefinitions(False, False)])
@@ -35,16 +35,16 @@ def RDFprocess(fvec, outputDir, sample, xsec, systType, sumwClipped, pretendJob)
     elif systType < 2: #this is MC with no PDF variations
         #falling back to old lumi weight computation
         p.branch(nodeToStart = 'defs', nodeToEnd = 'defs', modules = [ROOT.customizeforUL(True,False), ROOT.recoDefinitions(True, False), getLumiWeight(xsec=xsec, inputFile = fvec, genEvsbranch = "genEventSumw", targetLumi = 19.3), ROOT.SF_ul(fileSFul)])
-        p.Histogram(columns = ["Mu1_eta","Mu1_pt","Mu1_charge","MT","Mu1_relIso", "lumiweight"], types = ['float']*6,node='defs',histoname=ROOT.string('ewk'),bins = [etaBins,ptBins,chargeBins,mTBins,isoBins], variations = [])
+        p.Histogram(columns = ["Mu1_eta","Mu1_pt","Mu1_charge","MT","Mu1_relIso", "lumiweight","puWeight"], types = ['float']*7,node='defs',histoname=ROOT.string('ewk'),bins = [etaBins,ptBins,chargeBins,mTBins,isoBins], variations = [])
         
     else:
         if 'DY' in sample: #reweight full Z kinematics
             p.branch(nodeToStart = 'defs', nodeToEnd = 'defs', modules = [ROOT.customizeforUL(True, True), ROOT.recoDefinitions(True, False),ROOT.lumiWeight(xsec=xsec, sumwclipped=sumwClipped, targetLumi = 19.3), ROOT.SF_ul(fileSFul)])
-            p.Histogram(columns = ["Mu1_eta","Mu1_pt","Mu1_charge","MT","Mu1_relIso", "lumiweight"], types = ['float']*6,node='defs',histoname=ROOT.string('ewk'),bins = [etaBins,ptBins,chargeBins,mTBins,isoBins], variations = [])
+            p.Histogram(columns = ["Mu1_eta","Mu1_pt","Mu1_charge","MT","Mu1_relIso", "lumiweight","puWeight"], types = ['float']*7,node='defs',histoname=ROOT.string('ewk'),bins = [etaBins,ptBins,chargeBins,mTBins,isoBins], variations = [])
 
         else:
             p.branch(nodeToStart = 'defs', nodeToEnd = 'defs', modules = [ROOT.customizeforUL(True, True), ROOT.recoDefinitions(True, False),ROOT.lumiWeight(xsec=xsec, sumwclipped=sumwClipped, targetLumi = 19.3), ROOT.SF_ul(fileSFul)])
-            p.Histogram(columns = ["Mu1_eta","Mu1_pt","Mu1_charge","MT","Mu1_relIso", "lumiweight"], types = ['float']*6,node='defs',histoname=ROOT.string('ewk'),bins = [etaBins,ptBins,chargeBins,mTBins,isoBins], variations = [])
+            p.Histogram(columns = ["Mu1_eta","Mu1_pt","Mu1_charge","MT","Mu1_relIso", "lumiweight","puWeight"], types = ['float']*7,node='defs',histoname=ROOT.string('ewk'),bins = [etaBins,ptBins,chargeBins,mTBins,isoBins], variations = [])
                      
     return p
 
