@@ -10,7 +10,7 @@ plt.style.use([hep.style.ROOT])
 #hep.cms.label(loc=0, year=2016, lumi=35.9, data=True)
 #hep.cms.text('Simulation')
 
-folder = "../templateMaker/outputDY_31_01_2021_17_59_44/"
+folder = sys.argv[1] #"../templateMaker/outputDY_31_01_2021_17_59_44/"
 
 histonames = ['DY', 'DY_sumw2']
 shape = ((len(zmassBins)-1)*(len(etaBins)-1)*(len(ptBins)-1)*(len(qtBins)-1)*(len(etaBins)-1))

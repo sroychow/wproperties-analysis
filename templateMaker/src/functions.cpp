@@ -5,6 +5,12 @@
 float getFromIdx(ROOT::VecOps::RVec<float> vec, int index){
 	return vec[index];
 }
+
+int getIntFromIdx(ROOT::VecOps::RVec<int> vec, int index){
+	return vec[index];
+}
+
+
 float getCharge(ROOT::VecOps::RVec<int> vec, int index)
 {
   return float(vec[index]);
