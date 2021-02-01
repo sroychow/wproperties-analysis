@@ -10,7 +10,7 @@ plt.style.use([hep.style.ROOT])
 #hep.cms.label(loc=0, year=2016, lumi=35.9, data=True)
 #hep.cms.text('Simulation')
 
-folder = "../templateMaker/output_29_01_2021_19_53_24/"
+folder = "../templateMaker/output_31_01_2021_10_08_04/"
 
 # ewkFiles = ["DYJetsToLL_M10to50.hdf5", "ST_t-channel_antitop_4f_inclusiveDecays.hdf5","ST_tW_top_5f_inclusiveDecays.hdf5","TTJets_SingleLeptFromTbar.hdf5","WZ.hdf5",\
 # "DYJetsToLL_M50.hdf5","ST_t-channel_top_4f_inclusiveDecays_13TeV.hdf5","TTJets_DiLept.hdf5","WJetsToLNu.hdf5","ZZ.hdf5",\
@@ -191,8 +191,7 @@ for i in range(2):
     ptDiboson = np.sum(hDiboson,axis=0)[:,-1,-1,i]
     ptfake = np.sum(hfakesHighMt,axis=0)[:,-1,i]
     hep.histplot([ptdata],bins = ptBins, histtype = 'errorbar', color = "k", stack = False, ax=ax1,label = ["data"])
-    #hep.histplot([ptDiboson,ptTop,ptDY,ptfake,ptW],bins = ptBins, histtype = 'fill',linestyle = 'solid', color =["grey","magenta","orange","blue","red"], label=["Diboson","Top","DY","fake","W"], stack = True, ax=ax1)
-    hep.histplot([ptW],bins = ptBins, histtype = 'fill',linestyle = 'solid', color =["red"], label=["W"], stack = True, ax=ax1)
+    hep.histplot([ptDiboson,ptTop,ptDY,ptfake,ptW],bins = ptBins, histtype = 'fill',linestyle = 'solid', color =["grey","magenta","orange","blue","red"], label=["Diboson","Top","DY","fake","W"], stack = True, ax=ax1)
     ax2.set_ylim([0.7, 1.3])
     hep.histplot([ptdata/(ptfake+ptewk)],bins = ptBins, histtype = 'errorbar', color = "k", stack = False, ax=ax2)
     ax1.legend(loc='upper right', frameon=True)

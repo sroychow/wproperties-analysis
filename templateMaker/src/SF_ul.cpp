@@ -3,6 +3,7 @@
 RNode SF_ul::run(RNode d){
 
     auto defineSFZ = [this](float pt1, float eta1, float charge1, float iso1, float pt2, float eta2, float charge2, float iso2) {
+
         int binTracking1 = _tracking->FindBin(eta1, pt1);
         int binTrigger1 = _trigger_plus->FindBin(eta1, pt1);
         int binIso1 = _iso->FindBin(eta1, pt1);
@@ -13,15 +14,8 @@ RNode SF_ul::run(RNode d){
         int binIso2 = _iso->FindBin(eta2, pt2);
         int binIdip2 = _idip->FindBin(eta2, pt2);
 
-        float SFiso1 = -9999999.;
-        if (iso1 > 0.15)
-            SFiso1 = 1. - _iso->GetBinContent(binIso1);
-        else
-            SFiso1 = _iso->GetBinContent(binIso1);
-        float SFiso2 = -9999999.;
-        if (iso2 > 0.15)
-            SFiso2 = 1. - _iso->GetBinContent(binIso2);
-        else SFiso2 = _iso->GetBinContent(binIso2);
+        float SFiso1 = _iso->GetBinContent(binIso1);
+        float SFiso2 = _iso->GetBinContent(binIso2);
 
         float SFtrigger1 = -9999999.;
         if (charge1 > 0.)
@@ -51,7 +45,7 @@ RNode SF_ul::run(RNode d){
         int binIdip1 = _idip->FindBin(eta1, pt1);
 
         float SFiso1 = -9999999.;
-        if (iso1 > 0.15)
+        if (iso1 >= 0.15)
             SFiso1 = _antiiso->GetBinContent(binAntiiso1);
         else
             SFiso1 = _iso->GetBinContent(binIso1);
