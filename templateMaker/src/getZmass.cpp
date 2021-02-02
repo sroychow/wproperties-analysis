@@ -44,6 +44,7 @@ RNode getZmass::run(RNode d) {
       .Define("Mu2_pt", getFromIdx, {"Muon_corrected_pt", "Idx_mu2"})
       .Define("Mu2_sip3d", getFromIdx, {"Muon_sip3d", "Idx_mu2"})
       .Define("Mu2_dxy", getFromIdx, {"Muon_dxy", "Idx_mu2"})
+      .Define("Mu2_hasTriggerMatch", getIntFromIdx, {"Muon_hasTriggerMatch", "Idx_mu2"})
       .Define("dimuonMass", getdimuonMass, {"Muon_pt", "Muon_eta", "Muon_phi", "Muon_mass", "Idx_mu1", "Idx_mu2"});
   
   if(_isData){
