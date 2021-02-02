@@ -16,7 +16,7 @@ RNode SF_ul::run(RNode d){
       int binIdip2 = _idip->FindBin(eta2, pt2);
       //this is always applied
       float combinedSF=_tracking->GetBinContent(binTracking1) * _idip->GetBinContent(binIdip1);
-      combinedSF=_tracking->GetBinContent(binTracking2)*_idip->GetBinContent(binIdip2);
+      combinedSF *= _tracking->GetBinContent(binTracking2)*_idip->GetBinContent(binIdip2);
 
       if(_prefCharge == charge1 && istrigMatched1 > 0) {
 	int binTrigger1 = _trigger_plus->FindBin(eta1, pt1);
