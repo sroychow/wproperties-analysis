@@ -21,34 +21,24 @@ ROOT.gROOT.ProcessLine("gErrorIgnoreLevel = 2001;")
 
 def RDFprocess(fvec, outputDir, sample, xsec, systType, sumwClipped, pretendJob):
     chargeCut="(Muon_charge[Idx_mu1] > 0 && Muon_hasTriggerMatch[Idx_mu1]) || (Muon_charge[Idx_mu2] > 0 && Muon_hasTriggerMatch[Idx_mu2])"
-    isoCut = "(Muon_charge[Idx_mu1] > 0 && Muon_pfRelIso04_all[Idx_mu1] < 0.15) || (Muon_charge[Idx_mu2] > 0 && Muon_pfRelIso04_all[Idx_mu2] < 0.15)"
+    isoCut = "Muon_pfRelIso04_all[Idx_mu1] < 0.15 && Muon_pfRelIso04_all[Idx_mu2] < 0.15"
     print("processing ", sample)
     p = RDFtree(outputDir = outputDir, inputFile = fvec, outputFile="{}.root".format(sample), pretend=pretendJob)
-
-    p.EventFilter(nodeToStart='input', nodeToEnd='defs', evfilter="event%2!=0", filtername="{:20s}".format("Odd event"))
-
-    p.EventFilter(nodeToStart='defs', nodeToEnd='defs', evfilter="nVetoElectrons== 0 && Idx_mu1>-1 && Idx_mu2>-1", filtername="{:20s}".format("twomuon"))
-
+    # p.EventFilter(nodeToStart='input', nodeToEnd='defs', evfilter="event%2!=0", filtername="{:20s}".format("Odd event"))
+    p.EventFilter(nodeToStart='input', nodeToEnd='defs', evfilter="nVetoElectrons== 0 && Idx_mu1>-1 && Idx_mu2>-1", filtername="{:20s}".format("twomuon"))
     p.EventFilter(nodeToStart='defs', nodeToEnd='defs', evfilter="HLT_SingleMu24 > 0 ", filtername="{:20s}".format("Pass HLT"))
-
     p.EventFilter(nodeToStart='defs', nodeToEnd='defs', evfilter=chargeCut, filtername="{:20s}".format("Trig object matching for preselected leg"))
-
     p.EventFilter(nodeToStart='defs', nodeToEnd='defs', evfilter="Vtype_subcat == 0", filtername="{:20s}".format("Opposite Charge and loose isolation"))
-
-    p.EventFilter(nodeToStart='defs', nodeToEnd='defs', evfilter="abs(Muon_eta[Idx_mu1]) < 2.4 && abs(Muon_eta[Idx_mu2]) < 2.4 && (26. < Muon_pt[Idx_mu1] && Muon_pt[Idx_mu1] < 55.) && (26. < Muon_pt[Idx_mu2] && Muon_pt[Idx_mu2] < 55.)", filtername="{:20s}".format("acceptance"))
-
+    p.EventFilter(nodeToStart='defs', nodeToEnd='defs', evfilter="abs(Muon_eta[Idx_mu1]) < 2.4 && abs(Muon_eta[Idx_mu2]) < 2.4 && (Muon_pt[Idx_mu1] > 25.  && Muon_pt[Idx_mu1] < 55.) && (Muon_pt[Idx_mu2]>25. && Muon_pt[Idx_mu2] < 55.)", filtername="{:20s}".format("acceptance"))
     p.EventFilter(nodeToStart='defs', nodeToEnd='defs', evfilter="{}".format(isoCut), filtername="{:20s}".format("pfRelIso04_mainLeg"))
-
     p.EventFilter(nodeToStart='defs', nodeToEnd='defs', evfilter="Muon_mediumId[Idx_mu1] == 1 && Muon_mediumId[Idx_mu2] == 1", filtername="{:20s}".format("MuonID"))
-
     p.EventFilter(nodeToStart='defs', nodeToEnd='defs', evfilter="abs(Muon_dxy[Idx_mu1]) < 0.05 && abs(Muon_dxy[Idx_mu2]) < 0.05", filtername="{:20s}".format("dxy"))    
-
-    p.EventFilter(nodeToStart='defs', nodeToEnd='defs', evfilter="abs(Muon_dz[Idx_mu1]) < 0.05 && abs(Muon_dz[Idx_mu2]) < 0.05", filtername="{:20s}".format("dz"))    
+    p.EventFilter(nodeToStart='defs', nodeToEnd='defs', evfilter="abs(Muon_dz[Idx_mu1]) < 0.2 && abs(Muon_dz[Idx_mu2]) < 0.2", filtername="{:20s}".format("dz"))    
 
     #note for customizeforUL(isMC=true, isWorZ=false)
     if systType == 0: #this is data
         p.branch(nodeToStart='defs', nodeToEnd='defs', modules=[ROOT.customizeforUL(False, False), ROOT.recoDefinitions(False, False)])
-        p.branch(nodeToStart='defs', nodeToEnd='defs', modules=[ROOT.getZmass(isData=True)])
+        p.branch(nodeToStart='defs', nodeToEnd='defs', modules=[ROOT.getZmass()])
         #p.displayColumn(node="defs", columname="dimuonMass")
 
         p.EventFilter(nodeToStart='defs', nodeToEnd='defs', evfilter="60. < dimuonMass && dimuonMass < 120.", filtername="{:20s}".format("mZ range"))
@@ -62,7 +52,7 @@ def RDFprocess(fvec, outputDir, sample, xsec, systType, sumwClipped, pretendJob)
 
         p.EventFilter(nodeToStart='defs', nodeToEnd='defs', evfilter="60. < dimuonMass && dimuonMass < 120.", filtername="{:20s}".format("mZ range"))
 
-        p.Histogram(columns = ["dimuonMass", "Mu1_eta", "Mu1_pt", "Vpt_preFSR", "Vrap_preFSR", "lumiweight", "puWeight", "SF", "PrefireWeight"], types = ['float']*9,node='defs',histoname=ROOT.string('DY'),bins = [zmassBins,etaBins,ptBins,qtBins, etaBins], variations = [])
+        p.Histogram(columns = ["dimuonMass", "Mu1_eta", "Mu1_pt", "dimuonPt", "dimuonY", "lumiweight", "puWeight", "PrefireWeight", "SF"], types = ['float']*9,node='defs',histoname=ROOT.string('DY'),bins = [zmassBins,etaBins,ptBins,qtBins, etaBins], variations = [])
         return p
 
 def main():

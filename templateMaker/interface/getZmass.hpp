@@ -9,9 +9,7 @@ class getZmass : public Module {
 
     bool _isData;
     public:
-    getZmass(bool isData=false) {
-        _isData = isData;
-    };
+    getZmass() {};
     ~getZmass() {};
     RNode run(RNode) override;
 
