@@ -29,7 +29,7 @@ public:
         _trigger_minus = (TH2D *)_SF->Get("SF2D_trigger_BtoF_minus");
         _iso = (TH2D *)_SF->Get("SF2D_iso_BtoF_both");
         _antiiso = (TH2D *)_SF->Get("SF2D_antiiso_BtoF_both");
-	prefCharge = _prefCharge;
+	_prefCharge = prefCharge;
     };
     ~SF_ul(){};
 

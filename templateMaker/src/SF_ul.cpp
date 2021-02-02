@@ -67,10 +67,9 @@ RNode SF_ul::run(RNode d){
     };
 
     if(_isZ){
-        auto d1 = d.Define("SF", defineSFZ, {"Mu1_pt", "Mu1_eta", "Mu1_charge", "Mu1_relIso", "Mu1_hasTriggerMatch", "Mu2_pt", "Mu2_eta", "Mu2_charge", "Mu2_relIso", "Mu2_hasTriggerMatch"});
-        return d1;
-    }
-    else{
+      auto d1 = d.Define("SF", defineSFZ, {"Mu1_pt", "Mu1_eta", "Mu1_charge", "Mu1_relIso", "Mu1_hasTriggerMatch", "Mu2_pt", "Mu2_eta", "Mu2_charge", "Mu2_relIso", "Mu2_hasTriggerMatch"});
+      return d1;
+    } else{
         auto d1 = d.Define("SF", defineSF, {"Mu1_pt", "Mu1_eta", "Mu1_charge", "Mu1_relIso"});
         return d1;
     }
