@@ -10,7 +10,6 @@ RNode SF_ul::run(RNode d)
     Whereas, for the other muon, only the tracking and ID SF is appled.
     **The default charge is +ve;
       */
-
         int binTracking1 = _tracking->FindBin(eta1, pt1);
         int binIdip1 = _idip->FindBin(eta1, pt1);
         int binTracking2 = _tracking->FindBin(eta2, pt2);
@@ -18,7 +17,6 @@ RNode SF_ul::run(RNode d)
         //this is always applied
         float combinedSF = _tracking->GetBinContent(binTracking1) * _idip->GetBinContent(binIdip1);
         combinedSF *= _tracking->GetBinContent(binTracking2) * _idip->GetBinContent(binIdip2);
-
         if (_prefCharge == charge1 && istrigMatched1 > 0)
         {
             int binTrigger1 = _trigger_plus->FindBin(eta1, pt1);
@@ -30,7 +28,7 @@ RNode SF_ul::run(RNode d)
             // apply iso SF to firing muon
             combinedSF *= _iso->GetBinContent(binIso1);
             // apply iso SF to non-firing muon
-            int binIso2 = _iso->FindBin(eta2, pt2);
+            int binIso2 = _iso_notrig->FindBin(eta2, pt2);
             if(iso2<0.15)
                 combinedSF *= _iso_notrig->GetBinContent(binIso2);
         }
@@ -45,11 +43,12 @@ RNode SF_ul::run(RNode d)
             // apply iso SF to firing muon
             combinedSF *= _iso->GetBinContent(binIso2);
             // apply iso SF to non-firing muon
-            int binIso1 = _iso->FindBin(eta1, pt1);
+            int binIso1 = _iso_notrig->FindBin(eta1, pt1);
             if (iso1 < 0.15)
                 combinedSF *= _iso_notrig->GetBinContent(binIso1);
         }
         // std::cout << "SF" << combinedSF << std::endl;
+
         return combinedSF;
     };
 
