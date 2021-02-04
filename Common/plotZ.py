@@ -10,7 +10,7 @@ plt.style.use([hep.style.ROOT])
 #hep.cms.label(loc=0, year=2016, lumi=35.9, data=True)
 #hep.cms.text('Simulation')
 
-folder = sys.argv[1] #"../templateMaker/outputDY_31_01_2021_17_59_44/"
+folder = sys.argv[1]
 
 histonames = ['DY', 'DY_sumw2']
 shape = ((len(zmassBins)-1)*(len(etaBins)-1)*(len(ptBins)-1)*(len(qtBins)-1)*(len(etaBins)-1))
@@ -60,7 +60,7 @@ massDiboson = np.sum(hDiboson,axis=(1,2,3,4))[:]
 massewk = np.sum(hewk,axis=(1,2,3,4))[:]
 hep.histplot([massdata],bins = zmassBins, histtype = 'errorbar', color = "k", stack = False, ax=ax1, label = ["data"])
 hep.histplot([massDiboson,massTop,massDY],bins = zmassBins, histtype = 'fill',linestyle = 'solid', color =["magenta","green","orange"], label=["Diboson","Top","DY"], stack = True, ax=ax1)
-ax2.set_ylim([0.7, 1.3])
+ax2.set_ylim([0.9, 1.1])
 hep.histplot([massdata/massewk], bins = zmassBins, histtype = 'errorbar', color = "k", stack = False, ax=ax2)
 ax1.legend(loc='upper right', frameon=True)
 plt.savefig('mass_iso1_1_iso2_1.png')
@@ -79,7 +79,7 @@ etaDiboson = np.sum(hDiboson,axis=(0,2,3,4))[:]
 etaewk = np.sum(hewk,axis=(0,2,3,4))[:]
 hep.histplot([etadata],bins = etaBins, histtype = 'errorbar', color = "k", stack = False, ax=ax1, label = ["data"])
 hep.histplot([etaDiboson,etaTop,etaDY],bins = etaBins, histtype = 'fill',linestyle = 'solid', color =["magenta","green","orange"], label=["Diboson","Top","DY"], stack = True, ax=ax1)
-ax2.set_ylim([0.7, 1.3])
+ax2.set_ylim([0.9, 1.1])
 hep.histplot([etadata/etaewk], bins = etaBins, histtype = 'errorbar', color = "k", stack = False, ax=ax2)
 ax1.legend(loc='upper right', frameon=True)
 plt.savefig('eta_iso1_1_iso2_1.png')
@@ -98,7 +98,7 @@ ptDiboson = np.sum(hDiboson,axis=(0,1,3,4))[:]
 ptewk = np.sum(hewk,axis=(0,1,3,4))[:]
 hep.histplot([ptdata],bins = ptBins, histtype = 'errorbar', color = "k", stack = False, ax=ax1, label = ["data"])
 hep.histplot([ptDiboson,ptTop,ptDY],bins = ptBins, histtype = 'fill',linestyle = 'solid', color =["magenta","green","orange"], label=["Diboson","Top","DY"], stack = True, ax=ax1)
-ax2.set_ylim([0.7, 1.3])
+ax2.set_ylim([0.9, 1.1])
 hep.histplot([ptdata/ptDY], bins = ptBins, histtype = 'errorbar', color = "k", stack = False, ax=ax2)
 ax1.legend(loc='upper right', frameon=True)
 plt.savefig('pt_iso1_1_iso2_1.png')
@@ -117,7 +117,7 @@ qtDiboson = np.sum(hDiboson,axis=(0,1,2,4))[:]
 qtewk = np.sum(hewk,axis=(0,1,2,4))[:]
 hep.histplot([qtdata],bins = qtBins, histtype = 'errorbar', color = "k", stack = False, ax=ax1, label = ["data"])
 hep.histplot([qtDiboson,qtTop,qtDY],bins = qtBins, histtype = 'fill',linestyle = 'solid', color =["magenta","green","orange"], label=["Diboson","Top","DY"], stack = True, ax=ax1)
-ax2.set_ylim([0.7, 1.3])
+ax2.set_ylim([0.9, 1.1])
 hep.histplot([qtdata/qtDY], bins = qtBins, histtype = 'errorbar', color = "k", stack = False, ax=ax2)
 ax1.legend(loc='upper right', frameon=True)
 plt.savefig('qt_iso1_1_iso2_1.png')
@@ -136,7 +136,7 @@ yDiboson = np.sum(hDiboson,axis=(0,1,2,3))[:]
 yewk = np.sum(hewk,axis=(0,1,2,3))[:]
 hep.histplot([ydata],bins = etaBins, histtype = 'errorbar', color = "k", stack = False, ax=ax1, label = ["data"])
 hep.histplot([yDiboson,yTop,yDY],bins = etaBins, histtype = 'fill',linestyle = 'solid', color =["magenta","green","orange"], label=["Diboson","Top","DY"], stack = True, ax=ax1)
-ax2.set_ylim([0.7, 1.3])
+ax2.set_ylim([0.9, 1.1])
 hep.histplot([ydata/yDY], bins = etaBins, histtype = 'errorbar', color = "k", stack = False, ax=ax2)
 ax1.legend(loc='upper right', frameon=True)
 plt.savefig('y_iso1_1_iso2_1.png')

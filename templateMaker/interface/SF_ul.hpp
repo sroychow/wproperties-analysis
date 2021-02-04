@@ -13,6 +13,7 @@ private:
     TH2D *_trigger_plus;
     TH2D *_trigger_minus;
     TH2D *_iso;
+    TH2D *_iso_notrig;
     TH2D *_antiiso;
     bool _isZ;
     //this is only relevant for Z studies
@@ -28,6 +29,7 @@ public:
         _trigger_plus = (TH2D *)_SF->Get("SF2D_trigger_BtoF_plus");
         _trigger_minus = (TH2D *)_SF->Get("SF2D_trigger_BtoF_minus");
         _iso = (TH2D *)_SF->Get("SF2D_iso_BtoF_both");
+        _iso_notrig = (TH2D *)_SF->Get("SF2D_isonotrig_BtoF_both");
         _antiiso = (TH2D *)_SF->Get("SF2D_antiiso_BtoF_both");
 	_prefCharge = prefCharge;
     };

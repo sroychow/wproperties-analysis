@@ -5,12 +5,12 @@ import h5py
 import numpy as np
 import matplotlib.pyplot as plt
 import mplhep as hep
-from binning import ptBins, etaBins, mTBins, isoBins, chargeBins
+from binning import ptBins, etaBins, mTBins, isoBins, chargeBins, metBins
 plt.style.use([hep.style.ROOT])
 #hep.cms.label(loc=0, year=2016, lumi=35.9, data=True)
 #hep.cms.text('Simulation')
 
-folder = "../templateMaker/output_31_01_2021_10_08_04/"
+folder = "../templateMaker/output_02_02_2021_19_10_46/"
 
 # ewkFiles = ["DYJetsToLL_M10to50.hdf5", "ST_t-channel_antitop_4f_inclusiveDecays.hdf5","ST_tW_top_5f_inclusiveDecays.hdf5","TTJets_SingleLeptFromTbar.hdf5","WZ.hdf5",\
 # "DYJetsToLL_M50.hdf5","ST_t-channel_top_4f_inclusiveDecays_13TeV.hdf5","TTJets_DiLept.hdf5","WJetsToLNu.hdf5","ZZ.hdf5",\
@@ -237,3 +237,60 @@ for i in range(2):
     ax1.legend(loc='upper right', frameon=True)
     plt.savefig('pt_iso{}_lowMt.png'.format(i))
     plt.cla()
+
+    fig, (ax1, ax2) = plt.subplots(nrows=2,gridspec_kw={'height_ratios': [3, 1]})
+    ax1.set_title("mt_iso{}".format(i), fontsize=18)
+    ax1.set_ylabel('number of events')
+    ax2.set_ylabel('data/prediction')
+    ax2.set_xlabel('$m_T$')
+    mtdata = np.sum(hdata,axis=(0,1))[-1,:,i]
+    mtewk = np.sum(hewk,axis=(0,1))[-1,:,i]
+    mtW = np.sum(hW,axis=(0,1))[-1,:,i]
+    mtDY = np.sum(hDY,axis=(0,1))[-1,:,i]
+    mtTop = np.sum(hTop,axis=(0,1))[-1,:,i]
+    mtDiboson = np.sum(hDiboson,axis=(0,1))[-1,:,i]
+    hep.histplot([mtdata],bins = mTBins, histtype = 'errorbar', color = "k", stack = False, ax=ax1,label = ["data"])
+    hep.histplot([mtDiboson,mtTop,mtDY,mtW],bins = mTBins, histtype = 'fill',linestyle = 'solid', color =["grey","magenta","orange","red"], label=["Diboson","Top","DY","W"], stack = True, ax=ax1)
+    ax2.set_ylim([0.7, 1.3])
+    hep.histplot([mtdata/(mtewk)],bins = mTBins, histtype = 'errorbar', color = "k", stack = False, ax=ax2)
+    ax1.legend(loc='upper right', frameon=True)
+    plt.savefig('mt_iso{}.png'.format(i))
+    plt.cla()
+
+    # fig, (ax1, ax2) = plt.subplots(nrows=2,gridspec_kw={'height_ratios': [3, 1]})
+    # ax1.set_title("met_iso{}".format(i), fontsize=18)
+    # ax1.set_ylabel('number of events')
+    # ax2.set_ylabel('data/prediction')
+    # ax2.set_xlabel('$m_T$')
+    # mtdata = np.sum(hdata,axis=(0,1))[-1,:,i]
+    # mtewk = np.sum(hewk,axis=(0,1))[-1,:,i]
+    # mtW = np.sum(hW,axis=(0,1))[-1,:,i]
+    # mtDY = np.sum(hDY,axis=(0,1))[-1,:,i]
+    # mtTop = np.sum(hTop,axis=(0,1))[-1,:,i]
+    # mtDiboson = np.sum(hDiboson,axis=(0,1))[-1,:,i]
+    # hep.histplot([mtdata],bins = metBins, histtype = 'errorbar', color = "k", stack = False, ax=ax1,label = ["data"])
+    # hep.histplot([mtDiboson,mtTop,mtDY,mtW],bins = metBins, histtype = 'fill',linestyle = 'solid', color =["grey","magenta","orange","red"], label=["Diboson","Top","DY","W"], stack = True, ax=ax1)
+    # ax2.set_ylim([0.7, 1.3])
+    # hep.histplot([mtdata/(mtewk)],bins = metBins, histtype = 'errorbar', color = "k", stack = False, ax=ax2)
+    # ax1.legend(loc='upper right', frameon=True)
+    # plt.savefig('met_iso{}.png'.format(i))
+    # plt.cla()
+
+fig, (ax1, ax2) = plt.subplots(nrows=2,gridspec_kw={'height_ratios': [3, 1]})
+ax1.set_title("iso", fontsize=18)
+ax1.set_ylabel('number of events')
+ax2.set_ylabel('data/prediction')
+ax2.set_xlabel('iso')
+mtdata = np.sum(hdata,axis=(0,1,3))[-1,:]
+mtewk = np.sum(hewk,axis=(0,1,3))[-1,:]
+mtW = np.sum(hW,axis=(0,1,3))[-1,:]
+mtDY = np.sum(hDY,axis=(0,1,3))[-1,:]
+mtTop = np.sum(hTop,axis=(0,1,3))[-1,:]
+mtDiboson = np.sum(hDiboson,axis=(0,1,3))[-1,:]
+hep.histplot([mtdata],bins = isoBins, histtype = 'errorbar', color = "k", stack = False, ax=ax1,label = ["data"])
+hep.histplot([mtDiboson,mtTop,mtDY,mtW],bins = isoBins, histtype = 'fill',linestyle = 'solid', color =["grey","magenta","orange","red"], label=["Diboson","Top","DY","W"], stack = True, ax=ax1)
+ax2.set_ylim([0.7, 1.3])
+hep.histplot([mtdata/(mtewk)],bins = isoBins, histtype = 'errorbar', color = "k", stack = False, ax=ax2)
+ax1.legend(loc='upper right', frameon=True)
+plt.savefig('iso.png')
+plt.cla()
