@@ -43,7 +43,7 @@ def RDFprocess(fvec, outputDir, sample, xsec, systType, sumwClipped, pretendJob)
 
         p.EventFilter(nodeToStart='defs', nodeToEnd='defs', evfilter="60. < dimuonMass && dimuonMass < 120.", filtername="{:20s}".format("mZ range"))
 
-        p.Histogram(columns = ["dimuonMass", "Mu1_eta", "Mu1_pt", "dimuonPt", "dimuonY"], types = ['float']*5,node='defs',histoname=ROOT.string('data_obs'),bins = [zmassBins,etaBins, ptBins,qtBins, etaBins], variations = [])
+        p.Histogram(columns = ["dimuonMass", "Mupos_eta", "Mupos_pt", "dimuonPt", "dimuonY"], types = ['float']*5,node='defs',histoname=ROOT.string('data_obs'),bins = [zmassBins,etaBins, ptBins,qtBins, etaBins], variations = [])
         return p
     else:
         p.branch(nodeToStart = 'defs', nodeToEnd = 'defs', modules = [ROOT.lumiWeight(xsec=xsec, sumwclipped=sumwClipped, targetLumi = 19.3), ROOT.customizeforUL(True, False), ROOT.recoDefinitions(True, False)])
@@ -52,7 +52,7 @@ def RDFprocess(fvec, outputDir, sample, xsec, systType, sumwClipped, pretendJob)
 
         p.EventFilter(nodeToStart='defs', nodeToEnd='defs', evfilter="60. < dimuonMass && dimuonMass < 120.", filtername="{:20s}".format("mZ range"))
 
-        p.Histogram(columns = ["dimuonMass", "Mu1_eta", "Mu1_pt", "dimuonPt", "dimuonY", "lumiweight", "puWeight", "PrefireWeight", "SF"], types = ['float']*9,node='defs',histoname=ROOT.string('DY'),bins = [zmassBins,etaBins,ptBins,qtBins, etaBins], variations = [])
+        p.Histogram(columns = ["dimuonMass", "Mupos_eta", "Mupos_pt", "dimuonPt", "dimuonY", "lumiweight", "puWeight", "PrefireWeight", "SF"], types = ['float']*9,node='defs',histoname=ROOT.string('DY'),bins = [zmassBins,etaBins,ptBins,qtBins, etaBins], variations = [])
         return p
 
 def main():
