@@ -37,6 +37,21 @@ RNode getZmass::run(RNode d)
     return y;
   };
 
+  // careful: this requires opposite charge cut is applied!
+  auto getByPosCharge = [](float var1, float var2, float charge1) {
+    if (charge1 > 0)
+      return var1;
+    else
+      return var2;
+  };
+
+  auto getByNegCharge = [](float var1, float var2, float charge1) {
+    if (charge1 < 0)
+      return var1;
+    else
+      return var2;
+  };
+
   auto d1 = d.Define("Mu2_eta", getFromIdx, {"Muon_eta", "Idx_mu2"})
                 .Define("Mu2_phi", getFromIdx, {"Muon_phi", "Idx_mu2"})
                 .Define("Mu2_charge", getCharge, {"Muon_charge", "Idx_mu2"})
@@ -48,7 +63,10 @@ RNode getZmass::run(RNode d)
                 .Define("Mu2_hasTriggerMatch", getIntFromIdx, {"Muon_hasTriggerMatch", "Idx_mu2"})
                 .Define("dimuonMass", getdimuonMass, {"Muon_pt", "Muon_eta", "Muon_phi", "Muon_mass", "Idx_mu1", "Idx_mu2"})
                 .Define("dimuonPt", getdimuonPt, {"Muon_pt", "Muon_eta", "Muon_phi", "Muon_mass", "Idx_mu1", "Idx_mu2"})
-                .Define("dimuonY", getdimuonRapidity, {"Muon_pt", "Muon_eta", "Muon_phi", "Muon_mass", "Idx_mu1", "Idx_mu2"});
-
+                .Define("dimuonY", getdimuonRapidity, {"Muon_pt", "Muon_eta", "Muon_phi", "Muon_mass", "Idx_mu1", "Idx_mu2"})
+                .Define("Mupos_pt", getByPosCharge, {"Mu1_pt", "Mu2_pt", "Mu1_charge"})
+                .Define("Muneg_pt", getByNegCharge, {"Mu1_pt", "Mu2_pt", "Mu1_charge"})
+                .Define("Mupos_eta", getByPosCharge, {"Mu1_eta", "Mu2_eta", "Mu1_charge"})
+                .Define("Muneg_eta", getByNegCharge, {"Mu1_eta", "Mu2_eta", "Mu1_charge"});
   return d1;
 }
