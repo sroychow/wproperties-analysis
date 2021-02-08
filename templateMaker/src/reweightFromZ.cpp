@@ -23,17 +23,19 @@ RNode reweightFromZ::run(RNode d)
             return _hY->GetBinContent(bin);
     };
 
-    if(!_isUL && !_isWJets) {//old mc case
-      auto d1 = d.Define("Wpt_dress", "GenV_dress[0]").Define("Wrap_dress", "GenV_dress[1]")
-	.Define("weightPt", getWeightPt, {"Wpt_dress"}).Define("weightY", getWeightY, {"Wrap_dress"});
-      return d1;
-    } else if(!_isUL && _isWJets) {//WJets sample V2 already has Wpt_dress column
-      //@Note for @SRC: if we use preFSR, this block can go away
-      auto d1 = d.Define("weightPt", getWeightPt, {"Wpt_dress"}).Define("weightY", getWeightY, {"Wrap_dress"});
-      return d1;
-    } 
+    if (!_isUL && !_isWJets)
+    { //old mc case
+        auto d1 = d.Define("Wpt_dress", "GenV_dress[0]").Define("Wrap_dress", "GenV_dress[1]").Define("weightPt", getWeightPt, {"Wpt_dress"}).Define("weightY", getWeightY, {"Wrap_dress"});
+        return d1;
+    }
+    else if (!_isUL && _isWJets)
+    { //WJets sample V2 already has Wpt_dress column
+        //@Note for @SRC: if we use preFSR, this block can go away
+        auto d1 = d.Define("Wpt_dress", "GenV_dress[0]").Define("Wrap_dress", "GenV_dress[1]").Define("weightPt", getWeightPt, {"Wpt_dress"}).Define("weightY", getWeightY, {"Wrap_dress"});
+        return d1;
+    }
     //
     //Note for @SRC:UL case//have to check why dress is not saved.
-    auto d1 = d.Define("weightPt", getWeightPt, {"Wpt_preFSR"}).Define("weightY", getWeightY, {"Wrap_preFSR"});
+    auto d1 = d.Define("weightPt", getWeightPt, {"Vpt_preFSR"}).Define("weightY", getWeightY, {"Vrap_preFSR"});
     return d1;
 }

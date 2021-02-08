@@ -15,8 +15,9 @@ private:
 
     bool _isWJets;
     bool _isUL;
+
 public:
-    reweightFromZ(TFile *Pt, TFile *Y, const bool WJets = false, const bool isUL=false)
+    reweightFromZ(TFile *Pt, TFile *Y, const bool WJets = false, const bool isUL = false)
     {
         _Pt = Pt;
         _Y = Y;
@@ -31,8 +32,8 @@ public:
 
         hYMC->Scale(_hY->Integral() / hYMC->Integral());
         _hY->Divide(hYMC);
-        
-	_isWJets = WJets;
+
+        _isWJets = WJets;
         _isUL = isUL;
     };
     ~reweightFromZ(){};

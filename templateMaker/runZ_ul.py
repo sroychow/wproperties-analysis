@@ -11,7 +11,7 @@ from RDFtree import RDFtree
 from samples_2016_ul import samplespreVFP
 sys.path.append('python/')
 from binning import ptBins, etaBins, mTBins, etaBins, isoBins, chargeBins, zmassBins, qtBins
-from externals import fileSFul
+from externals import fileSFul,filePt, fileY
 sys.path.append('python/')
 from getLumiWeight import getLumiWeight
 from genSumWClipped import sumwClippedDict
@@ -24,34 +24,35 @@ def RDFprocess(fvec, outputDir, sample, xsec, systType, sumwClipped, pretendJob)
     isoCut = "Muon_pfRelIso04_all[Idx_mu1] < 0.15 && Muon_pfRelIso04_all[Idx_mu2] < 0.15"
     print("processing ", sample)
     p = RDFtree(outputDir = outputDir, inputFile = fvec, outputFile="{}.root".format(sample), pretend=pretendJob)
-    # p.EventFilter(nodeToStart='input', nodeToEnd='defs', evfilter="event%2!=0", filtername="{:20s}".format("Odd event"))
     p.EventFilter(nodeToStart='input', nodeToEnd='defs', evfilter="nVetoElectrons== 0 && Idx_mu1>-1 && Idx_mu2>-1", filtername="{:20s}".format("twomuon"))
     p.EventFilter(nodeToStart='defs', nodeToEnd='defs', evfilter="HLT_SingleMu24 > 0 ", filtername="{:20s}".format("Pass HLT"))
     p.EventFilter(nodeToStart='defs', nodeToEnd='defs', evfilter=chargeCut, filtername="{:20s}".format("Trig object matching for preselected leg"))
     p.EventFilter(nodeToStart='defs', nodeToEnd='defs', evfilter="Vtype_subcat == 0", filtername="{:20s}".format("Opposite Charge and loose isolation"))
-    p.EventFilter(nodeToStart='defs', nodeToEnd='defs', evfilter="abs(Muon_eta[Idx_mu1]) < 2.4 && abs(Muon_eta[Idx_mu2]) < 2.4 && (Muon_pt[Idx_mu1] > 25.  && Muon_pt[Idx_mu1] < 55.) && (Muon_pt[Idx_mu2]>25. && Muon_pt[Idx_mu2] < 55.)", filtername="{:20s}".format("acceptance"))
+    p.EventFilter(nodeToStart='defs', nodeToEnd='defs', evfilter="abs(Muon_eta[Idx_mu1]) < 2.4 && abs(Muon_eta[Idx_mu2]) < 2.4 && Muon_pt[Idx_mu1] > 25. && Muon_pt[Idx_mu1]<65.", filtername="{:20s}".format("acceptance"))
     p.EventFilter(nodeToStart='defs', nodeToEnd='defs', evfilter="{}".format(isoCut), filtername="{:20s}".format("pfRelIso04_mainLeg"))
     p.EventFilter(nodeToStart='defs', nodeToEnd='defs', evfilter="Muon_mediumId[Idx_mu1] == 1 && Muon_mediumId[Idx_mu2] == 1", filtername="{:20s}".format("MuonID"))
     p.EventFilter(nodeToStart='defs', nodeToEnd='defs', evfilter="abs(Muon_dxy[Idx_mu1]) < 0.05 && abs(Muon_dxy[Idx_mu2]) < 0.05", filtername="{:20s}".format("dxy"))    
     p.EventFilter(nodeToStart='defs', nodeToEnd='defs', evfilter="abs(Muon_dz[Idx_mu1]) < 0.2 && abs(Muon_dz[Idx_mu2]) < 0.2", filtername="{:20s}".format("dz"))    
-
     #note for customizeforUL(isMC=true, isWorZ=false)
     if systType == 0: #this is data
         p.branch(nodeToStart='defs', nodeToEnd='defs', modules=[ROOT.customizeforUL(False, False), ROOT.recoDefinitions(False, False)])
         p.branch(nodeToStart='defs', nodeToEnd='defs', modules=[ROOT.getZmass()])
         #p.displayColumn(node="defs", columname="dimuonMass")
-
         p.EventFilter(nodeToStart='defs', nodeToEnd='defs', evfilter="60. < dimuonMass && dimuonMass < 120.", filtername="{:20s}".format("mZ range"))
-
         p.Histogram(columns = ["dimuonMass", "Mupos_eta", "Mupos_pt", "dimuonPt", "dimuonY"], types = ['float']*5,node='defs',histoname=ROOT.string('data_obs'),bins = [zmassBins,etaBins, ptBins,qtBins, etaBins], variations = [])
+        return p
+    elif systType == 1:
+        p.branch(nodeToStart = 'defs', nodeToEnd = 'defs', modules = [getLumiWeight(xsec=xsec, inputFile = fvec, genEvsbranch = "genEventSumw", targetLumi = 19.3), ROOT.customizeforUL(True, False), ROOT.recoDefinitions(True, False)])
+        p.branch(nodeToStart='defs', nodeToEnd='defs', modules=[ROOT.getZmass(),ROOT.SF_ul(fileSFul, isZ=True)])
+        #p.displayColumn(node="defs", columname={"dimuonMass", "lumiweight", "puWeight", "SF"})
+        p.EventFilter(nodeToStart='defs', nodeToEnd='defs', evfilter="60. < dimuonMass && dimuonMass < 120.", filtername="{:20s}".format("mZ range"))
+        p.Histogram(columns = ["dimuonMass", "Mupos_eta", "Mupos_pt", "dimuonPt", "dimuonY", "lumiweight", "puWeight", "PrefireWeight", "SF"], types = ['float']*9,node='defs',histoname=ROOT.string('DY'),bins = [zmassBins,etaBins,ptBins,qtBins, etaBins], variations = [])
         return p
     else:
         p.branch(nodeToStart = 'defs', nodeToEnd = 'defs', modules = [ROOT.lumiWeight(xsec=xsec, sumwclipped=sumwClipped, targetLumi = 19.3), ROOT.customizeforUL(True, False), ROOT.recoDefinitions(True, False)])
         p.branch(nodeToStart='defs', nodeToEnd='defs', modules=[ROOT.getZmass(),ROOT.SF_ul(fileSFul, isZ=True)])
         #p.displayColumn(node="defs", columname={"dimuonMass", "lumiweight", "puWeight", "SF"})
-
         p.EventFilter(nodeToStart='defs', nodeToEnd='defs', evfilter="60. < dimuonMass && dimuonMass < 120.", filtername="{:20s}".format("mZ range"))
-
         p.Histogram(columns = ["dimuonMass", "Mupos_eta", "Mupos_pt", "dimuonPt", "dimuonY", "lumiweight", "puWeight", "PrefireWeight", "SF"], types = ['float']*9,node='defs',histoname=ROOT.string('DY'),bins = [zmassBins,etaBins,ptBins,qtBins, etaBins], variations = [])
         return p
 
@@ -82,7 +83,7 @@ def main():
     samples = samplespreVFP
     for sample in samples:
         #print('analysing sample: %s'%sample)
-        if not 'DY' in sample and not 'data' in sample: continue
+        if 'WPlus' in sample or 'WMinus' in sample: continue
         direc = samples[sample]['dir']
         xsec = samples[sample]['xsec']
         fvec=ROOT.vector('string')()
@@ -108,7 +109,7 @@ def main():
     objList = []
     cutFlowreportDict = {}
     for sample in samples:
-        if not 'DY' in sample and not 'data' in sample: continue
+        if 'WPlus' in sample or 'WMinus' in sample: continue
         print(sample)
         RDFtreeDict = RDFtrees[sample].getObjects()
         if args.report: cutFlowreportDict[sample] = RDFtrees[sample].getCutFlowReport()
@@ -121,7 +122,7 @@ def main():
     #now write the histograms:
     
     for sample in samples:
-        if not 'DY' in sample and not 'data' in sample: continue
+        if 'WPlus' in sample or 'WMinus' in sample: continue
         print(sample)
         #RDFtrees[sample].getOutput()
         RDFtrees[sample].gethdf5Output()

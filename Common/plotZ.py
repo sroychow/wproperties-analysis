@@ -31,20 +31,18 @@ def haddFiles(fileList, fname, histonames, shape):
     return
 
 haddFiles(DYFiles,"DY",histonames, shape)
-# haddFiles(TopFiles,"Top",histonames, shape)
-# haddFiles(DibosonFiles,"Diboson",histonames, shape)
+haddFiles(TopFiles,"Top",histonames, shape)
+haddFiles(DibosonFiles,"Diboson",histonames, shape)
 
 fdata = h5py.File(folder+'data.hdf5', mode='r+')
 fDY = h5py.File(folder+'DY.hdf5', mode='r+')
-# fTop = h5py.File(folder+'Top.hdf5', mode='r+')
-# fDiboson = h5py.File(folder+'Diboson.hdf5', mode='r+')
+fTop = h5py.File(folder+'Top.hdf5', mode='r+')
+fDiboson = h5py.File(folder+'Diboson.hdf5', mode='r+')
 
 hdata = np.array(fdata['data_obs'][:].reshape((len(zmassBins)-1,len(etaBins)-1,len(ptBins)-1,len(qtBins)-1,len(etaBins)-1),order='F'),order='C')
 hDY = np.array(fDY['DY'][:].reshape((len(zmassBins)-1,len(etaBins)-1,len(ptBins)-1,len(qtBins)-1,len(etaBins)-1),order='F'),order='C')
-# hTop = np.array(fTop['DY'][:].reshape((len(zmassBins)-1,len(etaBins)-1,len(ptBins)-1,len(qtBins)-1,len(etaBins)-1),order='F'),order='C')
-# hDiboson = np.array(fDiboson['DY'][:].reshape((len(zmassBins)-1,len(etaBins)-1,len(ptBins)-1,len(qtBins)-1,len(etaBins)-1),order='F'),order='C')
-hTop = np.zeros(hdata.shape)
-hDiboson = np.zeros(hdata.shape)
+hTop = np.array(fTop['DY'][:].reshape((len(zmassBins)-1,len(etaBins)-1,len(ptBins)-1,len(qtBins)-1,len(etaBins)-1),order='F'),order='C')
+hDiboson = np.array(fDiboson['DY'][:].reshape((len(zmassBins)-1,len(etaBins)-1,len(ptBins)-1,len(qtBins)-1,len(etaBins)-1),order='F'),order='C')
 
 hewk = hDY+hTop+hDiboson
 #### mass
