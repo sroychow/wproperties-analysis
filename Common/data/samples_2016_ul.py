@@ -26,12 +26,12 @@ samplespreVFP = {
     },
     "WPlusJetsToTauNu": {
         "nsyst": 2, 
-        "xsec": 11572.19, 
+        "xsec": 0.17394*11572.19, 
         "dir": ["WplusJetsToTauNu"]
     },
     "WMinusJetsToTauNu": {
         "nsyst": 2, 
-        "xsec": 8562.66, 
+        "xsec": 0.17394*8562.66, 
         "dir": ["WminusJetsToTauNu"]
     },
     "WZ": {
