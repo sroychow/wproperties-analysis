@@ -12,4 +12,5 @@
   <class name="lumiWeight"/>
   <class name="getZmass"/>
   <class name="SF_ul"/>
+  <class name="getZmassV2"/>
 </lcgdict>
