@@ -22,43 +22,50 @@ ROOT.gROOT.ProcessLine("gErrorIgnoreLevel = 2001;")
 def RDFprocess(fvec, outputDir, sample, xsec, systType, sumwClipped, pretendJob):
     print("processing ", sample)
     p = RDFtree(outputDir = outputDir, inputFile = fvec, outputFile="{}.root".format(sample), pretend=pretendJob)
-    p.branch(nodeToStart='input', nodeToEnd='defs', modules=[ROOT.getZmassV2()])
-    
-    p.EventFilter(nodeToStart='defs', nodeToEnd='defs', evfilter="nVetoElectrons== 0 && nMuon>=2", filtername="{:20s}".format("twomuon"))
+    p.EventFilter(nodeToStart='input', nodeToEnd='defs', evfilter="nVetoElectrons== 0 && nMuon>=2", filtername="{:20s}".format("twomuon"))
     p.EventFilter(nodeToStart='defs', nodeToEnd='defs', evfilter="HLT_SingleMu24 > 0 ", filtername="{:20s}".format("Pass HLT"))
     p.EventFilter(nodeToStart='defs', nodeToEnd='defs', evfilter="(Muon_charge[0] + Muon_charge[1] )== 0", filtername="{:20s}".format("Opposite charge"))
     #For cross-check
+    p.EventFilter(nodeToStart='defs', nodeToEnd='defs', evfilter="abs(Muon_eta[0]) < 2.4 && abs(Muon_eta[1]) < 2.4 && Muon_pt[0] > 26. && Muon_pt[1] > 26. && Muon_pt[0] < 55. && Muon_pt[1] < 55.", filtername="{:20s}".format("mu pt eta acceptance"))
     p.EventFilter(nodeToStart='defs', nodeToEnd='defs', evfilter="Muon_mediumId[0] == 1 && Muon_mediumId[1] == 1", filtername="{:20s}".format("MuonID"))
     p.EventFilter(nodeToStart='defs', nodeToEnd='defs', evfilter="Muon_pfRelIso04_all[0] < 0.15 && Muon_pfRelIso04_all[1] < 0.15", filtername="{:20s}".format("both mu isolated"))
     p.EventFilter(nodeToStart='defs', nodeToEnd='defs', evfilter="abs(Muon_dxy[0]) < 0.05 && abs(Muon_dxy[1]) < 0.05", filtername="{:20s}".format("dxy"))    
     p.EventFilter(nodeToStart='defs', nodeToEnd='defs', evfilter="abs(Muon_dz[0]) < 0.2 && abs(Muon_dz[1]) < 0.2", filtername="{:20s}".format("dz"))
-    
-    p.EventFilter(nodeToStart='defs', nodeToEnd='defs', evfilter="60. < dimuonMass && dimuonMass < 120.", filtername="{:20s}".format("mZ range"))
-    #p.EventFilter(nodeToStart='defs', nodeToEnd='defs', evfilter="Muon_hasTriggerMatch[0]", filtername="{:20s}".format("lead mu trig matched"))
-    
+
     #note for customizeforUL(isMC=true, isWorZ=false)
     if systType == 0: #this is data
+        p.branch(nodeToStart='defs', nodeToEnd='defs', modules=[ROOT.getZmassV2()])
+        p.EventFilter(nodeToStart='defs', nodeToEnd='defs', evfilter="60. < dimuonMass && dimuonMass < 120.", filtername="{:20s}".format("mZ range"))
+
+        tobjMCut="(Muon_charge[0] > 0 && Muon_hasTriggerMatch[0]) || (Muon_charge[1] > 0 && Muon_hasTriggerMatch[1])"
+        p.EventFilter(nodeToStart='defs', nodeToEnd='defs', evfilter=tobjMCut, filtername="{:20s}".format("+ve mu trig matched"))
+    
         p.Histogram(columns = ["dimuonMass", "Mu1_eta", "Mu1_pt", "Mu2_eta", "Mu2_pt"], types = ['float']*5,node='defs',histoname=ROOT.string('data_muons'),bins = [zmassBins, etaBins, ptBins, etaBins, ptBins], variations = [])
-        
-        p.EventFilter(nodeToStart='defs', nodeToEnd='defs', evfilter="abs(Mu1_eta) < 2.4 && abs(Mu2_eta) < 2.4 && Mu1_pt > 25. && Mu2_pt > 25. && Mu1_pt < 55. && Mu2_pt < 55.", filtername="{:20s}".format("mu pt eta acceptance"))
-
+        #p.EventFilter(nodeToStart='defs', nodeToEnd='defs', evfilter="abs(Mu1_eta) < 2.4 && abs(Mu2_eta) < 2.4 && Mu1_pt > 25. && Mu2_pt > 25. && Mu1_pt < 55. && Mu2_pt < 55.", filtername="{:20s}".format("mu pt eta acceptance"))
         p.Histogram(columns = ["dimuonMass", "dimuonPt", "dimuonY", "MET_T1_pt"], types = ['float']*4,node='defs',histoname=ROOT.string('data_dimuon'),bins = [zmassBins,qtBins, etaBins, metBins], variations = [])
-
         return p
     elif systType == 1:
+        p.branch(nodeToStart='defs', nodeToEnd='defs', modules=[ROOT.getZmassV2()])
+        p.EventFilter(nodeToStart='defs', nodeToEnd='defs', evfilter="60. < dimuonMass && dimuonMass < 120.", filtername="{:20s}".format("mZ range"))
+
+        tobjMCut="(Muon_charge[0] > 0 && Muon_hasTriggerMatch[0]) || (Muon_charge[1] > 0 && Muon_hasTriggerMatch[1])"
+        p.EventFilter(nodeToStart='defs', nodeToEnd='defs', evfilter=tobjMCut, filtername="{:20s}".format("+ve mu trig matched"))
+        
         p.branch(nodeToStart = 'defs', nodeToEnd = 'defs', modules = [getLumiWeight(xsec=xsec, inputFile = fvec, genEvsbranch = "genEventSumw", targetLumi = 19.3), ROOT.SF_ul(fileSFul, isZ=True)])
         p.Histogram(columns = ["dimuonMass", "Mu1_eta", "Mu1_pt", "Mu2_eta", "Mu2_pt", "lumiweight", "puWeight", "SF"], types = ['float']*8,node='defs',histoname=ROOT.string('DY_muons'),bins = [zmassBins, etaBins, ptBins, etaBins, ptBins], variations = [])
-
-        p.EventFilter(nodeToStart='defs', nodeToEnd='defs', evfilter="abs(Mu1_eta) < 2.4 && abs(Mu2_eta) < 2.4 && Mu1_pt > 25. && Mu2_pt > 25. && Mu1_pt < 55. && Mu2_pt < 55.", filtername="{:20s}".format("mu pt eta acceptance"))
-        
+        #p.EventFilter(nodeToStart='defs', nodeToEnd='defs', evfilter="abs(Mu1_eta) < 2.4 && abs(Mu2_eta) < 2.4 && Mu1_pt > 25. && Mu2_pt > 25. && Mu1_pt < 55. && Mu2_pt < 55.", filtername="{:20s}".format("mu pt eta acceptance"))
         p.Histogram(columns = ["dimuonMass", "dimuonPt", "dimuonY", "MET_T1_pt", "lumiweight", "puWeight", "SF"], types = ['float']*7,node='defs',histoname=ROOT.string('DY_dimuon'),bins = [zmassBins,qtBins, etaBins,metBins], variations = [])
         return p
     else:
+        p.branch(nodeToStart='defs', nodeToEnd='defs', modules=[ROOT.getZmassV2()])
+        p.EventFilter(nodeToStart='defs', nodeToEnd='defs', evfilter="60. < dimuonMass && dimuonMass < 120.", filtername="{:20s}".format("mZ range"))
+
+        tobjMCut="(Muon_charge[0] > 0 && Muon_hasTriggerMatch[0]) || (Muon_charge[1] > 0 && Muon_hasTriggerMatch[1])"
+        p.EventFilter(nodeToStart='defs', nodeToEnd='defs', evfilter=tobjMCut, filtername="{:20s}".format("+ve mu trig matched"))
+        
         p.branch(nodeToStart = 'defs', nodeToEnd = 'defs', modules = [ROOT.lumiWeight(xsec=xsec, sumwclipped=236188699235.12158, targetLumi = 19.3), ROOT.SF_ul(fileSFul, isZ=True)])
         p.Histogram(columns = ["dimuonMass", "Mu1_eta", "Mu1_pt", "Mu2_eta", "Mu2_pt", "lumiweight", "puWeight", "SF"], types = ['float']*8,node='defs',histoname=ROOT.string('DY_muons'),bins = [zmassBins, etaBins, ptBins, etaBins, ptBins], variations = [])
-
-        p.EventFilter(nodeToStart='defs', nodeToEnd='defs', evfilter="abs(Mu1_eta) < 2.4 && abs(Mu2_eta) < 2.4 && Mu1_pt > 25. && Mu2_pt > 25. && Mu1_pt < 55. && Mu2_pt < 55.", filtername="{:20s}".format("mu pt eta acceptance"))        
-
+        #p.EventFilter(nodeToStart='defs', nodeToEnd='defs', evfilter="abs(Mu1_eta) < 2.4 && abs(Mu2_eta) < 2.4 && Mu1_pt > 25. && Mu2_pt > 25. && Mu1_pt < 55. && Mu2_pt < 55.", filtername="{:20s}".format("mu pt eta acceptance"))        
         p.Histogram(columns = ["dimuonMass", "dimuonPt", "dimuonY", "MET_T1_pt", "lumiweight", "puWeight", "SF"], types = ['float']*7,node='defs',histoname=ROOT.string('DY_dimuon'),bins = [zmassBins,qtBins, etaBins,metBins], variations = [])
         return p
 
