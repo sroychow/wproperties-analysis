@@ -46,9 +46,8 @@ def dySelectionSequence(p, xsec, systType, sumwClipped, nodetoStart):
         p.Histogram(columns = ["dimuonMass", "dimuonPt", "dimuonY", "MET_pt", "lumiweight", "puWeight"], types = ['float']*6,node='defs',histoname=ROOT.string('DY_dimuon'),bins = [zmassBins,qtBins, etaBins,metBins], variations = [])
         return p
     else:
-        p.branch(nodeToStart = 'defs', nodeToEnd = 'defs', modules = [ROOT.lumiWeight(xsec=xsec, sumwclipped=236188699235.12158, targetLumi = 19.3), ROOT.SF_ul(fileSFul, isZ=True)])
+        p.branch(nodeToStart = 'defs', nodeToEnd = 'defs', modules = [ROOT.lumiWeight(xsec=xsec, sumwclipped=sumwClipped, targetLumi = 19.3), ROOT.SF_ul(fileSFul, isZ=True)])
         p.Histogram(columns = ["dimuonMass", "Mu1_eta", "Mu1_pt", "Mu2_eta", "Mu2_pt", "lumiweight", "puWeight"], types = ['float']*7,node='defs',histoname=ROOT.string('DY_muons'),bins = [zmassBins, etaBins, ptBins, etaBins, ptBins], variations = [])
         p.EventFilter(nodeToStart='defs', nodeToEnd='defs', evfilter="abs(Mu1_eta) < 2.4 && abs(Mu2_eta) < 2.4 && Mu1_pt > 25. && Mu2_pt > 25. && Mu1_pt < 55. && Mu2_pt < 55.", filtername="{:20s}".format("mu pt eta acceptance"))
         p.Histogram(columns = ["dimuonMass", "dimuonPt", "dimuonY", "MET_pt", "lumiweight", "puWeight"], types = ['float']*6,node='defs',histoname=ROOT.string('DY_dimuon'),bins = [zmassBins,qtBins, etaBins,metBins], variations = [])
         return p
-
