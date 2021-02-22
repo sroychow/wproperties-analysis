@@ -1,8 +1,8 @@
-#include "getZmassV2.hpp"
+#include "zSelection.hpp"
 #include "functions.hpp"
 #include "TLorentzVector.h"
 
-RNode getZmassV2::run(RNode d) {
+RNode zSelection::run(RNode d) {
   auto getdimuonP4 = [](float mu1_pt, float mu1_eta, float mu1_phi, float mu2_pt, float mu2_eta, float mu2_phi) {
     TLorentzVector mu1P;
     mu1P.SetPtEtaPhiM(mu1_pt, mu1_eta, mu1_phi, 0.1057);

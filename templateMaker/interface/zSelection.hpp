@@ -1,18 +1,18 @@
-#ifndef GETZMASSV2_H
-#define GETZMASSV2_H
+#ifndef ZSELECTION_H
+#define ZSELECTION_H
 
 #include "module.hpp"
 
-class getZmassV2 : public Module {
+class zSelection : public Module {
 
     private:
 
     bool _isData;
     public:
-    getZmassV2(bool isData=false) {
+    zSelection(bool isData=false) {
         _isData = isData;
     };
-    ~getZmassV2() {};
+    ~zSelection() {};
     RNode run(RNode) override;
 
 };
