@@ -26,11 +26,11 @@ make -j 8
 Brief description of packages:
 
 * `nanotools`: 
-  ** `puWeightProducer`: module which produces putWeight column for MC
-  ** `trigObjMatchProducer`: module which creates a selected array of Trigger Objects
-  ** `nanoSequence.py` : config file which contains the nanotools sequence for samples
+    * `puWeightProducer`: module which produces putWeight column for MC
+    * `trigObjMatchProducer`: module which creates a selected array of Trigger Objects
+    * `nanoSequence.py` : config file which contains the nanotools sequence for samples
 * `templateMaker`: contains all the modules related to event selection
-  ** `dySequence.py`: defines the sequence for dimuon event selection
+    * `dySequence.py`: defines the sequence for dimuon event selection
 * `config`: directory with final executable configs for various sequences
 
 
