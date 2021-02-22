@@ -13,3 +13,6 @@ float Z_qt(float,float,float,float);
 float Z_mass(float,float,float,float,float,float);
 float Z_y(float,float,float,float);
 ROOT::VecOps::RVec<float> float2vec(float val1, float val2, float val3, float val4, float val5);
+float deltaR(float eta1, float phi1, float eta2, float phi2);
+float deltaR2(float eta1, float phi1, float eta2, float phi2);
+float deltaPhi(float phi1, float phi2);
