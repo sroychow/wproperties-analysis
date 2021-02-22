@@ -34,47 +34,6 @@ RNode SF_ul::run(RNode d)
 	int binIso2 = _iso_notrig->FindBin(eta2, pt2);
 	combinedSF *= _iso_notrig->GetBinContent(binIso2);
 	
-	//apply the iso no trig since trig m
-	//combinedSF *= _iso_notrig->GetBinContent(binIso1);
-	//combinedSF *= _iso_notrig->GetBinContent(binIso2) ;
-	
-	//int binIso1 = _iso->FindBin(eta1, pt1);
-	//combinedSF *= _iso->GetBinContent(binIso1);
-	//int binIso2 = _iso->FindBin(eta2, pt2);
-	//combinedSF *= _iso->GetBinContent(binIso2);
-	/*
-        if (_prefCharge == charge1 && istrigMatched1 > 0)
-        {
-            int binTrigger1 = _trigger_plus->FindBin(eta1, pt1);
-            int binIso1 = _iso->FindBin(eta1, pt1);
-            if (charge1 > 0.)
-                combinedSF *= _trigger_plus->GetBinContent(binTrigger1);
-            else
-                combinedSF *= _trigger_minus->GetBinContent(binTrigger1);
-            // apply iso SF to firing muon
-            combinedSF *= _iso->GetBinContent(binIso1);
-            // apply iso SF to non-firing muon
-            int binIso2 = _iso_notrig->FindBin(eta2, pt2);
-            if(iso2<0.15)
-                combinedSF *= _iso_notrig->GetBinContent(binIso2);
-        }
-        else if (_prefCharge == charge2 && istrigMatched2 > 0)
-        {
-            int binTrigger2 = _trigger_plus->FindBin(eta2, pt2);
-            int binIso2 = _iso->FindBin(eta2, pt2);
-            if (charge2 > 0.)
-                combinedSF *= _trigger_plus->GetBinContent(binTrigger2);
-            else
-                combinedSF *= _trigger_minus->GetBinContent(binTrigger2);
-            // apply iso SF to firing muon
-            combinedSF *= _iso->GetBinContent(binIso2);
-            // apply iso SF to non-firing muon
-            int binIso1 = _iso_notrig->FindBin(eta1, pt1);
-            if (iso1 < 0.15)
-                combinedSF *= _iso_notrig->GetBinContent(binIso1);
-        }
-        // std::cout << "SF" << combinedSF << std::endl;
-	*/
         return combinedSF;
     };
 
