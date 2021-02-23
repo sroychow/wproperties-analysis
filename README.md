@@ -16,31 +16,28 @@ cd wproperties-analysis/RDFprocessor/framework
 
 ## How to run the analysis
 
-Preliminary compile analysisOnData modules:
+Preliminary compile subpackages :
 ```
-cd wproperties-analysis/analysisOnData/
-make
-```
-
-To run the entire workflow (from wproperties-analysis/ directory):
-```
-python runTheMatrix.py --outputDir OUTPUT --bkgOutput BKGOUT --ncores 64 --bkgFile MYBKG --bkgPrep 1 --bkgAna 1 --prefit 1 --plotter 1
+cd wproperties-analysis/
+source setpath.sh
+make -j 8
 ```
 
-Description of the output:
-* `./analysisOnData/BKGOUT/` : all prefit output (bkgPrep (aka step1) and prefit (aka step3))
-    * `./analysisOnData/BKGOUT/` : .root files from step1 and step3
-    * `./analysisOnData/BKGOUT/plot/` : prefit plots in .png, .pdf and .root
-    * `./analysisOnData/BKGOUT/plot/hadded` : hadded root file needed for the prefit plots
-* `./bkgAnalysis/BKGOUT/` : all the background output (bkgAna aka step2)
-    * `./bkgAnalysis/BKGOUT/bkg_parameters_CFstatAna.root` : bkg parameters file, used to build the QCD
-    * `./bkgAnalysis/BKGOUT/final_plots_CFstatAna.root` : bkg validation plot file (with systematics comparison)
-    * `./bkgAnalysis/BKGOUT/bkg_SYSTNAME/` : single-systematic output and validation plot
-    * `./bkgAnalysis/BKGOUT/bkgInput/` : prepared root file for the bkgAnalysis
-    * `./bkgAnalysis/BKGOUT/bkgInput/hadded/` : hadded root file, the only required input of the bkgAna
+Brief description of packages:
 
-For more details about the parameters of `runTheMatrix.py` there is documentation inside the file itself.
+* `nanotools`: 
+    * `puWeightProducer`: module which produces putWeight column for MC
+    * `trigObjMatchProducer`: module which creates a selected array of Trigger Objects
+    * `nanoSequence.py` : config file which contains the nanotools sequence for samples
+* `templateMaker`: contains all the modules related to event selection
+    * `dySequence.py`: defines the sequence for dimuon event selection
+* `config`: directory with final executable configs for various sequences
 
 
+To run the Z workflow:
+```
+cd config/
+python runZ_fromNANO.py
+```
 
-
+More explanation coming soon!!!

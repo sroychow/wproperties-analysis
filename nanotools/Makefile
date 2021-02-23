@@ -1,5 +1,5 @@
 GCC=g++
-CXXFLAGS=`root-config --libs --cflags` -O3 -fPIC -Wall
+CXXFLAGS=`root-config --libs --cflags` -O3 -fPIC -Wall 
 SOFLAGS=-shared
 
 SRCDIR=src
@@ -20,13 +20,13 @@ all:
 	$(info, "-> if you want just to recompile something use 'make fast' ")	
 	$(info, "------------------------ ")	
 	$(MAKE) clean
-	$(MAKE) libAnalysisOnData.so
+	$(MAKE) libNanoTools.so
 
 .PHONY: fast
 fast:
-	$(MAKE) libAnalysisOnData.so
+	$(MAKE) libNanoTools.so
 
-libAnalysisOnData.so: $(OBJ) Dict | $(BINDIR)
+libNanoTools.so: $(OBJ) Dict | $(BINDIR)
 	$(GCC) $(CXXFLAGS) $(PATHFLAGS) $(RPATH) $(SOFLAGS) -o $(BINDIR)/$@ $(OBJ) $(BINDIR)/dict.o $(CORELIB)
 
 $(OBJ) : $(BINDIR)/%.o : $(SRCDIR)/%.cpp interface/%.hpp | $(BINDIR)
@@ -36,7 +36,7 @@ $(OBJ) : $(BINDIR)/%.o : $(SRCDIR)/%.cpp interface/%.hpp | $(BINDIR)
 Dict: $(BINDIR)/dict.o
 
 $(BINDIR)/dict.o: $(SRC) | $(BINDIR)
-	genreflex $(SRCDIR)/classes.h -s $(SRCDIR)/classes_def.xml -o $(BINDIR)/dict.cc --fail_on_warnings --rootmap=$(BINDIR)/dict.rootmap --rootmap-lib=libAnalysisOnData.so $(PATHFLAGS)
+	genreflex $(SRCDIR)/classes.h -s $(SRCDIR)/classes_def.xml -o $(BINDIR)/dict.cc --fail_on_warnings --rootmap=$(BINDIR)/dict.rootmap --rootmap-lib=libNanoTools.so $(PATHFLAGS)
 	$(GCC) -c -o $(BINDIR)/dict.o $(CXXFLAGS) $(PATHFLAGS) $(RPATH) $(BINDIR)/dict.cc
 
 $(BINDIR):
@@ -47,5 +47,5 @@ $(BINDIR):
 clean:
 	-rm $(OBJ)
 	-rm $(BINDIR)/dict*
-	-rm $(BINDIR)/libAnalysisOnData.so
+	-rm $(BINDIR)/NanoTools.so
 	-rmdir $(BINDIR)
