@@ -86,28 +86,42 @@ samplespreVFP = {
     # },
 }
 
-samplesPostVFP = {
+samplespostVFP = {
     "data": {
         "nsyst": 0, 
         "xsec": -1, 
         "dir": ["Run2016F_postVFP", "Run2016G", "Run2016H"]
     },
-    "DYJetsToLL_M50": {
+    "DYJetsToMuMu_M50": {
         "nsyst": 2, 
         "xsec": 1976.17, 
-        "dir": ["DYJetsToMuMu_postVFP_addVars", "DYJetsToTauTau_postVFP_addVars"]
-    },
-    "WJetsToMuNu": {
+        "dir": ["DYJetsToMuMu"]
+    }, 
+    "DYJetsToTauTau_M50": {
         "nsyst": 2, 
-        "xsec": 61526.7, 
-        "dir": ["WminusJetsToMuNu_postVFP_addVars", "WplusJetsToMuNu_postVFP_addVars"]
-    },
-    "WJetsToTauNu": {
+        "xsec": 0.5802*1976.17, 
+        "dir": ["DYJetsToTauTau"]
+    }, 
+    "WPlusJetsToMuNu": {
         "nsyst": 2, 
-        "xsec": 61526.7, 
-        "dir": ["WminusJetsToTauNu_postVFP_addVars", "WplusJetsToTauNu_postVFP_addVars"]
-    }
+        "xsec": 11572.19, 
+        "dir": ["WplusJetsToMuNu"]
+    },
+    "WMinusJetsToMuNu": {
+        "nsyst": 2, 
+        "xsec": 8562.66, 
+        "dir": ["WminusJetsToMuNu"]
+    },
+    "WPlusJetsToTauNu": {
+        "nsyst": 2, 
+        "xsec": 0.17394*11572.19, 
+        "dir": ["WplusJetsToTauNu"]
+    },
+    "WMinusJetsToTauNu": {
+        "nsyst": 2, 
+        "xsec": 0.17394*8562.66, 
+        "dir": ["WminusJetsToTauNu"]
+    },
 }
 
-'''
-'''
+

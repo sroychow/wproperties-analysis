@@ -7,12 +7,13 @@ import time
 from datetime import datetime
 
 FWKBASE=os.getenv('FWK_BASE')
+print('Adding path: {}/RDFprocessor/framework'.format(FWKBASE))
 sys.path.append('{}/RDFprocessor/framework'.format(FWKBASE))
 from RDFtree import RDFtree
 
 sys.path.append('{}/Common/data'.format(FWKBASE))
-from samples_2016_ul import samplespreVFP
-from genSumWClipped import sumwClippedDict
+from samples_2016_ul import samplespreVFP, samplespostVFP
+from genSumWClipped import sumwClippedDictpreVFP, sumwClippedDictpostVFP
 
 ROOT.gSystem.Load('{}/nanotools/bin/libNanoTools.so'.format(FWKBASE))
 sys.path.append('../nanotools')
@@ -33,7 +34,7 @@ def RDFprocess(fvec, outputDir, sample, xsec, systType, sumwClipped, era, preten
     postnano, endNode=nanoSequence(p, systType, era)
     print("Post nano node name: ", endNode)
     #return postnano
-    resultNode=dySelectionSequence(postnano, xsec, systType, sumwClipped, nodetoStart=endNode)
+    resultNode=dySelectionSequence(postnano, xsec, systType, sumwClipped, endNode, era)
     return resultNode
 
 
@@ -62,6 +63,12 @@ def main():
     RDFtrees = {}
     
     samples = samplespreVFP
+    sumwClippedDict=sumwClippedDictpreVFP
+    if era == 'postVFP': 
+        samples = samplespostVFP
+        sumwClippedDict=sumwClippedDictpostVFP
+
+
     for sample in samples:
         #print('analysing sample: %s'%sample)
         if 'WPlus' in sample or 'WMinus' in sample: continue
