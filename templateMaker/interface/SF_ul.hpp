@@ -2,7 +2,8 @@
 #define SF_UL_H
 
 #include "module.hpp"
-
+#include "TString.h"
+#include<iostream>
 class SF_ul : public Module
 {
 
@@ -20,17 +21,21 @@ private:
     int _prefCharge;
 
 public:
-  SF_ul(TFile *SF, bool isZ = false, int prefCharge = 1)
+  SF_ul(TFile *SF, bool isZ = false, std::string era = "preVFP", int prefCharge = 1)
     {
         _SF = SF;
         _isZ = isZ;
-        _tracking = (TH2D *)_SF->Get("SF2D_tracking_BtoF_both");
-        _idip = (TH2D *)_SF->Get("SF2D_idip_BtoF_both");
-        _trigger_plus = (TH2D *)_SF->Get("SF2D_trigger_BtoF_plus");
-        _trigger_minus = (TH2D *)_SF->Get("SF2D_trigger_BtoF_minus");
-        _iso = (TH2D *)_SF->Get("SF2D_iso_BtoF_both");
-        _iso_notrig = (TH2D *)_SF->Get("SF2D_isonotrig_BtoF_both");
-        _antiiso = (TH2D *)_SF->Get("SF2D_antiiso_BtoF_both");
+	TString tag = "BtoH";//for all 2016
+	if(era == "preVFP") tag = "BtoF";
+	else if(era == "postVFP") tag = "GtoH";
+	std::cout << "SF tag is " << tag << std::endl;
+        _tracking = (TH2D *)_SF->Get("SF2D_tracking_" + tag + "_both");
+        _idip = (TH2D *)_SF->Get("SF2D_idip_" + tag + "_both");
+        _trigger_plus = (TH2D *)_SF->Get("SF2D_trigger_" + tag + "_plus");
+        _trigger_minus = (TH2D *)_SF->Get("SF2D_trigger_" + tag + "_minus");
+        _iso = (TH2D *)_SF->Get("SF2D_iso_" + tag + "_both");
+        _iso_notrig = (TH2D *)_SF->Get("SF2D_isonotrig_" + tag + "_both");
+        _antiiso = (TH2D *)_SF->Get("SF2D_antiiso_" + tag + "_both");
 	_prefCharge = prefCharge;
     };
     ~SF_ul(){};

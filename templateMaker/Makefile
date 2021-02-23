@@ -1,5 +1,5 @@
 GCC=g++
-CXXFLAGS=`root-config --libs --cflags` -O3 -fPIC -Wall 
+CXXFLAGS=`root-config --libs --cflags` -O3 -fPIC -Wall
 SOFLAGS=-shared
 
 SRCDIR=src

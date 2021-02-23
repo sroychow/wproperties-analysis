@@ -21,7 +21,11 @@ ROOT.gROOT.ProcessLine("gErrorIgnoreLevel = 2001;")
 
 
 #Build the template building sequenc
-def dySelectionSequence(p, xsec, systType, sumwClipped, nodetoStart):
+def dySelectionSequence(p, xsec, systType, sumwClipped, nodetoStart, era):
+    luminosityN = 35.9
+    if era == 'preVFP' :     luminosityN = 19.3
+    else: luminosityN = 16.6
+ 
     p.EventFilter(nodeToStart=nodetoStart, nodeToEnd='defs', evfilter="nMuon>=2", filtername="{:20s}".format("twomuon"))
     p.EventFilter(nodeToStart='defs', nodeToEnd='defs', evfilter="(HLT_IsoMu24 ||  HLT_IsoTkMu24)", filtername="{:20s}".format("Pass HLT"))
     p.EventFilter(nodeToStart='defs', nodeToEnd='defs', evfilter="(Muon_charge[0] + Muon_charge[1] )== 0", filtername="{:20s}".format("Opposite charge"))
@@ -40,14 +44,14 @@ def dySelectionSequence(p, xsec, systType, sumwClipped, nodetoStart):
         p.Histogram(columns = ["dimuonMass", "dimuonPt", "dimuonY", "MET_pt"], types = ['float']*4,node='defs',histoname=ROOT.string('data_dimuon'),bins = [zmassBins,qtBins, etaBins, metBins], variations = [])
         return p
     elif systType == 1:
-        p.branch(nodeToStart = 'defs', nodeToEnd = 'defs', modules = [getLumiWeight(xsec=xsec, inputFile = fvec, genEvsbranch = "genEventSumw", targetLumi = 19.3), ROOT.SF_ul(fileSFul, isZ=True)])
-        p.Histogram(columns = ["dimuonMass", "Mu1_eta", "Mu1_pt", "Mu2_eta", "Mu2_pt", "lumiweight", "puWeight"], types = ['float']*7,node='defs',histoname=ROOT.string('DY_muons'),bins = [zmassBins, etaBins, ptBins, etaBins, ptBins], variations = [])
+        p.branch(nodeToStart = 'defs', nodeToEnd = 'defs', modules = [getLumiWeight(xsec=xsec, inputFile = fvec, genEvsbranch = "genEventSumw", targetLumi = luminosityN), ROOT.SF_ul(fileSFul, isZ=True,era=era)])
+        p.Histogram(columns = ["dimuonMass", "Mu1_eta", "Mu1_pt", "Mu2_eta", "Mu2_pt", "lumiweight", "puWeight", "SF"], types = ['float']*8,node='defs',histoname=ROOT.string('DY_muons'),bins = [zmassBins, etaBins, ptBins, etaBins, ptBins], variations = [])
         p.EventFilter(nodeToStart='defs', nodeToEnd='defs', evfilter="abs(Mu1_eta) < 2.4 && abs(Mu2_eta) < 2.4 && Mu1_pt > 25. && Mu2_pt > 25. && Mu1_pt < 55. && Mu2_pt < 55.", filtername="{:20s}".format("mu pt eta acceptance"))
-        p.Histogram(columns = ["dimuonMass", "dimuonPt", "dimuonY", "MET_pt", "lumiweight", "puWeight"], types = ['float']*6,node='defs',histoname=ROOT.string('DY_dimuon'),bins = [zmassBins,qtBins, etaBins,metBins], variations = [])
+        p.Histogram(columns = ["dimuonMass", "dimuonPt", "dimuonY", "MET_pt", "lumiweight", "puWeight", "SF"], types = ['float']*7,node='defs',histoname=ROOT.string('DY_dimuon'),bins = [zmassBins,qtBins, etaBins,metBins], variations = [])
         return p
     else:
-        p.branch(nodeToStart = 'defs', nodeToEnd = 'defs', modules = [ROOT.lumiWeight(xsec=xsec, sumwclipped=sumwClipped, targetLumi = 19.3), ROOT.SF_ul(fileSFul, isZ=True)])
-        p.Histogram(columns = ["dimuonMass", "Mu1_eta", "Mu1_pt", "Mu2_eta", "Mu2_pt", "lumiweight", "puWeight"], types = ['float']*7,node='defs',histoname=ROOT.string('DY_muons'),bins = [zmassBins, etaBins, ptBins, etaBins, ptBins], variations = [])
+        p.branch(nodeToStart = 'defs', nodeToEnd = 'defs', modules = [ROOT.lumiWeight(xsec=xsec, sumwclipped=sumwClipped, targetLumi = luminosityN), ROOT.SF_ul(fileSFul, isZ=True, era=era)])
+        p.Histogram(columns = ["dimuonMass", "Mu1_eta", "Mu1_pt", "Mu2_eta", "Mu2_pt", "lumiweight", "puWeight", "SF"], types = ['float']*8,node='defs',histoname=ROOT.string('DY_muons'),bins = [zmassBins, etaBins, ptBins, etaBins, ptBins], variations = [])
         p.EventFilter(nodeToStart='defs', nodeToEnd='defs', evfilter="abs(Mu1_eta) < 2.4 && abs(Mu2_eta) < 2.4 && Mu1_pt > 25. && Mu2_pt > 25. && Mu1_pt < 55. && Mu2_pt < 55.", filtername="{:20s}".format("mu pt eta acceptance"))
-        p.Histogram(columns = ["dimuonMass", "dimuonPt", "dimuonY", "MET_pt", "lumiweight", "puWeight"], types = ['float']*6,node='defs',histoname=ROOT.string('DY_dimuon'),bins = [zmassBins,qtBins, etaBins,metBins], variations = [])
+        p.Histogram(columns = ["dimuonMass", "dimuonPt", "dimuonY", "MET_pt", "lumiweight", "puWeight", "SF"], types = ['float']*7,node='defs',histoname=ROOT.string('DY_dimuon'),bins = [zmassBins,qtBins, etaBins,metBins], variations = [])
         return p
