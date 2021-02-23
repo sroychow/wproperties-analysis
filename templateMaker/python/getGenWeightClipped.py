@@ -18,10 +18,9 @@ ROOT::RDF::RResultPtr<double> getClippedSumW(std::vector<std::string> fileNames)
   auto clipGenWeight = [](float Gen_weight) {
     double sign = Gen_weight / abs(Gen_weight);
     //return sign;                                                                                                                                                                                   
-    double new_weight = double(std::min(fabs(Gen_weight), float(50000.)));
+    double new_weight = double(std::min(fabs(Gen_weight), float(50118.72)));
     return sign * new_weight;
   };
-  //auto d1 = df.Define("Generator_weight_clipped", clipGenWeight, {"Generator_weight"});                                                                                                            
   auto d1 = df.Define("Generator_weight_clipped", clipGenWeight, {"genWeight"}).Sum<double>("Generator_weight_clipped");
   return d1;
 }
@@ -32,9 +31,10 @@ from samples_2016_ul import samplespreVFP
 def genwtsum(sample, fvec) :
     print("processing ", sample)
     
-ROOT.ROOT.EnableImplicitMT(64)
+ROOT.ROOT.EnableImplicitMT(128)
 
-inDir='/scratchnvme/wmass/NanoAOD2016-UL/preVFP/'
+#inDir='/scratchnvme/wmass/BARENANO/preVFP/'
+inDir='/scratchnvme/wmass/BARENANO/postVFP/'
 samples = samplespreVFP
 sumwProc={}
 sumwRunProc = {}
