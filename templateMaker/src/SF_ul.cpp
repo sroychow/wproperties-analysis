@@ -3,44 +3,32 @@
 RNode SF_ul::run(RNode d)
 {
 
-  auto defineSFZ = [this](float pt1, float eta1, int charge1, bool istrigMatched1, float pt2, float eta2, int charge2) {
+    auto defineSFZ = [this](float pt1, float eta1, int charge1, bool istrigMatched1, float pt2, float eta2, int charge2) {
         /*
     @SRC Note: here we choose muon of one charge(set from config) as primary or preferred muon in 
     a dimuon event. This muon is trigger matched. All the SFs shall be applied for this muon. 
     Whereas, for the other muon, only the tracking and ID SF is appled.
     **The default charge is +ve;
       */
-        int binTracking1 = _tracking->FindBin(eta1, pt1);
-        int binIdip1 = _idip->FindBin(eta1, pt1);
-	
-	//this is always applied
-        float combinedSF = _tracking->GetBinContent(binTracking1) * _idip->GetBinContent(binIdip1);
-	
-	//trig and iso for muon1
-	int binIso1 = _iso->FindBin(eta1, pt1);
-	combinedSF *= _iso->GetBinContent(binIso1);
-	if(charge1 > 0) {
-	  int binTrigger1 = _trigger_plus->FindBin(eta1, pt1);
-	  combinedSF *= _trigger_plus->GetBinContent(binTrigger1);
-	} else {
-	  int binTrigger1 = _trigger_minus->FindBin(eta1, pt1);
-	  combinedSF *=  _trigger_minus->GetBinContent(binTrigger1);
-	}
+        float sf = 1.;
+        sf *= getValFromTH2(*_tracking, eta1, pt1);
+        sf *= getValFromTH2(*_idip, eta1, pt1);
+        sf *= getValFromTH2(*_iso, eta1, pt1);
 
-	//Mu2
-        int binTracking2 = _tracking->FindBin(eta2, pt2);
-        int binIdip2 = _idip->FindBin(eta2, pt2);
-        combinedSF *= _tracking->GetBinContent(binTracking2) * _idip->GetBinContent(binIdip2);
-	int binIso2 = _iso_notrig->FindBin(eta2, pt2);
-	combinedSF *= _iso_notrig->GetBinContent(binIso2);
-	
-        return combinedSF;
+        if (charge1 > 0) sf *= getValFromTH2(*_trigger_plus, eta1, pt1);
+        else sf *= getValFromTH2(*_trigger_minus, eta1, pt1);
+
+        sf *= getValFromTH2(*_tracking, eta2, pt2);
+        sf *= getValFromTH2(*_idip, eta2, pt2);
+        sf *= getValFromTH2(*_iso_notrig, eta2, pt2);
+    
+        return sf;
     };
 
     auto defineSF = [this](float pt1, float eta1, float charge1, float iso1) {
         int binTracking1 = _tracking->FindBin(eta1, pt1);
         int binTrigger1 = _trigger_plus->FindBin(eta1, pt1);
-        int binIso1 = _iso_notrig->FindBin(eta1, pt1);
+        int binIso1 = _iso->FindBin(eta1, pt1);
         int binAntiiso1 = _antiiso->FindBin(eta1, pt1);
         int binIdip1 = _idip->FindBin(eta1, pt1);
 
