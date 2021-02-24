@@ -1,4 +1,5 @@
 import ROOT
+from math import pi
 
 qtBins = ROOT.vector('float')([0., 4., 8., 12., 16., 20., 24., 28., 32., 40., 60., 100., 200.])
 yBins = ROOT.vector('float')([0, 0.4, 0.8, 1.2, 1.6, 2.0, 2.4, 3.0, 6.0])
@@ -14,3 +15,5 @@ isoBins = ROOT.vector('float')([0.,0.15,1.])
 #isoBins = ROOT.vector('float')([i*0.005 for i in range(41)])
 zmassBins = ROOT.vector('float')([70 + i*1. for i in range(41)])
 pvBins = ROOT.vector('float')([9.5 + i*1. for i in range(50)])
+cosThetaBins = ROOT.vector('float')([-1. + 2*i/100 for i in range(101)])
+phiBins = ROOT.vector('float')([0. + 2*pi*i/100 for i in range(101)])
