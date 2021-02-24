@@ -86,5 +86,29 @@ float deltaPhi(float phi1, float phi2)
     result += float(2 * M_PI);
   return result;
 }
+
+bool hasTriggerMatch(const float mueta, const float muphi, const RVec<float> &TrigObj_eta, const RVec<float> &TrigObj_phi) {
+  bool muhasTrigm = false;
+  for (unsigned int jtrig = 0; jtrig < TrigObj_eta.size(); ++jtrig)
+  {
+    if (deltaR(mueta, muphi, TrigObj_eta[jtrig], TrigObj_phi[jtrig]) < 0.3)
+    {
+      muhasTrigm = true;
+      break;
+    } //if
+  }
+
+  return muhasTrigm;
+}
+
+float getValFromTH2(const TH2 &h, const float &x, const float &y)
+{
+  //std::cout << "x,y --> " << x << "," << y << std::endl;
+  int xbin = std::max(1, std::min(h.GetNbinsX(), h.GetXaxis()->FindFixBin(x)));
+  int ybin = std::max(1, std::min(h.GetNbinsY(), h.GetYaxis()->FindFixBin(y)));
+  //std::cout << "xbin,ybin --> " << xbin << "," << ybin << std::endl;
+  return h.GetBinContent(xbin, ybin);
+}
+
 #endif
 
