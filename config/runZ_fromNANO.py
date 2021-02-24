@@ -68,7 +68,6 @@ def main():
         samples = samplespostVFP
         sumwClippedDict=sumwClippedDictpostVFP
 
-
     for sample in samples:
         #print('analysing sample: %s'%sample)
         if 'WPlus' in sample or 'WMinus' in sample: continue
