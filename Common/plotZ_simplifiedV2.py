@@ -88,10 +88,12 @@ def drawMuons(folder, DYFiles, TopFiles, DibosonFiles,logyscale):
     ptdata = np.sum(hdata,axis=(0,1,3,4))[:]
     ptDY = np.sum(hDY,axis=(0,1,3,4))[:]
     ptewk = np.sum(hewk,axis=(0,1,3,4))[:]
-    hep.histplot([ptdata],bins = ptBins, histtype = 'errorbar', color = "k", stack = False, ax=ax1, label = ["data"])
-    hep.histplot([ptDY],bins = ptBins, histtype = 'fill',linestyle = 'solid', color =["orange"], label=["DY"], stack = True, ax=ax1)
+    ptBinsNew=ptBins
+    ptBinsNew[31]=56.
+    hep.histplot([ptdata],bins = ptBinsNew, histtype = 'errorbar', color = "k", stack = False, ax=ax1, label = ["data"])
+    hep.histplot([ptDY],bins = ptBinsNew, histtype = 'fill',linestyle = 'solid', color =["orange"], label=["DY"], stack = True, ax=ax1)
     ax2.set_ylim([0.9, 1.1])
-    hep.histplot([ptdata/ptDY], bins = ptBins, histtype = 'errorbar', color = "k", stack = False, ax=ax2)
+    hep.histplot([ptdata/ptDY], bins = ptBinsNew, histtype = 'errorbar', color = "k", stack = False, ax=ax2)
     ax1.legend(loc='upper right', frameon=True)
     plt.savefig('{}/pt1{}.png'.format(folder,ytag))
     plt.cla()
