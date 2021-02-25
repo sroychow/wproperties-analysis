@@ -40,6 +40,7 @@ RNode trigObjMatchProducer::run(RNode d) {
     .Define("goodTrigObjs_phi", "TrigObj_phi[goodTrigObjs]");
   //.Define("Muon_hasTriggerMatch", hasTriggerMatch, {"Muon_eta", "Muon_phi", "goodTrigObjs_eta", "goodTrigObjs_phi"});
 
+  
   return d1;
 
 }
