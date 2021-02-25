@@ -13,4 +13,5 @@
   <class name="getZmass"/>
   <class name="SF_ul"/>
   <class name="zSelection"/>
+    <class name="zHistosROOT"/>
 </lcgdict>

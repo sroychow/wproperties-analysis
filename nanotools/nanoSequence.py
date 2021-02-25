@@ -27,15 +27,21 @@ def nanoSequence(rdftree, systType, era):
         endNode='postnano'
         datapu = pufile_data_UL2016_preVFP
         mcprofName="Pileup_nTrueInt_Wplus_preVFP"
+        eraCode=1#1 for preVFP, 2 for postVFP
+            
         if era == 'postVFP' : 
             datapu=pufile_data_UL2016_postVFP
             mcprofName="Pileup_nTrueInt_Wplus_preVFP"
+            eraCode=2
         if not datapu :
             print("DATA pu hist doesn't exist")
             sys.exit(2)
         if not pufile_mc_UL2016 :
             print("MC pu hist doesn't exist")
-            sys.exit(2)            
+            sys.exit(2)   
+        print('Using puWeight producer era code=',eraCode)
         #TFile *puMC, TFile *puData, TString hmcName, TString hdataName, bool dosyst, booql fixlargeW = true, bool normtoArea = true
-        rdftree.branch(nodeToStart='input', nodeToEnd='postnano', modules=[ROOT.puWeightProducer(mcprofName, "pileup", False, True, True), ROOT.trigObjMatchProducer()])
+        #rdftree.branch(nodeToStart='input', nodeToEnd='postnano', modules=[ROOT.puWeightProducer(mcprofName, "pileup", False, True, True), ROOT.trigObjMatchProducer()])
+        #FOR ROOT HISTOS
+        rdftree.branch(nodeToStart='input', nodeToEnd='postnano', modules=[ROOT.puWeightProducer(eraCode), ROOT.trigObjMatchProducer()])
     return rdftree,endNode
