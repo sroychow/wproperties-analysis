@@ -44,6 +44,12 @@ RNode zHistosROOT::run(RNode d)
   auto hzY = df.Book<float, float, ROOT::VecOps::RVec<float>>(std::move(helperzY), {"dimuonY", "weight", _syst_weight});
   _h1Group.emplace_back(hzY);
 
+  if(_isMC) {
+    TH1weightsHelper helperGenW(std::string("genWeight"), std::string(" ; genWeight;"), _gwArr.size() - 1, _gwArr, _syst_name);
+    auto hGw = df.Book<float, float, ROOT::VecOps::RVec<float>>(std::move(helperGenW), {"Generator_weight_clipped", "uno", _syst_weight});
+    _h1Group.emplace_back(hGw);
+  }
+
   return df;
 }
 
@@ -61,6 +67,9 @@ void zHistosROOT::setAxisarrays()
 
   for (int i = 0; i < 61; i++)
     _ZmassArr[i] = 60 + i*1.;
+
+  for(int i = 0; i < 201; i++)
+    _gwArr[i] = -12. + 200*i;
   
   auto printVec= [this](const std::vector<float>& vec) {
     std::cout << "Size=" << vec.size() << std::endl;
@@ -74,4 +83,5 @@ void zHistosROOT::setAxisarrays()
   printVec(_METArr);
   printVec(_ZmassArr);
   printVec(_qtArr);
+  printVec(_gwArr);
 }

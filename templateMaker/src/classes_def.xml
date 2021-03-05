@@ -13,5 +13,6 @@
   <class name="getZmass"/>
   <class name="SF_ul"/>
   <class name="zSelection"/>
-    <class name="zHistosROOT"/>
+  <class name="zVetoMuons"/>
+  <class name="zHistosROOT"/>
 </lcgdict>
