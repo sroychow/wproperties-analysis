@@ -4,7 +4,7 @@ RNode lumiWeight::run(RNode d)
 {
     auto clipGenWeight = [](float Gen_weight) {
         float sign = Gen_weight / abs(Gen_weight);
-        float new_weight = std::min(fabs(Gen_weight), float(50000.));
+        float new_weight = std::min(fabs(Gen_weight), float(50118.72));
         return sign * new_weight;
     };
 
