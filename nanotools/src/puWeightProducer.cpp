@@ -2,6 +2,11 @@
 
 RNode puWeightProducer::run(RNode d)
 {
+  if(_fromHisto) return getfromHisto(d);
+  else  return getfromArray(d);
+}
+
+RNode puWeightProducer::getfromHisto(RNode d) {
   auto getpuWeightNom = [this](float npu) {
     int bin = std::max(1, std::min(_nompuwtH->GetNbinsX(), _nompuwtH->GetXaxis()->FindBin(npu)));
     float puW = _nompuwtH->GetBinContent(bin);
@@ -11,6 +16,19 @@ RNode puWeightProducer::run(RNode d)
   return df;
 }
 
+RNode puWeightProducer::getfromArray(RNode d) {
+  auto getpuWeightNom = [this](float nTrueInt) {
+    float puW = 1.;
+    if (nTrueInt < 100.0) {
+      if      (_era == 1) puW =  _pileupWeights_2016UL_preVFP[static_cast<int>(nTrueInt)];
+      else if (_era == 2) puW =  _pileupWeights_2016UL_postVFP[static_cast<int>(nTrueInt)];
+      else                puW = _pileupWeights_2016UL_all[static_cast<int>(nTrueInt)];
+    }
+    return puW;
+  };
+  auto df = d.Define("puWeight", getpuWeightNom, {"Pileup_nTrueInt"});
+  return df;
+}
 
 TH1D* puWeightProducer::ratio(TH1D* hmc, TH1D* hdata, TString tag) {
   std::vector<float> refvals;

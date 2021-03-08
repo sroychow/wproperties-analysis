@@ -52,7 +52,8 @@ RNode SF_ul::run(RNode d)
 
     if (_isZ)
     {
-        auto d1 = d.Define("SF", defineSFZ, {"Mu1_pt", "Mu1_eta", "Mu1_charge", "Mu1_hasTriggerMatch", "Mu2_pt", "Mu2_eta", "Mu2_charge"});
+      auto d1 = d.Define("SF", defineSFZ, {"Mu1_pt", "Mu1_eta", "Mu1_charge", "Mu1_hasTriggerMatch", "Mu2_pt", "Mu2_eta", "Mu2_charge"})
+	         .Define("totalWeight", [](float lumi, float pu, float sf){ return lumi*pu*sf;}, {"lumiweight","puWeight", "SF"});
         return d1;
     }
     else
