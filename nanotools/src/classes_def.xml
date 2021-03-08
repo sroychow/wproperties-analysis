@@ -1,4 +1,5 @@
 <lcgdict>
   <class name="puWeightProducer"/>
   <class name="trigObjMatchProducer"/>
+  <class name="isGoodLumi"/>
 </lcgdict>
