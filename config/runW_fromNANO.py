@@ -12,8 +12,9 @@ sys.path.append('{}/RDFprocessor/framework'.format(FWKBASE))
 from RDFtree import RDFtree
 
 sys.path.append('{}/Common/data'.format(FWKBASE))
-from samples_2016_ul import samplespreVFP, samplespostVFP
+#from samples_2016_ul import samplespreVFP, samplespostVFP
 from genSumWClipped import sumwClippedDictpreVFP, sumwClippedDictpostVFP
+from samples_2016_ulCentral import samplespreVFP, samplespostVFP
 
 ROOT.gSystem.Load('{}/nanotools/bin/libNanoTools.so'.format(FWKBASE))
 sys.path.append('../nanotools')
@@ -54,7 +55,7 @@ def main():
     inDir = args.inputDir
     era=args.era
     ##Add era to input dir
-    inDir+=era
+    #inDir+=era
     if pretendJob:
         print("Running a test job over a few events")
     else:
@@ -75,7 +76,7 @@ def main():
         xsec = samples[sample]['xsec']
         fvec=ROOT.vector('string')()
         for d in direc:
-            targetDir='{}/{}/merged/'.format(inDir, d)
+            targetDir='{}/{}/'.format(inDir, d)
             for f in os.listdir(targetDir):#check the directory
                 if not f.endswith('.root'): continue
                 inputFile=targetDir+f
