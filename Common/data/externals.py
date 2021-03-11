@@ -1,4 +1,5 @@
 import ROOT
+import json
 
 #fileSFul = ROOT.TFile.Open("../Common/data/allSFs.root")
 fileSFul = ROOT.TFile.Open("../Common/data/allSFs_eta0p1.root")
@@ -11,3 +12,4 @@ pufile_data_UL2016_allData = ROOT.TFile.Open("../Common/data/PileupData_2016Lega
 pufile_data_UL2016_preVFP = ROOT.TFile.Open("../Common/data/PileupData_2016Legacy_upTo2016FwithHIPM.root")
 pufile_data_UL2016_postVFP = ROOT.TFile.Open("../Common/data/PileupData_2016Legacy_FpostHIPMandGH.root")
 
+datajson='../Common/data/Cert_271036-284044_13TeV_Legacy2016_Collisions16_JSON.txt'

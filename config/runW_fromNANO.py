@@ -44,16 +44,16 @@ def main():
     parser.add_argument('-p', '--pretend',type=bool, default=False, help="run over a small number of event")
     parser.add_argument('-r', '--report',type=bool, default=False, help="Prints the cut flow report for all named filters")
     parser.add_argument('-o', '--outputDir',type=str, default='outputW', help="output dir name")
-    parser.add_argument('-i', '--inputDir',type=str, default='/scratchnvme/wmass/BARENANO/', help="input dir name")    
+    parser.add_argument('-i', '--inputDir',type=str, default='/scratchnvme/wmass/', help="input dir name")    
     parser.add_argument('-e', '--era',type=str, default='preVFP', help="either (preVFP|postVFP)")    
 
     args = parser.parse_args()
     pretendJob = args.pretend
     now = datetime.now()
     dt_string = now.strftime("_%d_%m_%Y_%H_%M_%S")
-    outputDir = args.outputDir + dt_string
     inDir = args.inputDir
     era=args.era
+    outputDir = args.outputDir+"_"+era
     ##Add era to input dir
     #inDir+=era
     if pretendJob:
@@ -70,8 +70,8 @@ def main():
         sumwClippedDict=sumwClippedDictpostVFP
 
     for sample in samples:
+        if 'ST_t-channel_top_5f' in sample: continue
         print('analysing sample: %s'%sample)
-        if not "WPlus" in sample or "data" in sample or "DY" in sample: continue
         direc = samples[sample]['dir']
         xsec = samples[sample]['xsec']
         fvec=ROOT.vector('string')()
@@ -85,7 +85,6 @@ def main():
         if fvec.empty():
             print("No files found for directory:", samples[sample], " SKIPPING processing")
             continue
-        print(fvec)         
         systType = samples[sample]['nsyst']
         sumwClipped=1.
         if systType == 2:
@@ -97,7 +96,7 @@ def main():
     objList = []
     cutFlowreportDict = {}
     for sample in samples:
-        if not "WPlus" in sample or "data" in sample or "DY" in sample: continue
+        if 'ST_t-channel_top_5f' in sample: continue
         print(sample)
         RDFtreeDict = RDFtrees[sample].getObjects()
         if args.report: cutFlowreportDict[sample] = RDFtrees[sample].getCutFlowReport()
@@ -111,16 +110,13 @@ def main():
     
     for sample in samples:
         print(sample)
-        if not "WPlus" in sample or "data" in sample or "DY" in sample: continue
-        #RDFtrees[sample].getOutput()
+        if 'ST_t-channel_top_5f' in sample: continue
         RDFtrees[sample].gethdf5Output()
         if args.report: cutFlowreportDict[sample].Print()
         #RDFtrees[sample].saveGraph()
 
     print('all samples processed in {} s'.format(time.time()-start))
 
-#At some point this should be what we want
-#p.Histogram(columns = ["dimuonMass", "Mu1_eta", "Mu1_pt", "Mu2_eta", "Mu2_pt", "dimuonPt", "dimuonY", "MET_T1_pt"], types = ['float']*8,node='defs',histoname=ROOT.string('data_muons'),bins = [zmassBins, etaBins, ptBins, etaBins, qtBins, etaBins, metBins], variations = [])
 if __name__ == "__main__":
     main()
 
