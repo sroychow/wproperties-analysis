@@ -29,14 +29,15 @@ ROOT.gROOT.ProcessLine("gErrorIgnoreLevel = 2001;")
 ROOT.ROOT.EnableImplicitMT(48)
 
 outputDir = 'PLOTS'
-inputFile = '/scratchnvme/wmass/NanoAOD2016-UL/postNanoDec2020/WplusJetsToMuNu_preVFP_addVars/merged/*.root'
+# inputFile = '/scratchnvme/wmass/NanoAOD2016-UL/postNanoDec2020/WplusJetsToMuNu_preVFP_addVars/merged/*.root'
+inputFile = '/scratchnvme/wmass/NanoAOD2016-UL/postNanoDec2020/WplusJetsToMuNu_preVFP_addVars/*.root'
 
 p = RDFtree(outputDir = outputDir, inputFile = inputFile, outputFile="test.root", pretend=False)
-p.branch(nodeToStart='input', nodeToEnd='defs', modules=[ROOT.lumiWeight(xsec=11572.19, sumwclipped=5895447715506.5, targetLumi = 35.9), ROOT.customizeforUL(True,True), ROOT.genDefinitions(), ROOT.defineHarmonics(),ROOT.recoDefinitions()])
+p.branch(nodeToStart='input', nodeToEnd='defs', modules=[ROOT.lumiWeight(xsec=11572.19, sumwclipped=5895447715506.5, targetLumi = 35.9), ROOT.customizeforUL(True,True), ROOT.genDefinitions()])
 p.Histogram(columns = ["Wrap_preFSR_abs","Vpt_preFSR","CStheta_preFSR","CSphi_preFSR","lumiweight"], types = ['float']*5,node='defs',histoname=ROOT.string("xsecs"), bins = [yBins,qtBins,cosThetaBins,phiBins])
 p.gethdf5Output()
 
-
+assert(0)
 fewk = h5py.File('PLOTS/test.hdf5', mode='r+')
 h = np.array(fewk['xsecs'][:].reshape((len(yBins)-1,len(qtBins)-1, len(cosThetaBins)-1, len(phiBins)-1),order='F'),order='C')
 
@@ -125,4 +126,21 @@ for i,hw in enumerate(whelicity):
     ax1.set_title("templates{}".format(i), fontsize=18)
     hep.hist2dplot(htmp[0,0,:,:-1],etaBins,ptBins[:-1])
     plt.savefig("templates{}".format(i))
+    plt.cla()
+
+# rescale to make them positive defined
+
+hhelicity[0]+=hhelicity[-1]/6.
+hhelicity[1]+=hhelicity[-1]/6.
+hhelicity[2]+=hhelicity[-1]/6.
+hhelicity[3]+=hhelicity[-1]/6.
+hhelicity[4]+=hhelicity[-1]/6.
+hhelicity[-1]/=6.
+
+for i,h in enumerate(hhelicity):
+    # plot one slice of every templates
+    fig, ax1 = plt.subplots()
+    ax1.set_title("templates{}_rescaled".format(i), fontsize=18)
+    hep.hist2dplot(h[0,0,:,:-1],etaBins,ptBins[:-1])
+    plt.savefig("templates{}_rescaled".format(i))
     plt.cla()
