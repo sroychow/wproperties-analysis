@@ -29,15 +29,13 @@ ROOT.gROOT.ProcessLine("gErrorIgnoreLevel = 2001;")
 ROOT.ROOT.EnableImplicitMT(48)
 
 outputDir = 'PLOTS'
-# inputFile = '/scratchnvme/wmass/NanoAOD2016-UL/postNanoDec2020/WplusJetsToMuNu_preVFP_addVars/merged/*.root'
-inputFile = '/scratchnvme/wmass/NanoAOD2016-UL/postNanoDec2020/WplusJetsToMuNu_preVFP_addVars/*.root'
+inputFile = '/scratchnvme/wmass/NanoAOD2016-UL/postNanoDec2020/WplusJetsToMuNu_preVFP_addVars/merged/*.root'
 
 p = RDFtree(outputDir = outputDir, inputFile = inputFile, outputFile="test.root", pretend=False)
 p.branch(nodeToStart='input', nodeToEnd='defs', modules=[ROOT.lumiWeight(xsec=11572.19, sumwclipped=5895447715506.5, targetLumi = 35.9), ROOT.customizeforUL(True,True), ROOT.genDefinitions()])
 p.Histogram(columns = ["Wrap_preFSR_abs","Vpt_preFSR","CStheta_preFSR","CSphi_preFSR","lumiweight"], types = ['float']*5,node='defs',histoname=ROOT.string("xsecs"), bins = [yBins,qtBins,cosThetaBins,phiBins])
 p.gethdf5Output()
 
-assert(0)
 fewk = h5py.File('PLOTS/test.hdf5', mode='r+')
 h = np.array(fewk['xsecs'][:].reshape((len(yBins)-1,len(qtBins)-1, len(cosThetaBins)-1, len(phiBins)-1),order='F'),order='C')
 
