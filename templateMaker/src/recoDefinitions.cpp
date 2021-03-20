@@ -5,15 +5,15 @@ RNode recoDefinitions::run(RNode d)
 {
     //define all nominal quantities // true for data and MC
 
-    auto d1 = d.Define("Mu1_eta", getFromIdx, {"Muon_eta", "Idx_mu1"})
-                  .Define("Mu1_phi", getFromIdx, {"Muon_phi", "Idx_mu1"})
-                  .Define("Mu1_charge", getCharge, {"Muon_charge", "Idx_mu1"})
-                  .Define("Mu1_relIso", getFromIdx, {"Muon_pfRelIso04_all", "Idx_mu1"})
-                  .Define("Mu1_dz", getFromIdx, {"Muon_dz", "Idx_mu1"})
-                  .Define("Mu1_pt", getFromIdx, {"Muon_pt", "Idx_mu1"})
-                  .Define("Mu1_sip3d", getFromIdx, {"Muon_sip3d", "Idx_mu1"})
-                  .Define("Mu1_dxy", getFromIdx, {"Muon_dxy", "Idx_mu1"})
-                  .Define("Mu1_hasTriggerMatch", getIntFromIdx, {"Muon_hasTriggerMatch", "Idx_mu1"})
+    auto d1 = d.Define("Mu1_eta", "Muon_eta[0]")
+                  .Define("Mu1_phi", "Muon_phi[0]")
+                  .Define("Mu1_charge", "float(Muon_charge[0])")
+                  .Define("Mu1_relIso", "Muon_pfRelIso04_all[0]")
+                  .Define("Mu1_dz", "Muon_dz[0]")
+                  .Define("Mu1_pt", "Muon_pt[0]")
+                  .Define("Mu1_sip3d", "Muon_sip3d[0]")
+                  .Define("Mu1_dxy", "Muon_dxy[0]")
+                  .Define("Mu1_hasTriggerMatch", hasTriggerMatch, {"Mu1_eta", "Mu1_phi", "goodTrigObjs_eta", "goodTrigObjs_phi"})
                   .Define("MT", W_mt, {"Mu1_pt", "Mu1_phi", "MET_pt_nom", "MET_phi_nom"})
                   .Define("Recoil_pt", W_hpt, {"Mu1_pt", "Mu1_phi", "MET_pt_nom", "MET_phi_nom"});
 

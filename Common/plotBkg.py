@@ -5,12 +5,13 @@ import h5py
 import numpy as np
 import matplotlib.pyplot as plt
 import mplhep as hep
-from binning import ptBins, etaBins, mTBins, isoBins, chargeBins, metBins
+from binning import ptBins, etaBins, isoBins, chargeBins, metBins
+from binning import mTBinsFull as mTBins
 plt.style.use([hep.style.ROOT])
 #hep.cms.label(loc=0, year=2016, lumi=35.9, data=True)
 #hep.cms.text('Simulation')
 
-folder = "../templateMaker/output_02_02_2021_19_10_46/"
+folder = "../config/outputW_postVFP_fullMt_postVFP/"
 
 # ewkFiles = ["DYJetsToLL_M10to50.hdf5", "ST_t-channel_antitop_4f_inclusiveDecays.hdf5","ST_tW_top_5f_inclusiveDecays.hdf5","TTJets_SingleLeptFromTbar.hdf5","WZ.hdf5",\
 # "DYJetsToLL_M50.hdf5","ST_t-channel_top_4f_inclusiveDecays_13TeV.hdf5","TTJets_DiLept.hdf5","WJetsToLNu.hdf5","ZZ.hdf5",\
@@ -18,7 +19,8 @@ folder = "../templateMaker/output_02_02_2021_19_10_46/"
 
 WFiles = ["WMinusJetsToMuNu.hdf5","WPlusJetsToTauNu.hdf5","WMinusJetsToTauNu.hdf5","WPlusJetsToMuNu.hdf5"]
 DYFiles = ["DYJetsToMuMu_M50.hdf5","DYJetsToTauTau_M50.hdf5"]
-TopFiles = ["ST_t-channel_muDecays.hdf5", "ST_t-channel_tauDecays.hdf5","ST_s-channel_4f_leptonDecays.hdf5","ST_t-channel_top_5f_InclusiveDecays.hdf5","TTToSemiLeptonic.hdf5", "TTTo2L2Nu.hdf5"]
+# TopFiles = ["ST_t-channel_muDecays.hdf5", "ST_t-channel_tauDecays.hdf5","ST_s-channel_4f_leptonDecays.hdf5","ST_t-channel_top_5f_InclusiveDecays.hdf5","TTToSemiLeptonic.hdf5", "TTTo2L2Nu.hdf5"]
+TopFiles = ["ST_t-channel_muDecays.hdf5", "ST_t-channel_tauDecays.hdf5","ST_s-channel_4f_leptonDecays.hdf5","TTToSemiLeptonic.hdf5", "TTTo2L2Nu.hdf5"]
 DibosonFiles = ["WW.hdf5","WZ.hdf5"]
 
 histonames = ['ewk', 'ewk_sumw2']
@@ -78,11 +80,15 @@ dset[...] = hfakesLowMt.flatten()
 # hfakesLowMtsumw2[:,:,1,:] = np.zeros([len(etaBins)-1,len(ptBins)-1,len(isoBins)-1], dtype='float64')
 # dset = fbkg.create_dataset(name='fakesLowMt_sumw2', shape=[(len(etaBins)-1) * (len(ptBins)-1) * (len(mTBins)-1) * (len(isoBins)-1)], dtype='float64')
 # dset[...] = hfakesLowMtsumw2.flatten()
+threshold = np.digitize(30.,mTBins)
+# fR is computed in low-mt region
+fR = np.sum(hdata[:,:,-1,:threshold-1,0]-hewk[:,:,-1,:threshold-1,0], axis=2)/np.sum(hdata[:,:,-1,:threshold-1,1]-hewk[:,:,-1,:threshold-1,1],axis=2)
+# fR =(hdata[:,:,-1,0,0]-hewk[:,:,-1,0,0])/(hdata[:,:,-1,0,1]-hewk[:,:,-1,0,1])
 
 hfakesHighMt = np.where(hdata[:,:,-1,:,:]-hewk[:,:,-1,:,:]>0, hdata[:,:,-1,:,:]-hewk[:,:,-1,:,:], 1)
 hfakesHighMt[:,:,0,:] = np.zeros([len(etaBins)-1,len(ptBins)-1,len(isoBins)-1], dtype='float64')
 # keep aiso/iso ratio constant
-hfakesHighMt[:,:,1,0] = (hdata[:,:,-1,1,1]-hewk[:,:,-1,1,1]) * (hdata[:,:,-1,0,0]-hewk[:,:,-1,0,0])/(hdata[:,:,-1,0,1]-hewk[:,:,-1,0,1])
+hfakesHighMt[:,:,1,0] = (hdata[:,:,-1,1,1]-hewk[:,:,-1,1,1]) * fR
 dset = fbkg.create_dataset(name='fakesHighMt', shape=[(len(etaBins)-1) * (len(ptBins)-1) * (len(mTBins)-1) * (len(isoBins)-1)], dtype='float64')
 dset[...] = hfakesHighMt.flatten()
 
@@ -172,7 +178,7 @@ for i in range(2):
     etafake = np.sum(hfakesHighMt,axis=1)[:,-1,i]
     hep.histplot([etadata],bins = etaBins, histtype = 'errorbar', color = "k", stack = False, ax=ax1, label = ["data"])
     hep.histplot([etaDiboson,etaTop,etaDY,etafake,etaW],bins = etaBins, histtype = 'fill',linestyle = 'solid', color =["grey","magenta","orange","blue","red"], label=["Diboson","Top","DY","fake","W"], stack = True, ax=ax1)
-    ax2.set_ylim([0.7, 1.3])
+    ax2.set_ylim([0.9, 1.1])
     hep.histplot([etadata/(etafake+etaewk)], bins = etaBins, histtype = 'errorbar', color = "k", stack = False, ax=ax2)
     ax1.legend(loc='upper right', frameon=True)
     plt.savefig('eta_iso{}_highMt.png'.format(i))
@@ -192,7 +198,7 @@ for i in range(2):
     ptfake = np.sum(hfakesHighMt,axis=0)[:,-1,i]
     hep.histplot([ptdata],bins = ptBins, histtype = 'errorbar', color = "k", stack = False, ax=ax1,label = ["data"])
     hep.histplot([ptDiboson,ptTop,ptDY,ptfake,ptW],bins = ptBins, histtype = 'fill',linestyle = 'solid', color =["grey","magenta","orange","blue","red"], label=["Diboson","Top","DY","fake","W"], stack = True, ax=ax1)
-    ax2.set_ylim([0.7, 1.3])
+    ax2.set_ylim([0.9, 1.1])
     hep.histplot([ptdata/(ptfake+ptewk)],bins = ptBins, histtype = 'errorbar', color = "k", stack = False, ax=ax2)
     ax1.legend(loc='upper right', frameon=True)
     plt.savefig('pt_iso{}_highMt.png'.format(i))
@@ -212,7 +218,7 @@ for i in range(2):
     etafake = np.sum(hfakesLowMt,axis=1)[:,0,i]
     hep.histplot([etadata],bins = etaBins, histtype = 'errorbar', color = "k", stack = False, ax=ax1,label = ["data"])
     hep.histplot([etaDiboson,etaTop,etaDY,etafake,etaW],bins = etaBins, histtype = 'fill',linestyle = 'solid', color =["grey","magenta","orange","blue","red"], label=["Diboson","Top","DY","fake","W"], stack = True, ax=ax1)
-    ax2.set_ylim([0.7, 1.3])
+    ax2.set_ylim([0.9, 1.1])
     hep.histplot([etadata/(etafake+etaewk)],bins = etaBins, histtype = 'errorbar', color = "k", stack = False, ax=ax2)
     ax1.legend(loc='upper right', frameon=True)
     plt.savefig('eta_iso{}_lowMt.png'.format(i))
@@ -232,65 +238,29 @@ for i in range(2):
     ptfake = np.sum(hfakesLowMt,axis=0)[:,0,i]
     hep.histplot([ptdata],bins = ptBins, histtype = 'errorbar', color = "k", stack = False, ax=ax1,label = ["data"])
     hep.histplot([ptDiboson,ptTop,ptDY,ptfake,ptW],bins = ptBins, histtype = 'fill',linestyle = 'solid', color =["grey","magenta","orange","blue","red"], label=["Diboson","Top","DY","fake","W"], stack = True, ax=ax1)
-    ax2.set_ylim([0.7, 1.3])
+    ax2.set_ylim([0.9, 1.1])
     hep.histplot([ptdata/(ptfake+ptewk)],bins = ptBins, histtype = 'errorbar', color = "k", stack = False, ax=ax2)
     ax1.legend(loc='upper right', frameon=True)
     plt.savefig('pt_iso{}_lowMt.png'.format(i))
     plt.cla()
 
-    fig, (ax1, ax2) = plt.subplots(nrows=2,gridspec_kw={'height_ratios': [3, 1]})
-    ax1.set_title("mt_iso{}".format(i), fontsize=18)
-    ax1.set_ylabel('number of events')
-    ax2.set_ylabel('data/prediction')
-    ax2.set_xlabel('$m_T$')
-    mtdata = np.sum(hdata,axis=(0,1))[-1,:,i]
-    mtewk = np.sum(hewk,axis=(0,1))[-1,:,i]
-    mtW = np.sum(hW,axis=(0,1))[-1,:,i]
-    mtDY = np.sum(hDY,axis=(0,1))[-1,:,i]
-    mtTop = np.sum(hTop,axis=(0,1))[-1,:,i]
-    mtDiboson = np.sum(hDiboson,axis=(0,1))[-1,:,i]
-    hep.histplot([mtdata],bins = mTBins, histtype = 'errorbar', color = "k", stack = False, ax=ax1,label = ["data"])
-    hep.histplot([mtDiboson,mtTop,mtDY,mtW],bins = mTBins, histtype = 'fill',linestyle = 'solid', color =["grey","magenta","orange","red"], label=["Diboson","Top","DY","W"], stack = True, ax=ax1)
-    ax2.set_ylim([0.7, 1.3])
-    hep.histplot([mtdata/(mtewk)],bins = mTBins, histtype = 'errorbar', color = "k", stack = False, ax=ax2)
-    ax1.legend(loc='upper right', frameon=True)
-    plt.savefig('mt_iso{}.png'.format(i))
-    plt.cla()
-
-    # fig, (ax1, ax2) = plt.subplots(nrows=2,gridspec_kw={'height_ratios': [3, 1]})
-    # ax1.set_title("met_iso{}".format(i), fontsize=18)
-    # ax1.set_ylabel('number of events')
-    # ax2.set_ylabel('data/prediction')
-    # ax2.set_xlabel('$m_T$')
-    # mtdata = np.sum(hdata,axis=(0,1))[-1,:,i]
-    # mtewk = np.sum(hewk,axis=(0,1))[-1,:,i]
-    # mtW = np.sum(hW,axis=(0,1))[-1,:,i]
-    # mtDY = np.sum(hDY,axis=(0,1))[-1,:,i]
-    # mtTop = np.sum(hTop,axis=(0,1))[-1,:,i]
-    # mtDiboson = np.sum(hDiboson,axis=(0,1))[-1,:,i]
-    # hep.histplot([mtdata],bins = metBins, histtype = 'errorbar', color = "k", stack = False, ax=ax1,label = ["data"])
-    # hep.histplot([mtDiboson,mtTop,mtDY,mtW],bins = metBins, histtype = 'fill',linestyle = 'solid', color =["grey","magenta","orange","red"], label=["Diboson","Top","DY","W"], stack = True, ax=ax1)
-    # ax2.set_ylim([0.7, 1.3])
-    # hep.histplot([mtdata/(mtewk)],bins = metBins, histtype = 'errorbar', color = "k", stack = False, ax=ax2)
-    # ax1.legend(loc='upper right', frameon=True)
-    # plt.savefig('met_iso{}.png'.format(i))
-    # plt.cla()
-
 fig, (ax1, ax2) = plt.subplots(nrows=2,gridspec_kw={'height_ratios': [3, 1]})
-ax1.set_title("iso", fontsize=18)
+ax1.set_title("mt", fontsize=18)
 ax1.set_ylabel('number of events')
 ax2.set_ylabel('data/prediction')
-ax2.set_xlabel('iso')
-mtdata = np.sum(hdata,axis=(0,1,3))[-1,:]
-mtewk = np.sum(hewk,axis=(0,1,3))[-1,:]
-mtW = np.sum(hW,axis=(0,1,3))[-1,:]
-mtDY = np.sum(hDY,axis=(0,1,3))[-1,:]
-mtTop = np.sum(hTop,axis=(0,1,3))[-1,:]
-mtDiboson = np.sum(hDiboson,axis=(0,1,3))[-1,:]
-hep.histplot([mtdata],bins = isoBins, histtype = 'errorbar', color = "k", stack = False, ax=ax1,label = ["data"])
-hep.histplot([mtDiboson,mtTop,mtDY,mtW],bins = isoBins, histtype = 'fill',linestyle = 'solid', color =["grey","magenta","orange","red"], label=["Diboson","Top","DY","W"], stack = True, ax=ax1)
-ax2.set_ylim([0.7, 1.3])
-hep.histplot([mtdata/(mtewk)],bins = isoBins, histtype = 'errorbar', color = "k", stack = False, ax=ax2)
+ax2.set_xlabel('$m_T$')
+mtdata = np.sum(hdata[:,:,-1,:,0],axis=(0,1))
+mtewk = np.sum(hewk[:,:,-1,:,0],axis=(0,1))
+mtW = np.sum(hW[:,:,-1,:,0],axis=(0,1))
+mtDY = np.sum(hDY[:,:,-1,:,0],axis=(0,1))
+mtTop = np.sum(hTop[:,:,-1,:,0],axis=(0,1))
+mtDiboson = np.sum(hDiboson[:,:,-1,:,0],axis=(0,1))
+mtfake = np.einsum('kmi,km->i',hdata[:,:,-1,:,1]-hewk[:,:,-1,:,1],fR)
+
+hep.histplot([mtdata],bins = mTBins, histtype = 'errorbar', color = "k", stack = False, ax=ax1,label = ["data"])
+hep.histplot([mtDiboson,mtTop,mtDY,mtfake,mtW],bins = mTBins, histtype = 'fill',linestyle = 'solid', color =["grey","magenta","orange","blue","red"], label=["Diboson","Top","DY","fake","W"], stack = True, ax=ax1)
+ax2.set_ylim([0.9, 1.1])
+hep.histplot([mtdata/(mtfake+mtewk)],bins = mTBins, histtype = 'errorbar', color = "k", stack = False, ax=ax2)
 ax1.legend(loc='upper right', frameon=True)
-plt.savefig('iso.png')
+plt.savefig('mt.png')
 plt.cla()
