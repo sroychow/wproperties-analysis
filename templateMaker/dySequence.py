@@ -31,13 +31,17 @@ def dySelectionSequence(p, xsec, systType, sumwClipped, nodetoStart, era):
     p.branch(nodeToStart=nodetoStart, nodeToEnd='defs', modules=[ROOT.zVetoMuons()])
     p.EventFilter(nodeToStart='defs', nodeToEnd='defs', evfilter="Sum(vetoMuons)==2 && Sum(goodMuons)==2", filtername="{:20s}".format("two muons"))
     p.EventFilter(nodeToStart='defs', nodeToEnd='defs', evfilter="(HLT_IsoMu24 ||  HLT_IsoTkMu24)", filtername="{:20s}".format("Pass HLT"))
-    p.EventFilter(nodeToStart='defs', nodeToEnd='defs', evfilter="Muon_charge[goodMuons][0] + Muon_charge[goodMuons][1]) == 0", filtername="{:20s}".format("Opposite charge"))
+    p.EventFilter(nodeToStart='defs', nodeToEnd='defs', evfilter="(Muon_charge[goodMuons][0] + Muon_charge[goodMuons][1]) == 0", filtername="{:20s}".format("Opposite charge"))
     p.EventFilter(nodeToStart='defs', nodeToEnd='defs', evfilter="std::abs(Muon_eta[goodMuons][0]) < 2.4 && std::abs(Muon_eta[goodMuons][1]) < 2.4", filtername="{:20s}".format("Accept"))
     p.EventFilter(nodeToStart='defs', nodeToEnd='defs', evfilter="Muon_mediumId[goodMuons][0] == 1 && Muon_mediumId[goodMuons][1] == 1", filtername="{:20s}".format("MuonId"))
     p.EventFilter(nodeToStart='defs', nodeToEnd='defs', evfilter="Muon_pfRelIso04_all[goodMuons][0] < 0.15 && Muon_pfRelIso04_all[goodMuons][1] < 0.15", filtername="{:20s}".format("Isolation"))
     p.branch(nodeToStart='defs', nodeToEnd='defs', modules=[ROOT.zSelection()])
     p.EventFilter(nodeToStart='defs', nodeToEnd='defs', evfilter="60. < dimuonMass && dimuonMass < 120.", filtername="{:20s}".format("mZ range"))
     p.EventFilter(nodeToStart='defs', nodeToEnd='defs', evfilter="Mu1_hasTriggerMatch", filtername="{:20s}".format("+ve mu trig matched"))
+
+
+
+    
 
     if systType == 0: #this is data
         p.Histogram(columns = ["dimuonMass", "Mu1_eta", "Mu1_pt", "Mu2_eta", "Mu2_pt"], types = ['float']*5,node='defs',histoname=ROOT.string('data_muons'),bins = [zmassBins, etaBins, ptBins, etaBins, ptBins], variations = [])

@@ -1,3 +1,6 @@
 #include "puWeightProducer.hpp"
 #include "trigObjMatchProducer.hpp"
 #include "isGoodLumi.hpp"
+#include "genLeptonSelector.hpp"
+#include "CSvariableProducer.hpp"
+#include "genVProducer.hpp"
