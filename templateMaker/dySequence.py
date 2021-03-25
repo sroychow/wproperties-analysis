@@ -11,7 +11,7 @@ sys.path.append('{}/RDFprocessor/framework'.format(FWKBASE))
 from RDFtree import RDFtree
 sys.path.append('{}/Common/data'.format(FWKBASE))
 from samples_2016_ul import samplespreVFP
-from binning import ptBins, etaBins, mTBins, etaBins, isoBins, chargeBins, zmassBins, qtBins,metBins,pvBins
+from binning import ptBins, etaBins, mTBins, etaBins, isoBins, chargeBins, zmassBins, qtBins,metBins,pvBins,phiBins,cosThetaBins
 from externals import fileSFul,filePt, fileY
 
 sys.path.append('{}/templateMaker/python'.format(FWKBASE))
@@ -27,6 +27,9 @@ def dySelectionSequence(p, xsec, systType, sumwClipped, nodetoStart, era):
     luminosityN = 35.9
     if era == 'preVFP' :     luminosityN = 19.3
     else: luminosityN = 16.6
+
+    if systType not in [0,1]:#for signal MC
+        p.Histogram(columns = ["CStheta_preFSR","CSphi_preFSR","Vpt_preFSR","Vrap_preFSR","Vmass_preFSR"], types = ['float']*5,node=nodetoStart,histoname=ROOT.string('genhistos'),bins = [cosThetaBins,phiBins,qtBins,etaBins,zmassBins], variations = [])
     
     p.branch(nodeToStart=nodetoStart, nodeToEnd='defs', modules=[ROOT.zVetoMuons()])
     p.EventFilter(nodeToStart='defs', nodeToEnd='defs', evfilter="Sum(vetoMuons)==2 && Sum(goodMuons)==2", filtername="{:20s}".format("two muons"))
@@ -38,10 +41,6 @@ def dySelectionSequence(p, xsec, systType, sumwClipped, nodetoStart, era):
     p.branch(nodeToStart='defs', nodeToEnd='defs', modules=[ROOT.zSelection()])
     p.EventFilter(nodeToStart='defs', nodeToEnd='defs', evfilter="60. < dimuonMass && dimuonMass < 120.", filtername="{:20s}".format("mZ range"))
     p.EventFilter(nodeToStart='defs', nodeToEnd='defs', evfilter="Mu1_hasTriggerMatch", filtername="{:20s}".format("+ve mu trig matched"))
-
-
-
-    
 
     if systType == 0: #this is data
         p.Histogram(columns = ["dimuonMass", "Mu1_eta", "Mu1_pt", "Mu2_eta", "Mu2_pt"], types = ['float']*5,node='defs',histoname=ROOT.string('data_muons'),bins = [zmassBins, etaBins, ptBins, etaBins, ptBins], variations = [])

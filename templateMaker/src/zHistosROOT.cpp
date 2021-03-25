@@ -48,6 +48,26 @@ RNode zHistosROOT::run(RNode d)
     TH1weightsHelper helperGenW(std::string("genWeight"), std::string(" ; genWeight;"), _gwArr.size() - 1, _gwArr, _syst_name);
     auto hGw = df.Book<float, float, ROOT::VecOps::RVec<float>>(std::move(helperGenW), {"Generator_weight_clipped", "uno", _syst_weight});
     _h1Group.emplace_back(hGw);
+
+    TH1weightsHelper helperGenWQt(std::string("GenV_qt"), std::string(" ; GenV #p_{T} preFSR;"), _qtArr.size() - 1, _qtArr, _syst_name);
+    auto hGw_qt = df.Book<float, float, ROOT::VecOps::RVec<float>>(std::move(helperGenWQt), {"Vpt_preFSR", "uno", _syst_weight});
+    _h1Group.emplace_back(hGw_qt);
+    
+    //"Vmass_preFSR"
+    TH1weightsHelper helperGenWY(std::string("GenV_y"), std::string(" ; GenV Y  preFSR;"), _etaArr.size() - 1, _etaArr, _syst_name);
+    auto hGw_rap = df.Book<float, float, ROOT::VecOps::RVec<float>>(std::move(helperGenWY), {"Vrap_preFSR", "uno", _syst_weight});
+    _h1Group.emplace_back(hGw_rap);
+
+    TH1weightsHelper helperGenCStheta(std::string("GenV_cstheta"), std::string(" ; CS #Theta;"), _cosThetaBins.size() - 1, _cosThetaBins, _syst_name);
+    auto hGw_cstheta = df.Book<float, float, ROOT::VecOps::RVec<float>>(std::move(helperGenCStheta), {"CStheta_preFSR", "uno", _syst_weight});
+    _h1Group.emplace_back(hGw_cstheta);
+
+    TH1weightsHelper helperGenCSphi(std::string("GenV_phi"), std::string(" ; CS #phi;"), _phiBins.size() - 1, _phiBins, _syst_name);
+    auto hGw_csphi = df.Book<float, float, ROOT::VecOps::RVec<float>>(std::move(helperGenCSphi), {"CSphi_preFSR", "uno", _syst_weight});
+    _h1Group.emplace_back(hGw_csphi);
+
+    
+    
   }
 
   return df;
