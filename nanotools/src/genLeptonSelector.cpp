@@ -15,7 +15,7 @@ RNode genLeptonSelector::run(RNode d) {
       if(genPartIdxMother[i] < 0) continue;
       int mompdgId = pdgId[genPartIdxMother[i]];
       if(abs(pdgId[i]) < 11 || abs(pdgId[i]) > 16) continue;
-      if (abs(mompdgId) == 23 &&  abs(mompdgId) == 24){//
+      if (abs(mompdgId) == 23 ||  abs(mompdgId) == 24){//
 	if(status[i] == 746) //status 746 is pre photos FSR in new powheg samples. so if they exist we want those.
 	  status746.emplace_back(std::make_pair(i, pt[i]));
 	else other.emplace_back(std::make_pair(i, pt[i]));
