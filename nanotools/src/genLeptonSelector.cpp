@@ -33,8 +33,8 @@ RNode genLeptonSelector::run(RNode d) {
     //if 746 size is size2, then we return it by default
     std::pair<int,int> prefsrlepidx(-1,-1);
     if(status746.size() == 2) {
-      prefsrlepidx.first  = status746[0].second > status746[0].second ? status746[0].first : status746[1].first;
-      prefsrlepidx.second = status746[0].second > status746[0].second ? status746[1].first : status746[0].first;
+      prefsrlepidx.first  = status746[0].second > status746[1].second ? status746[0].first : status746[1].first;
+      prefsrlepidx.second = status746[0].second > status746[1].second ? status746[1].first : status746[0].first;
     }
     else if(status746.size() == 1 || other.size() == 1) {
       prefsrlepidx.first  = status746[0].second > other[0].second ? status746[0].first : other[0].first;
