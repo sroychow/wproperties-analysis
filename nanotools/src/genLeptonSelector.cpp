@@ -7,7 +7,6 @@ RNode genLeptonSelector::run(RNode d) {
   //Logic taken from https://github.com/WMass/nanoAOD-tools/blob/master/python/postprocessing/wmass/genLepSelection.py
   //have to think of refinement
   auto  getGenLeptonIdx = [](const RVec<int> &pdgId, const RVec<int>& status, const RVec<int>& genPartIdxMother, const RVec<int>& statusFlag, const RVec<float>& pt) { 
-    RVec<std::pair<int, float>> genLep;
     RVec<std::pair<int, float>> status746;
     RVec<std::pair<int, float>> other;
 
@@ -44,8 +43,15 @@ RNode genLeptonSelector::run(RNode d) {
       prefsrlepidx.first  = other[0].second > other[1].second ? other[0].first : other[1].first;
       prefsrlepidx.second = other[0].second > other[1].second ? other[1].first : other[0].first;
     }
+    
+    //swap indices to save +ve lepton as first index                                                                                                   
+    std::pair<int, int> genLep;
+    genLep.first  = pdgId[prefsrlepidx.first] < 0 ? prefsrlepidx.second : prefsrlepidx.first;
+    genLep.second = pdgId[prefsrlepidx.first] < 0 ? prefsrlepidx.first : prefsrlepidx.second;
+
        
-    return prefsrlepidx;
+    //return prefsrlepidx;
+    return genLep;
         
   };//function
 
