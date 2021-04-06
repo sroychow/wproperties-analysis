@@ -11,7 +11,7 @@ sys.path.append('{}/RDFprocessor/framework'.format(FWKBASE))
 from RDFtree import RDFtree
 sys.path.append('{}/Common/data'.format(FWKBASE))
 from samples_2016_ul import samplespreVFP
-from binning import ptBins, etaBins, mTBinsFull, etaBins, isoBins, chargeBins, zmassBins, qtBins,metBins,pvBins
+from binning import ptBins, etaBins, mTBinsFull, etaBins, isoBins, chargeBins, zmassBins, qtBins,metBins,pvBins, phiBins, cosThetaBins
 from externals import fileSFul,filePt, fileY
 
 sys.path.append('{}/templateMaker/python'.format(FWKBASE))
@@ -26,7 +26,9 @@ def wSelectionSequence(p, xsec, systType, sumwClipped, nodetoStart, era, fvec):
     luminosityN = 35.9
     if era == 'preVFP' :     luminosityN = 19.3
     else: luminosityN = 16.6
-    
+
+    if systType not in [0,1]:#for signal MC
+        p.Histogram(columns = ["CStheta_preFSR","CSphi_preFSR","Vpt_preFSR","Vrap_preFSR","Vmass_preFSR"], types = ['float']*5,node=nodetoStart,histoname=ROOT.string('genhistos'),bins = [cosThetaBins,phiBins,qtBins,etaBins,zmassBins], variations = [])
 
     p.EventFilter(nodeToStart=nodetoStart, nodeToEnd='defs', evfilter="(HLT_IsoMu24 ||  HLT_IsoTkMu24)", filtername="{:20s}".format("Pass HLT"))
     p.EventFilter(nodeToStart='defs', nodeToEnd='defs', evfilter="All(Muon_mediumId)", filtername="{:20s}".format("MuonID"))
@@ -35,7 +37,7 @@ def wSelectionSequence(p, xsec, systType, sumwClipped, nodetoStart, era, fvec):
     p.EventFilter(nodeToStart='defs', nodeToEnd='defs', evfilter="All(Muon_pt > 25.)", filtername="{:20s}".format("Muon pt cut"))
     p.EventFilter(nodeToStart='defs', nodeToEnd='defs', evfilter="All(abs(Muon_eta) < 2.4)", filtername="{:20s}".format("Muon eta cut"))
     p.EventFilter(nodeToStart='defs', nodeToEnd='defs', evfilter="nMuon== 1", filtername="{:20s}".format("one muon"))
-
+    
     # note for customizeforUL(isMC=true, isWorZ=false)
     if systType == 0: #this is data
         p.branch(nodeToStart='defs', nodeToEnd='defs', modules=[ROOT.customizeforUL(False, False), ROOT.recoDefinitions(False, False)])
@@ -55,4 +57,5 @@ def wSelectionSequence(p, xsec, systType, sumwClipped, nodetoStart, era, fvec):
         p.EventFilter(nodeToStart='defs', nodeToEnd='defs', evfilter="Mu1_hasTriggerMatch", filtername="{:20s}".format("+ve mu trig matched"))
         p.EventFilter(nodeToStart='defs', nodeToEnd='defs', evfilter="Mu1_pt < 65.", filtername="{:20s}".format("mu1 pt-eta acceptance"))
         p.Histogram(columns = ["Mu1_eta","Mu1_pt","Mu1_charge","MT","Mu1_relIso", "lumiweight","puWeight","SF"], types = ['float']*8,node='defs',histoname=ROOT.string('ewk'),bins = [etaBins,ptBins,chargeBins,mTBinsFull,isoBins], variations = [])
+
     return p

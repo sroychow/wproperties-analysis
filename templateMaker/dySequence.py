@@ -11,7 +11,7 @@ sys.path.append('{}/RDFprocessor/framework'.format(FWKBASE))
 from RDFtree import RDFtree
 sys.path.append('{}/Common/data'.format(FWKBASE))
 from samples_2016_ul import samplespreVFP
-from binning import ptBins, etaBins, mTBins, etaBins, isoBins, chargeBins, zmassBins, qtBins,metBins,pvBins
+from binning import ptBins, etaBins, mTBins, etaBins, isoBins, chargeBins, zmassBins, qtBins,metBins,pvBins,phiBins,cosThetaBins
 from externals import fileSFul,filePt, fileY
 
 sys.path.append('{}/templateMaker/python'.format(FWKBASE))
@@ -27,11 +27,14 @@ def dySelectionSequence(p, xsec, systType, sumwClipped, nodetoStart, era):
     luminosityN = 35.9
     if era == 'preVFP' :     luminosityN = 19.3
     else: luminosityN = 16.6
+
+    if systType not in [0,1]:#for signal MC
+        p.Histogram(columns = ["CStheta_preFSR","CSphi_preFSR","Vpt_preFSR","Vrap_preFSR","Vmass_preFSR"], types = ['float']*5,node=nodetoStart,histoname=ROOT.string('genhistos'),bins = [cosThetaBins,phiBins,qtBins,etaBins,zmassBins], variations = [])
     
     p.branch(nodeToStart=nodetoStart, nodeToEnd='defs', modules=[ROOT.zVetoMuons()])
     p.EventFilter(nodeToStart='defs', nodeToEnd='defs', evfilter="Sum(vetoMuons)==2 && Sum(goodMuons)==2", filtername="{:20s}".format("two muons"))
     p.EventFilter(nodeToStart='defs', nodeToEnd='defs', evfilter="(HLT_IsoMu24 ||  HLT_IsoTkMu24)", filtername="{:20s}".format("Pass HLT"))
-    p.EventFilter(nodeToStart='defs', nodeToEnd='defs', evfilter="Muon_charge[goodMuons][0] + Muon_charge[goodMuons][1]) == 0", filtername="{:20s}".format("Opposite charge"))
+    p.EventFilter(nodeToStart='defs', nodeToEnd='defs', evfilter="(Muon_charge[goodMuons][0] + Muon_charge[goodMuons][1]) == 0", filtername="{:20s}".format("Opposite charge"))
     p.EventFilter(nodeToStart='defs', nodeToEnd='defs', evfilter="std::abs(Muon_eta[goodMuons][0]) < 2.4 && std::abs(Muon_eta[goodMuons][1]) < 2.4", filtername="{:20s}".format("Accept"))
     p.EventFilter(nodeToStart='defs', nodeToEnd='defs', evfilter="Muon_mediumId[goodMuons][0] == 1 && Muon_mediumId[goodMuons][1] == 1", filtername="{:20s}".format("MuonId"))
     p.EventFilter(nodeToStart='defs', nodeToEnd='defs', evfilter="Muon_pfRelIso04_all[goodMuons][0] < 0.15 && Muon_pfRelIso04_all[goodMuons][1] < 0.15", filtername="{:20s}".format("Isolation"))

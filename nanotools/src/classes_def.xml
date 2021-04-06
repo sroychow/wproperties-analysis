@@ -2,4 +2,7 @@
   <class name="puWeightProducer"/>
   <class name="trigObjMatchProducer"/>
   <class name="isGoodLumi"/>
+  <class name="genLeptonSelector"/>
+  <class name="CSvariableProducer"/>
+  <class name="genVProducer"/>
 </lcgdict>

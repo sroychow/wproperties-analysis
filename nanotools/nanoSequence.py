@@ -45,5 +45,5 @@ def nanoSequence(rdftree, systType, era):
         #TFile *puMC, TFile *puData, TString hmcName, TString hdataName, bool dosyst, booql fixlargeW = true, bool normtoArea = true
         #rdftree.branch(nodeToStart='input', nodeToEnd='postnano', modules=[ROOT.puWeightProducer(mcprofName, "pileup", False, True, True), ROOT.trigObjMatchProducer()])
         #FOR ROOT HISTOS
-        rdftree.branch(nodeToStart='input', nodeToEnd='postnano', modules=[ROOT.puWeightProducer(eraCode), ROOT.trigObjMatchProducer()])
+        rdftree.branch(nodeToStart='input', nodeToEnd='postnano', modules=[ROOT.puWeightProducer(eraCode), ROOT.trigObjMatchProducer(), ROOT.genLeptonSelector(), ROOT.CSvariableProducer(), ROOT.genVProducer()])
     return rdftree,endNode
