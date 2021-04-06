@@ -13,7 +13,7 @@ RNode recoDefinitions::run(RNode d)
                   .Define("Mu1_pt", "Muon_pt[0]")
                   .Define("Mu1_sip3d", "Muon_sip3d[0]")
                   .Define("Mu1_dxy", "Muon_dxy[0]")
-                  .Define("Mu1_hasTriggerMatch", hasTriggerMatch, {"Mu1_eta", "Mu1_phi", "goodTrigObjs_eta", "goodTrigObjs_phi"})
+                //   .Define("Mu1_hasTriggerMatch", hasTriggerMatch, {"Mu1_eta", "Mu1_phi", "goodTrigObjs_eta", "goodTrigObjs_phi"})
                   .Define("MT", W_mt, {"Mu1_pt", "Mu1_phi", "MET_pt_nom", "MET_phi_nom"})
                   .Define("Recoil_pt", W_hpt, {"Mu1_pt", "Mu1_phi", "MET_pt_nom", "MET_phi_nom"});
 
