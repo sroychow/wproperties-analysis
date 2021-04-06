@@ -17,7 +17,7 @@ RNode genDefinitions::run(RNode d)
     auto d1 = d.Define("GenCharge", "float(GenPart_pdgId[GenPart_preFSRMuonIdx]/TMath::Abs(GenPart_pdgId[GenPart_preFSRMuonIdx]))")
                   .Define("Mupt_preFSR", "GenPart_pt[GenPart_preFSRMuonIdx]")
                   .Define("Mueta_preFSR", "GenPart_eta[GenPart_preFSRMuonIdx]")
-                  .Define("Wrap_preFSR_abs", "TMath::Abs(Wrap_preFSR)")
-                  .Define("LHEScaleWeightred", reduceVec, {"LHEScaleWeight"});
+                  .Define("Wrap_preFSR_abs", "TMath::Abs(Wrap_preFSR)");
+                  //.Define("LHEScaleWeightred", reduceVec, {"LHEScaleWeight"});
     return d1;
 }
