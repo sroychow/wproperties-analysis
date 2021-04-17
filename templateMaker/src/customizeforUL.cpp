@@ -4,32 +4,32 @@
 
 RNode customizeforUL::run(RNode d)
 {
-    //for both data/mc
-    auto d1 = d.Alias("MET_pt_nom", "MET_pt")
-                  .Alias("MET_phi_nom", "MET_phi");
+  //for both data/mc
+  auto d1 = d.Alias("MET_pt_nom", "MET_pt")
+                .Alias("MET_phi_nom", "MET_phi");
 
-    //for all MC
-    /*if (isMC_)
+  //for all MC
+  /*if (isMC_)
     {
         d1 = d1.Alias("MET_pt_jesTotalUp", "MET_pt_jesTotalUp")
                  .Alias("MET_phi_jesTotalUp", "MET_phi_jesTotalUp")
                  .Alias("MET_pt_jesTotalDown", "MET_pt_jesTotalDown")
                  .Alias("MET_phi_jesTotalDown", "MET_phi_jesTotalDown");
     }*/
-    //For only W&Z MC
-    if (isWorZMC_)
-    { //basic gen
-      //Have to define the post nano sequence
-      /*d1 = d1.Alias("Wrap_preFSR", "Vrap_preFSR")
-                 .Alias("Wpt_preFSR", "Vpt_preFSR")
-                 .Alias("Wmass_preFSR", "Vmass_preFSR")
-                 .Alias("GenPart_preFSRMuonIdx", "GenPart_preFSRLepIdx1");
+  //For only W&Z MC
+  if (isWorZMC_)
+  { //basic gen
+    //Have to define the post nano sequence
+    d1 = d1.Alias("Wrap_preFSR", "Vrap_preFSR")
+             .Alias("Wpt_preFSR", "Vpt_preFSR")
+             .Alias("Wmass_preFSR", "Vmass_preFSR")
+             .Alias("GenPart_preFSRMuonIdx", "GenPart_preFSRLepIdx1");
 
-        auto getSameVec = [](ROOT::VecOps::RVec<float> red) {
-            return red;
-        };
-      */
-        /*
+    auto getSameVec = [](ROOT::VecOps::RVec<float> red) {
+      return red;
+    };
+
+    /*
       Old Nano defn
       Float_t LHE scale variation weights (w_var / w_nominal); 
       [0] is muR=0.50000E+00 muF=0.50000E+00 ; 
@@ -43,11 +43,11 @@ RNode customizeforUL::run(RNode d)
       [8] is muR=0.20000E+01 muF=0.20000E+01 *
       @ForSRC:Once we switch to new MC fully, we create the needed vector of 6 directly
     */
-        // trigger matching not in legacy rereco
-        //Will be defined later
-      //d1 = d1.Define("Mu1_hasTriggerMatch", getIntFromIdx, {"Muon_hasTriggerMatch", "Idx_mu1"});
-        
-      /*no longer needed
+    // trigger matching not in legacy rereco
+    //Will be defined later
+    //d1 = d1.Define("Mu1_hasTriggerMatch", getIntFromIdx, {"Muon_hasTriggerMatch", "Idx_mu1"});
+
+    /*no longer needed
         d1 = d1.Define("LHEScaleWeight", ROOT::Internal::RDF::PassAsVec<9, float>(getSameVec),
                        {"scaleWeightMuR05MuF05",
                         "scaleWeightMuR05MuF1",
@@ -173,7 +173,7 @@ RNode customizeforUL::run(RNode d)
             PDFVars.push_back("pdf_" + std::to_string(i));
         customizeforUL::vary("pdfWeightNNPDF0", PDFVars);
       */
-    }
+  }
 
-    return d1;
+  return d1;
 }
