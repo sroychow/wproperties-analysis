@@ -103,7 +103,7 @@ def main():
     #now trigger all the event loops at the same time:
     objList = []
     cutFlowreportDict = {}
-    yieldDict = {}
+    #yieldDict = {}
     for sample in samples:
         if 'WPlus' in sample or 'WMinus' in sample: continue
         checkS= 'DYJetsToMuMu' in sample or 'data' in sample
@@ -112,9 +112,9 @@ def main():
         RDFtreeDict = RDFtrees[sample].getObjects()
         if args.report: cutFlowreportDict[sample] = RDFtrees[sample].getCutFlowReport()
         if 'data' not in sample:
-            yieldDict[sample] = {}
+            #yieldDict[sample] = {}
             varlist=["lumiweight", "puWeight", "SF", "totalWeight"]
-            yieldDict[sample] = RDFtrees[sample].getYieldMap('defs', "uno", varlist)
+            #yieldDict[sample] = RDFtrees[sample].getYieldMap('defs', "uno", varlist)
         for node in RDFtreeDict:
             objList.extend(RDFtreeDict[node])
 
@@ -134,11 +134,11 @@ def main():
 
     print('all samples processed in {} s'.format(time.time()-start))
     
-    print("Printing yield report")
-    for sample, ymap in yieldDict.items():
-        print(sample)
-        for col, val in ymap.items():
-            print("{:20s}:{}".format(col, val.GetW()))
+    #print("Printing yield report")
+    #for sample, ymap in yieldDict.items():
+    #    print(sample)
+    #    for col, val in ymap.items():
+    #        print("{:20s}:{}".format(col, val.GetW()))
 #At some point this should be what we want
 #p.Histogram(columns = ["dimuonMass", "Mu1_eta", "Mu1_pt", "Mu2_eta", "Mu2_pt", "dimuonPt", "dimuonY", "MET_T1_pt"], types = ['float']*8,node='defs',histoname=ROOT.string('data_muons'),bins = [zmassBins, etaBins, ptBins, etaBins, qtBins, etaBins, metBins], variations = [])
 if __name__ == "__main__":
