@@ -5,4 +5,5 @@
   <class name="genLeptonSelector"/>
   <class name="CSvariableProducer"/>
   <class name="genVProducer"/>
+  <class name="muonPrefireWeightProducer"/>
 </lcgdict>

@@ -4,3 +4,4 @@
 #include "genLeptonSelector.hpp"
 #include "CSvariableProducer.hpp"
 #include "genVProducer.hpp"
+#include "muonPrefireWeightProducer.hpp"

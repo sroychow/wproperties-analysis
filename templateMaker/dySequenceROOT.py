@@ -48,7 +48,7 @@ def dySelectionSequence(p, xsec, systType, sumwClipped, nodetoStart, era):
     elif systType == 1:
         print("Sample will be normalized to {}/fb".format(luminosityN))
         p.branch(nodeToStart = 'defs', nodeToEnd = 'defs', modules = [ROOT.lumiWeight(xsec=xsec, sumwclipped=sumwClipped, targetLumi = luminosityN), ROOT.SF_ul(fileSFul, isZ=True, era=era)])
-        weight = 'float(lumiweight*puWeight*SF)'
+        weight = 'float(lumiweight*puWeight*SF*muprefireWeight)'
         nom = ROOT.vector('string')()
         nom.push_back("")
         p.branch(nodeToStart='defs', nodeToEnd='muonHistos', modules=[ROOT.zHistosROOT(weight, nom,"Nom")])
@@ -56,8 +56,7 @@ def dySelectionSequence(p, xsec, systType, sumwClipped, nodetoStart, era):
     else:
         print("Sample will be normalized to {}/fb".format(luminosityN))
         p.branch(nodeToStart = 'defs', nodeToEnd = 'defs', modules = [ROOT.lumiWeight(xsec=xsec, sumwclipped=sumwClipped, targetLumi = luminosityN), ROOT.SF_ul(fileSFul, isZ=True, era=era)])
-        weight = 'float(lumiweight*puWeight*SF)'
-        #weight = 'float(lumiweight)'
+        weight = 'float(lumiweight*puWeight*SF*muprefireWeight)'
         nom = ROOT.vector('string')()
         nom.push_back("")
         p.branch(nodeToStart='defs', nodeToEnd='muonHistos', modules=[ROOT.zHistosROOT(weight, nom,"Nom")])

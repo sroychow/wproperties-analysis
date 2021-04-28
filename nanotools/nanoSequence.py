@@ -12,7 +12,7 @@ from RDFtree import RDFtree
 
 sys.path.append('{}/Common/data/'.format(FWKBASE))
 from externals import pufile_mc_UL2016, pufile_data_UL2016_allData, pufile_data_UL2016_preVFP, pufile_data_UL2016_postVFP
-from externals import datajson
+from externals import datajson, filemuPrefire
 
 ROOT.gSystem.Load('{}/nanotools/bin/libNanoTools.so'.format(FWKBASE))
 
@@ -45,5 +45,5 @@ def nanoSequence(rdftree, systType, era):
         #TFile *puMC, TFile *puData, TString hmcName, TString hdataName, bool dosyst, booql fixlargeW = true, bool normtoArea = true
         #rdftree.branch(nodeToStart='input', nodeToEnd='postnano', modules=[ROOT.puWeightProducer(mcprofName, "pileup", False, True, True), ROOT.trigObjMatchProducer()])
         #FOR ROOT HISTOS
-        rdftree.branch(nodeToStart='input', nodeToEnd='postnano', modules=[ROOT.puWeightProducer(eraCode), ROOT.trigObjMatchProducer(), ROOT.genLeptonSelector(), ROOT.CSvariableProducer(), ROOT.genVProducer()])
+        rdftree.branch(nodeToStart='input', nodeToEnd='postnano', modules=[ROOT.puWeightProducer(eraCode), ROOT.trigObjMatchProducer(), ROOT.muonPrefireWeightProducer(filemuPrefire, eraCode), ROOT.genLeptonSelector(), ROOT.CSvariableProducer(), ROOT.genVProducer()])
     return rdftree,endNode
