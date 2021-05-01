@@ -12,20 +12,29 @@ from RDFtree import RDFtree
 
 sys.path.append('{}/Common/data/'.format(FWKBASE))
 from externals import pufile_mc_UL2016, pufile_data_UL2016_allData, pufile_data_UL2016_preVFP, pufile_data_UL2016_postVFP
-from externals import datajson, filemuPrefire
+from externals import datajson,filemuPrefire
 
 ROOT.gSystem.Load('{}/nanotools/bin/libNanoTools.so'.format(FWKBASE))
-
 ROOT.gROOT.ProcessLine("gErrorIgnoreLevel = 2001;")
 
 #pass a RDFtree object
-def nanoSequence(rdftree, systType, era):    
+def nanoSequence(rdftree, systType, sample, xsec, sumw, era):    
     endNode="input" #this is to protect if no postnano sequence is run
     if systType == 0: #this is data
         endNode='postnano'
         rdftree.branch(nodeToStart='input', nodeToEnd='postnano', modules=[ROOT.isGoodLumi(datajson), ROOT.trigObjMatchProducer()])
         rdftree.EventFilter(nodeToStart='postnano', nodeToEnd='postnano', evfilter="isGoodLumi==true", filtername="{:20s}".format("good Lumi"))
     else: #this is mc
+        luminosityN = 35.9
+        if era == 'preVFP' :
+            luminosityN = 19.3
+        else:
+            luminosityN = 16.6
+        
+        clip=False
+        if systType==2:
+            clip=True
+
         endNode='postnano'
         datapu = pufile_data_UL2016_preVFP
         mcprofName="Pileup_nTrueInt_Wplus_preVFP"
@@ -45,5 +54,6 @@ def nanoSequence(rdftree, systType, era):
         #TFile *puMC, TFile *puData, TString hmcName, TString hdataName, bool dosyst, booql fixlargeW = true, bool normtoArea = true
         #rdftree.branch(nodeToStart='input', nodeToEnd='postnano', modules=[ROOT.puWeightProducer(mcprofName, "pileup", False, True, True), ROOT.trigObjMatchProducer()])
         #FOR ROOT HISTOS
-        rdftree.branch(nodeToStart='input', nodeToEnd='postnano', modules=[ROOT.puWeightProducer(eraCode), ROOT.trigObjMatchProducer(), ROOT.muonPrefireWeightProducer(filemuPrefire, eraCode), ROOT.genLeptonSelector(), ROOT.CSvariableProducer(), ROOT.genVProducer()])
+        print(clip)
+        rdftree.branch(nodeToStart='input', nodeToEnd='postnano', modules=[ROOT.lumiWeight(xsec=xsec, sumw=sumw, targetLumi = luminosityN, clip=clip),ROOT.puWeightProducer(eraCode), ROOT.trigObjMatchProducer(),ROOT.muonPrefireWeightProducer(filemuPrefire, eraCode)])
     return rdftree,endNode
