@@ -5,3 +5,4 @@
 #include "CSvariableProducer.hpp"
 #include "genVProducer.hpp"
 #include "muonPrefireWeightProducer.hpp"
+#include "lumiWeight.hpp"
