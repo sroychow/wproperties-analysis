@@ -13,6 +13,7 @@ sys.path.append('{}/Common/data'.format(FWKBASE))
 from samples_2016_ul import samplespreVFP
 from binning import ptBins, etaBins, mTBins, etaBins, isoBins, chargeBins, zmassBins, qtBins,metBins,pvBins
 from externals import fileSFul,filePt, fileY
+from dataluminosity import lumi_preVFP,lumi_postVFP,lumi_total2016
 
 sys.path.append('{}/templateMaker/python'.format(FWKBASE))
 from getLumiWeight import getLumiWeight
@@ -24,10 +25,10 @@ ROOT.gROOT.ProcessLine("gErrorIgnoreLevel = 2001;")
 def dySelectionSequence(p, xsec, systType, sumwClipped, nodetoStart, era):
     print(ptBins)
     print(zmassBins)
-    luminosityN = 35.9
-    if era == 'preVFP' :     luminosityN = 19.3
-    else: luminosityN = 16.6
-
+    luminosityN = lumi_total2016
+    if era == 'preVFP' :     luminosityN = lumi_preVFP
+    else: luminosityN =	lumi_postVFP
+    
     p.branch(nodeToStart=nodetoStart, nodeToEnd='defs', modules=[ROOT.zVetoMuons()])
     p.EventFilter(nodeToStart='defs', nodeToEnd='defs', evfilter="Sum(vetoMuons)==2 && Sum(goodMuons)==2", filtername="{:20s}".format("two muons"))
     p.EventFilter(nodeToStart='defs', nodeToEnd='defs', evfilter="(HLT_IsoMu24 ||  HLT_IsoTkMu24)", filtername="{:20s}".format("Pass HLT"))

@@ -13,6 +13,7 @@ sys.path.append('{}/Common/data'.format(FWKBASE))
 from samples_2016_ul import samplespreVFP
 from binning import ptBins, etaBins, mTBins, etaBins, isoBins, chargeBins, zmassBins, qtBins,metBins,pvBins,phiBins,cosThetaBins
 from externals import fileSFul,filePt, fileY
+from dataluminosity import lumi_preVFP,lumi_postVFP,lumi_total2016
 
 sys.path.append('{}/templateMaker/python'.format(FWKBASE))
 from getLumiWeight import getLumiWeight
@@ -24,9 +25,9 @@ ROOT.gROOT.ProcessLine("gErrorIgnoreLevel = 2001;")
 def dySelectionSequence(p, xsec, systType, sumwClipped, nodetoStart, era):
     print(ptBins)
     print(zmassBins)
-    luminosityN = 35.9
-    if era == 'preVFP' :     luminosityN = 19.3
-    else: luminosityN = 16.6
+    luminosityN = lumi_total2016
+    if era == 'preVFP' :     luminosityN = lumi_preVFP
+    else: luminosityN = lumi_postVFP
 
     if systType not in [0,1]:#for signal MC
         p.Histogram(columns = ["CStheta_preFSR","CSphi_preFSR","Vpt_preFSR","Vrap_preFSR","Vmass_preFSR"], types = ['float']*5,node=nodetoStart,histoname=ROOT.string('genhistos'),bins = [cosThetaBins,phiBins,qtBins,etaBins,zmassBins], variations = [])
@@ -49,13 +50,13 @@ def dySelectionSequence(p, xsec, systType, sumwClipped, nodetoStart, era):
         return p
     elif systType == 1:
         print("Sample will be normalized to {}/fb".format(luminosityN))
-        p.branch(nodeToStart = 'defs', nodeToEnd = 'defs', modules = [getLumiWeight(xsec=xsec, inputFile = fvec, genEvsbranch = "genEventSumw", targetLumi = luminosityN), ROOT.SF_ul(fileSFul, isZ=True,era=era)])
+        p.branch(nodeToStart = 'defs', nodeToEnd = 'defs', modules = [ROOT.SF_ul(fileSFul, isZ=True,era=era)])
         #p.EventFilter(nodeToStart='defs', nodeToEnd='defs', evfilter="Mu2_pt < 200. ", filtername="{:20s}".format("mu2 pt upper acceptance"))
         p.Histogram(columns = ["dimuonMass", "dimuonPt", "dimuonY", "MET_pt", "lumiweight", "puWeight", "SF"], types = ['float']*7,node='defs',histoname=ROOT.string('DY_dimuon'),bins = [zmassBins,qtBins, etaBins,metBins], variations = [])
         return p
     else:
         print("Sample will be normalized to {}/fb".format(luminosityN))
-        p.branch(nodeToStart = 'defs', nodeToEnd = 'defs', modules = [ROOT.lumiWeight(xsec=xsec, sumwclipped=sumwClipped, targetLumi = luminosityN), ROOT.SF_ul(fileSFul, isZ=True, era=era)])
+        p.branch(nodeToStart = 'defs', nodeToEnd = 'defs', modules = [ROOT.SF_ul(fileSFul, isZ=True, era=era)])
         p.Histogram(columns = ["dimuonMass", "Mu1_eta", "Mu1_pt", "Mu2_eta", "Mu2_pt", "lumiweight", "puWeight", "SF"], types = ['float']*8,node='defs',histoname=ROOT.string('DY_muons'),bins = [zmassBins, etaBins, ptBins, etaBins, ptBins], variations = [])
         #p.EventFilter(nodeToStart='defs', nodeToEnd='defs', evfilter="Mu2_pt < 200. ", filtername="{:20s}".format("mu2 pt upper acceptance"))
         p.Histogram(columns = ["dimuonMass", "dimuonPt", "dimuonY", "MET_pt", "lumiweight", "puWeight", "SF"], types = ['float']*7,node='defs',histoname=ROOT.string('DY_dimuon'),bins = [zmassBins,qtBins, etaBins,metBins], variations = [])
