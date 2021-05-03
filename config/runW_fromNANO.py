@@ -12,8 +12,7 @@ sys.path.append('{}/RDFprocessor/framework'.format(FWKBASE))
 from RDFtree import RDFtree
 
 sys.path.append('{}/Common/data'.format(FWKBASE))
-#from samples_2016_ul import samplespreVFP, samplespostVFP
-from genSumWClipped import sumwClippedDictpreVFP, sumwClippedDictpostVFP
+from genSumW import sumwDictpreVFP, sumwDictpostVFP
 from samples_2016_ulCentral import samplespreVFP, samplespostVFP
 
 ROOT.gSystem.Load('{}/nanotools/bin/libNanoTools.so'.format(FWKBASE))
@@ -29,13 +28,13 @@ from wSequence import wSelectionSequence
 
 ROOT.gROOT.ProcessLine("gErrorIgnoreLevel = 2001;")
 
-def RDFprocess(fvec, outputDir, sample, xsec, systType, sumwClipped, era, pretendJob):
+def RDFprocess(fvec, outputDir, sample, xsec, systType, sumw, era, pretendJob):
     print("processing ", sample)
     p = RDFtree(outputDir = outputDir, inputFile = fvec, outputFile="{}.root".format(sample), pretend=pretendJob)
-    postnano, endNode=nanoSequence(p, systType, era)
+    postnano, endNode=nanoSequence(p, systType, sample, xsec, sumw, era)
     print("Post nano node name: ", endNode)
     #return postnano
-    resultNode=wSelectionSequence(postnano, xsec, systType, sumwClipped, endNode, era, fvec)
+    resultNode=wSelectionSequence(postnano, systType, endNode, era)
     return resultNode
 
 
@@ -50,7 +49,6 @@ def main():
     args = parser.parse_args()
     pretendJob = args.pretend
     now = datetime.now()
-    dt_string = now.strftime("_%d_%m_%Y_%H_%M_%S")
     inDir = args.inputDir
     era=args.era
     outputDir = args.outputDir+"_"+era
@@ -64,14 +62,14 @@ def main():
     RDFtrees = {}
     
     samples = samplespreVFP
-    sumwClippedDict=sumwClippedDictpreVFP
+    sumwClippedDict=sumwDictpreVFP
     if era == 'postVFP': 
         samples = samplespostVFP
-        sumwClippedDict=sumwClippedDictpostVFP
+        sumwClippedDict=sumwDictpostVFP
 
     for sample in samples:
-        if 'ST_t-channel_top_5f' in sample: continue
         print('analysing sample: %s'%sample)
+        # if not ("WPlusJetsToMuNu" in sample or "WPlusJetsToTauNu" in sample): continue
         direc = samples[sample]['dir']
         xsec = samples[sample]['xsec']
         fvec=ROOT.vector('string')()
@@ -86,17 +84,17 @@ def main():
             print("No files found for directory:", samples[sample], " SKIPPING processing")
             continue
         systType = samples[sample]['nsyst']
-        sumwClipped=1.
-        if systType == 2:
-            sumwClipped=sumwClippedDict[sample]
-            print(sample, sumwClipped)
-        RDFtrees[sample] = RDFprocess(fvec, outputDir, sample, xsec, systType, sumwClipped, era, pretendJob)
+        sumw=1.
+        if not 'data' in sample:
+            sumw=sumwClippedDict[sample]
+        print(sample, sumw)
+        RDFtrees[sample] = RDFprocess(fvec, outputDir, sample, xsec, systType, sumw, era, pretendJob)
     #sys.exit(0)
     #now trigger all the event loops at the same time:
     objList = []
     cutFlowreportDict = {}
     for sample in samples:
-        if 'ST_t-channel_top_5f' in sample: continue
+        # if not ("WPlusJetsToMuNu" in sample or "WPlusJetsToTauNu" in sample): continue
         print(sample)
         RDFtreeDict = RDFtrees[sample].getObjects()
         if args.report: cutFlowreportDict[sample] = RDFtrees[sample].getCutFlowReport()
@@ -109,8 +107,8 @@ def main():
     #now write the histograms:
     
     for sample in samples:
+        # if not ("WPlusJetsToMuNu" in sample or "WPlusJetsToTauNu" in sample): continue
         print(sample)
-        if 'ST_t-channel_top_5f' in sample: continue
         RDFtrees[sample].gethdf5Output()
         if args.report: cutFlowreportDict[sample].Print()
         #RDFtrees[sample].saveGraph()

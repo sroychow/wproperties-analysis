@@ -10,9 +10,8 @@ FWKBASE=os.getenv('FWK_BASE')
 sys.path.append('{}/RDFprocessor/framework'.format(FWKBASE))
 from RDFtree import RDFtree
 sys.path.append('{}/Common/data'.format(FWKBASE))
-from samples_2016_ul import samplespreVFP
-from binning import ptBins, etaBins, mTBinsFull, etaBins, isoBins, chargeBins, zmassBins, qtBins,metBins,pvBins, phiBins, cosThetaBins
-from externals import fileSFul,filePt, fileY
+from binning import ptBins, etaBins, mTBinsFull, mTBins,etaBins, isoBins, chargeBins, zmassBins, qtBins,metBins,pvBins, phiBins, cosThetaBins
+from externals import fileSFul
 
 sys.path.append('{}/templateMaker/python'.format(FWKBASE))
 from getLumiWeight import getLumiWeight
@@ -21,14 +20,7 @@ ROOT.gROOT.ProcessLine("gErrorIgnoreLevel = 2001;")
 
 
 #Build the template building sequenc
-def wSelectionSequence(p, xsec, systType, sumwClipped, nodetoStart, era, fvec):
-
-    luminosityN = 35.9
-    if era == 'preVFP' :     luminosityN = 19.3
-    else: luminosityN = 16.6
-
-    if systType not in [0,1]:#for signal MC
-        p.Histogram(columns = ["CStheta_preFSR","CSphi_preFSR","Vpt_preFSR","Vrap_preFSR","Vmass_preFSR"], types = ['float']*5,node=nodetoStart,histoname=ROOT.string('genhistos'),bins = [cosThetaBins,phiBins,qtBins,etaBins,zmassBins], variations = [])
+def wSelectionSequence(p, systType, nodetoStart, era):
 
     p.EventFilter(nodeToStart=nodetoStart, nodeToEnd='defs', evfilter="(HLT_IsoMu24 ||  HLT_IsoTkMu24)", filtername="{:20s}".format("Pass HLT"))
     p.EventFilter(nodeToStart='defs', nodeToEnd='defs', evfilter="All(Muon_mediumId)", filtername="{:20s}".format("MuonID"))
@@ -40,22 +32,20 @@ def wSelectionSequence(p, xsec, systType, sumwClipped, nodetoStart, era, fvec):
     
     # note for customizeforUL(isMC=true, isWorZ=false)
     if systType == 0: #this is data
-        p.branch(nodeToStart='defs', nodeToEnd='defs', modules=[ROOT.customizeforUL(False, False), ROOT.recoDefinitions(False, False)])
+        p.branch(nodeToStart='defs', nodeToEnd='defs', modules=[ROOT.recoDefinitions(False, False)])
         p.EventFilter(nodeToStart='defs', nodeToEnd='defs', evfilter="Mu1_hasTriggerMatch", filtername="{:20s}".format("+ve mu trig matched"))
         p.EventFilter(nodeToStart='defs', nodeToEnd='defs', evfilter="Mu1_pt < 65.", filtername="{:20s}".format("mu1 pt-eta acceptance"))
-        p.Histogram(columns = ["Mu1_eta","Mu1_pt","Mu1_charge","MT","Mu1_relIso"], types = ['float']*5,node='defs',histoname=ROOT.string('data_obs'),bins = [etaBins,ptBins,chargeBins,mTBinsFull,isoBins], variations = [])
+        p.Histogram(columns = ["Mu1_eta","Mu1_pt","Mu1_charge","MT","Mu1_relIso"], types = ['float']*5,node='defs',histoname=ROOT.string('data_obs'),bins = [etaBins,ptBins,chargeBins,mTBins,isoBins], variations = [])
     elif systType < 2: #this is MC with no PDF variations
-        print("Sample will be normalized to {}/fb".format(luminosityN))
         #falling back to old lumi weight computation
-        p.branch(nodeToStart = 'defs', nodeToEnd = 'defs', modules = [ROOT.customizeforUL(True,False), ROOT.recoDefinitions(True, False), getLumiWeight(xsec=xsec, inputFile = fvec, genEvsbranch = "genEventSumw", targetLumi = luminosityN), ROOT.SF_ul(fileSFul)])
+        p.branch(nodeToStart = 'defs', nodeToEnd = 'defs', modules = [ROOT.recoDefinitions(True, False), ROOT.SF_ul(fileSFul)])
         p.EventFilter(nodeToStart='defs', nodeToEnd='defs', evfilter="Mu1_hasTriggerMatch", filtername="{:20s}".format("+ve mu trig matched"))
         p.EventFilter(nodeToStart='defs', nodeToEnd='defs', evfilter="Mu1_pt < 65.", filtername="{:20s}".format("mu1 pt-eta acceptance"))
-        p.Histogram(columns = ["Mu1_eta","Mu1_pt","Mu1_charge","MT","Mu1_relIso", "lumiweight","puWeight","SF"], types = ['float']*8,node='defs',histoname=ROOT.string('ewk'),bins = [etaBins,ptBins,chargeBins,mTBinsFull,isoBins], variations = [])
+        p.Histogram(columns = ["Mu1_eta","Mu1_pt","Mu1_charge","MT","Mu1_relIso", "lumiweight","puWeight","muprefireWeight","SF"], types = ['float']*9,node='defs',histoname=ROOT.string('ewk'),bins = [etaBins,ptBins,chargeBins,mTBins,isoBins], variations = [])
     else:
-        print("Sample will be normalized to {}/fb".format(luminosityN))
-        p.branch(nodeToStart = 'defs', nodeToEnd = 'defs', modules = [ROOT.customizeforUL(True, True), ROOT.recoDefinitions(True, False),ROOT.lumiWeight(xsec=xsec, sumwclipped=sumwClipped, targetLumi = luminosityN), ROOT.SF_ul(fileSFul)])
+        p.branch(nodeToStart = 'defs', nodeToEnd = 'defs', modules = [ROOT.recoDefinitions(True, False), ROOT.SF_ul(fileSFul)])
         p.EventFilter(nodeToStart='defs', nodeToEnd='defs', evfilter="Mu1_hasTriggerMatch", filtername="{:20s}".format("+ve mu trig matched"))
         p.EventFilter(nodeToStart='defs', nodeToEnd='defs', evfilter="Mu1_pt < 65.", filtername="{:20s}".format("mu1 pt-eta acceptance"))
-        p.Histogram(columns = ["Mu1_eta","Mu1_pt","Mu1_charge","MT","Mu1_relIso", "lumiweight","puWeight","SF"], types = ['float']*8,node='defs',histoname=ROOT.string('ewk'),bins = [etaBins,ptBins,chargeBins,mTBinsFull,isoBins], variations = [])
+        p.Histogram(columns = ["Mu1_eta","Mu1_pt","Mu1_charge","MT","Mu1_relIso", "lumiweight","puWeight","muprefireWeight","SF"], types = ['float']*9,node='defs',histoname=ROOT.string('ewk'),bins = [etaBins,ptBins,chargeBins,mTBins,isoBins], variations = [])
 
     return p
