@@ -13,6 +13,7 @@ from RDFtree import RDFtree
 sys.path.append('{}/Common/data/'.format(FWKBASE))
 from externals import pufile_mc_UL2016, pufile_data_UL2016_allData, pufile_data_UL2016_preVFP, pufile_data_UL2016_postVFP
 from externals import datajson,filemuPrefire
+from dataluminosity import lumi_preVFP,lumi_postVFP,lumi_total2016
 
 ROOT.gSystem.Load('{}/nanotools/bin/libNanoTools.so'.format(FWKBASE))
 ROOT.gROOT.ProcessLine("gErrorIgnoreLevel = 2001;")
@@ -25,11 +26,10 @@ def nanoSequence(rdftree, systType, sample, xsec, sumw, era):
         rdftree.branch(nodeToStart='input', nodeToEnd='postnano', modules=[ROOT.isGoodLumi(datajson), ROOT.trigObjMatchProducer()])
         rdftree.EventFilter(nodeToStart='postnano', nodeToEnd='postnano', evfilter="isGoodLumi==true", filtername="{:20s}".format("good Lumi"))
     else: #this is mc
-        luminosityN = 35.9
+        luminosityN = lumi_total2016
         if era == 'preVFP' :
-            luminosityN = 19.3
-        else:
-            luminosityN = 16.6
+            luminosityN = lumi_preVFP
+        else: luminosityN = lumi_postVFP
         
         clip=False
         if systType==2:
@@ -56,4 +56,6 @@ def nanoSequence(rdftree, systType, sample, xsec, sumw, era):
         #FOR ROOT HISTOS
         print(clip)
         rdftree.branch(nodeToStart='input', nodeToEnd='postnano', modules=[ROOT.lumiWeight(xsec=xsec, sumw=sumw, targetLumi = luminosityN, clip=clip),ROOT.puWeightProducer(eraCode), ROOT.trigObjMatchProducer(),ROOT.muonPrefireWeightProducer(filemuPrefire, eraCode)])
+        if systType == 2:#for signal MC
+            rdftree.branch(nodeToStart='postnano', nodeToEnd='postnano', modules=[ROOT.genLeptonSelector(), ROOT.CSvariableProducer(), ROOT.genVProducer()])
     return rdftree,endNode

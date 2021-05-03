@@ -28,13 +28,13 @@ from dySequence import dySelectionSequence
 
 ROOT.gROOT.ProcessLine("gErrorIgnoreLevel = 2001;")
 
-def RDFprocess(fvec, outputDir, sample, xsec, systType, sumwClipped, era, pretendJob):
+def RDFprocess(fvec, outputDir, sample, xsec, systType, sumw, era, pretendJob):
     print("processing ", sample)
     p = RDFtree(outputDir = outputDir, inputFile = fvec, outputFile="{}.root".format(sample), pretend=pretendJob)
-    postnano, endNode=nanoSequence(p, systType, era)
+    postnano, endNode=nanoSequence(p, systType, sample, xsec, sumw, era)
     print("Post nano node name: ", endNode)
     #return postnano
-    resultNode=dySelectionSequence(postnano, xsec, systType, sumwClipped, endNode, era)
+    resultNode=dySelectionSequence(postnano, xsec, systType, sumw, endNode, era)
     return resultNode
 
 
@@ -89,11 +89,11 @@ def main():
             continue
         print(fvec)         
         systType = samples[sample]['nsyst']
-        sumwClipped=1.
+        sumw=1.
         if systType == 2:
-            sumwClipped=sumwClippedDict[sample]
-            print(sample, sumwClipped)
-        RDFtrees[sample] = RDFprocess(fvec, outputDir, sample, xsec, systType, sumwClipped, era, pretendJob)
+            sumw=sumwClippedDict[sample]
+        print(sample, sumw)
+        RDFtrees[sample] = RDFprocess(fvec, outputDir, sample, xsec, systType, sumw, era, pretendJob)
     #sys.exit(0)
     #now trigger all the event loops at the same time:
     objList = []
