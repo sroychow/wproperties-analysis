@@ -14,12 +14,12 @@ RNode genVProducer::run(RNode d) {
     return dilepton;
   };
 
-  
-  auto d1 = d.Define("GenVP4", getGenV,{"GenPart_pt", "GenPart_eta", "GenPart_phi", "GenPart_mass", "GenPart_preFSRLepIdx1", "GenPart_preFSRLepIdx2"})
-             .Define("Vpt_preFSR", [this](TLorentzVector p){ return float(p.Pt());}, {"GenVP4"})
-             .Define("Vrap_preFSR", [this](TLorentzVector p){ return float(p.Rapidity());}, {"GenVP4"})
-             .Define("Vphi_preFSR", [this](TLorentzVector p){ return float(p.Phi());}, {"GenVP4"})
-             .Define("Vmass_preFSR", [this](TLorentzVector p){ return float(p.M());}, {"GenVP4"}); 
+  auto d1 = d.Define("GenVP4", getGenV, {"GenPart_pt", "GenPart_eta", "GenPart_phi", "GenPart_mass", "GenPart_preFSRLepIdx1", "GenPart_preFSRLepIdx2"})
+                .Define("Vpt_preFSR", [this](TLorentzVector p) { return float(p.Pt()); }, {"GenVP4"})
+                .Define("Vrap_preFSR", [this](TLorentzVector p) { return float(p.Rapidity()); }, {"GenVP4"})
+                .Define("Vrap_preFSR_abs", "TMath::Abs(Vrap_preFSR)")
+                .Define("Vphi_preFSR", [this](TLorentzVector p) { return float(p.Phi()); }, {"GenVP4"})
+                .Define("Vmass_preFSR", [this](TLorentzVector p) { return float(p.M()); }, {"GenVP4"});
 
   return d1;
 }
