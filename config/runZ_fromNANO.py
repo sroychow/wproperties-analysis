@@ -12,7 +12,7 @@ sys.path.append('{}/RDFprocessor/framework'.format(FWKBASE))
 from RDFtree import RDFtree
 
 sys.path.append('{}/Common/data'.format(FWKBASE))
-from samples_2016_ul import samplespreVFP, samplespostVFP
+from samples_2016_ulV2 import samplespreVFP, samplespostVFP
 from genSumWClipped import sumwClippedDictpreVFP, sumwClippedDictpostVFP
 
 ROOT.gSystem.Load('{}/nanotools/bin/libNanoTools.so'.format(FWKBASE))
@@ -43,7 +43,7 @@ def main():
     parser.add_argument('-p', '--pretend',type=bool, default=False, help="run over a small number of event")
     parser.add_argument('-r', '--report',type=bool, default=False, help="Prints the cut flow report for all named filters")
     parser.add_argument('-o', '--outputDir',type=str, default='outputDY', help="output dir name")
-    parser.add_argument('-i', '--inputDir',type=str, default='/scratchnvme/wmass/BARENANO/', help="input dir name")    
+    parser.add_argument('-i', '--inputDir',type=str, default='/scratchnvme/wmass/NANOMAY2021/', help="input dir name")    
     parser.add_argument('-e', '--era',type=str, default='preVFP', help="either (preVFP|postVFP)")    
 
     args = parser.parse_args()
@@ -78,7 +78,7 @@ def main():
         xsec = samples[sample]['xsec']
         fvec=ROOT.vector('string')()
         for d in direc:
-            targetDir='{}/{}/merged/'.format(inDir, d)
+            targetDir='{}/{}/'.format(inDir, d)
             for f in os.listdir(targetDir):#check the directory
                 if not f.endswith('.root'): continue
                 inputFile=targetDir+f
