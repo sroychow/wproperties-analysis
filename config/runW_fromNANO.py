@@ -13,7 +13,7 @@ from RDFtree import RDFtree
 
 sys.path.append('{}/Common/data'.format(FWKBASE))
 from genSumW import sumwDictpreVFP, sumwDictpostVFP
-from samples_2016_ulCentral import samplespreVFP, samplespostVFP
+from samples_2016_ulV2 import samplespreVFP, samplespostVFP
 
 ROOT.gSystem.Load('{}/nanotools/bin/libNanoTools.so'.format(FWKBASE))
 sys.path.append('../nanotools')
@@ -48,7 +48,7 @@ def main():
     parser.add_argument('-p', '--pretend',type=bool, default=False, help="run over a small number of event")
     parser.add_argument('-r', '--report',type=bool, default=False, help="Prints the cut flow report for all named filters")
     parser.add_argument('-o', '--outputDir',type=str, default='outputW', help="output dir name")
-    parser.add_argument('-i', '--inputDir',type=str, default='/scratchnvme/wmass/', help="input dir name")    
+    parser.add_argument('-i', '--inputDir',type=str, default='/scratchnvme/wmass/NANOMAY2021/', help="input dir name")    
     parser.add_argument('-e', '--era',type=str, default='preVFP', help="either (preVFP|postVFP)")    
     parser.add_argument('-helWeights', '--helWeights',type=bool, default=False, help="derive helicity weights for reweighting")    
 
@@ -59,7 +59,7 @@ def main():
     outputDir = args.outputDir+"_"+era
     helWeights = args.helWeights
     ##Add era to input dir
-    #inDir+=era
+    inDir+=era
     if pretendJob:
         print("Running a test job over a few events")
     else:
