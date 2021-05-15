@@ -54,12 +54,19 @@ def wSelectionHelWeightsSequence(p, nodetoStart):
     p.branch(nodeToStart=nodetoStart, nodeToEnd='defs', modules=[ROOT.defineHarmonics()])
     p.Histogram(columns = ["Vrap_preFSR_abs","Vpt_preFSR","lumiweight"], types = ['float']*3,node='defs',histoname=ROOT.string("xsecs"),bins=[yBins,qtBins], sample='harmonicsVec')
     p.Histogram(columns = ["Vrap_preFSR_abs","Vpt_preFSR","lumiweight"], types = ['float']*3,node='defs',histoname=ROOT.string("totxsecs"),bins=[yBins,qtBins])
+    # pdf variations
+    p.Histogram(columns = ["Vrap_preFSR_abs","Vpt_preFSR","lumiweight"], types = ['float']*3,node='defs',histoname=ROOT.string("xsecs_LHEPdfWeight"),bins=[yBins,qtBins], sample='harmonicsVec_LHEPdfWeight')
+    p.Histogram(columns = ["Vrap_preFSR_abs","Vpt_preFSR","lumiweight"], types = ['float']*3,node='defs',histoname=ROOT.string("totxsecs_LHEPdfWeight"),bins=[yBins,qtBins], sample='LHEPdfWeight')
     
     return p
 def wSelectionDifferentialSequence(p):
     from getHelWeights import getHelWeights
+    from getMassWeights import getMassWeights
     # here load angular coefficients and reweight
-    p.branch(nodeToStart='defs', nodeToEnd='defs', modules=[ROOT.defineHarmonics(),getHelWeights()])
-    p.Histogram(columns = ["Mu1_eta","Mu1_pt","Mu1_charge","MT","Mu1_relIso", "Vrap_preFSR_abs","Vpt_preFSR","lumiweight","puWeight","muprefireWeight","SF"], types = ['float']*11,node='defs',histoname=ROOT.string('signalTemplates'),bins = [etaBins,ptBins,chargeBins,mTBins,isoBins,yBins,qtBins], sample="helWeights")
+    p.branch(nodeToStart='defs', nodeToEnd='nominal', modules=[ROOT.defineHarmonics(),getHelWeights(),getMassWeights()])
+    p.Histogram(columns = ["Mu1_eta","Mu1_pt","Mu1_charge","MT","Mu1_relIso", "Vrap_preFSR_abs","Vpt_preFSR","lumiweight","puWeight","muprefireWeight","SF"], types = ['float']*11,node='nominal',histoname=ROOT.string('signalTemplates'),bins = [etaBins,ptBins,chargeBins,mTBins,isoBins,yBins,qtBins], sample="helWeights")
+    # p.branch(nodeToStart='defs', nodeToEnd='LHEPdfWeight', modules=[ROOT.defineHarmonics(),getHelWeights(syst="LHEPdfWeight")])
+    # p.Histogram(columns = ["Mu1_eta","Mu1_pt","Mu1_charge","MT","Mu1_relIso", "Vrap_preFSR_abs","Vpt_preFSR","lumiweight","puWeight","muprefireWeight","SF"], types = ['float']*11,node='LHEPdfWeight',histoname=ROOT.string('signalTemplates_LHEPdfWeight'),bins = [etaBins,ptBins,chargeBins,mTBins,isoBins,yBins,qtBins], sample="helWeights_LHEPdfWeight")
+    p.Histogram(columns = ["Mu1_eta","Mu1_pt","Mu1_charge","MT","Mu1_relIso", "Vrap_preFSR_abs","Vpt_preFSR","lumiweight","puWeight","muprefireWeight","SF"], types = ['float']*11,node='mass',histoname=ROOT.string('signalTemplates_mass'),bins = [etaBins,ptBins,chargeBins,mTBins,isoBins,yBins,qtBins], sample="helmassWeights")
 
     return p

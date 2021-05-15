@@ -5,7 +5,8 @@ RNode defineHarmonics::run(RNode d)
 
   // angular coefficients as defined in https://arxiv.org/pdf/1609.02536.pdf
 
-  auto getHarmonicsVec = [](float costheta, float phi) {
+  auto getHarmonicsVec = [](float costheta, float phi)
+  {
     float P0 = 1. / 2. * (1. - 3. * costheta * costheta);
     float P1 = 2. * costheta * sqrt(1. - costheta * costheta) * cos(phi);
     float P2 = 1. / 2. * (1. - costheta * costheta) * cos(2. * phi);
@@ -31,11 +32,22 @@ RNode defineHarmonics::run(RNode d)
     return harms;
   };
 
-  auto Sq = [](const ROOT::VecOps::RVec<float> &w) -> ROOT::VecOps::RVec<float> { return w * w; };
+  auto vecMultiplication = [](const ROOT::VecOps::RVec<float> &v1, const ROOT::VecOps::RVec<float> &v2) -> ROOT::VecOps::RVec<float>
+  {
+    ROOT::VecOps::RVec<float> products;
+
+    products.reserve(v1.size() * v2.size());
+    for (auto e1 : v1)
+      for (auto e2 : v2)
+        products.push_back(e1 * e2);
+
+    return products;
+  };
 
   auto d1 = d.Define("harmonicsVec", getHarmonicsVec, {"CStheta_preFSR", "CSphi_preFSR"})
                 .Define("nharmonicsVec", "harmonicsVec.size()")
-                .Define("harmonicsVecSq", Sq, {"harmonicsVec"});
+                .Define("harmonicsVec_LHEPdfWeight", vecMultiplication, {"harmonicsVec", "LHEPdfWeight"})
+                .Define("nharmonicsVec_LHEPdfWeight", "harmonicsVec_LHEPdfWeight.size()");
 
   return d1;
 }
