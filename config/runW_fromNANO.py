@@ -24,17 +24,22 @@ sys.path.append('{}/nanotools'.format(FWKBASE))
 from nanoSequence import nanoSequence
 
 sys.path.append('{}/templateMaker/'.format(FWKBASE))
-from wSequence import wSelectionSequence
+from wSequence import wSelectionSequence, wSelectionHelWeightsSequence, wSelectionDifferentialSequence
 
 ROOT.gROOT.ProcessLine("gErrorIgnoreLevel = 2001;")
 
-def RDFprocess(fvec, outputDir, sample, xsec, systType, sumw, era, pretendJob):
+def RDFprocess(fvec, outputDir, sample, xsec, systType, sumw, era, pretendJob, helWeights=False):
     print("processing ", sample)
-    p = RDFtree(outputDir = outputDir, inputFile = fvec, outputFile="{}.root".format(sample), pretend=pretendJob)
+    p = RDFtree(outputDir = outputDir, inputFile = fvec, outputFile="{}.root".format(sample if not helWeights else sample+'_helweights'), pretend=pretendJob)
     postnano, endNode=nanoSequence(p, systType, sample, xsec, sumw, era)
     print("Post nano node name: ", endNode)
     #return postnano
-    resultNode=wSelectionSequence(postnano, systType, endNode, era)
+    if not helWeights: 
+        resultNode = wSelectionSequence(postnano, systType, endNode, era)
+        if sample =="WPlusJetsToMuNu":
+            resultNode = wSelectionDifferentialSequence(resultNode)
+    else: resultNode = wSelectionHelWeightsSequence(postnano, endNode)
+    
     return resultNode
 
 
@@ -45,20 +50,21 @@ def main():
     parser.add_argument('-o', '--outputDir',type=str, default='outputW', help="output dir name")
     parser.add_argument('-i', '--inputDir',type=str, default='/scratchnvme/wmass/NANOMAY2021/', help="input dir name")    
     parser.add_argument('-e', '--era',type=str, default='preVFP', help="either (preVFP|postVFP)")    
+    parser.add_argument('-helWeights', '--helWeights',type=bool, default=False, help="derive helicity weights for reweighting")    
 
     args = parser.parse_args()
     pretendJob = args.pretend
-    now = datetime.now()
     inDir = args.inputDir
     era=args.era
     outputDir = args.outputDir+"_"+era
+    helWeights = args.helWeights
     ##Add era to input dir
     inDir+=era
     if pretendJob:
         print("Running a test job over a few events")
     else:
         print("Running on full dataset")
-    ROOT.ROOT.EnableImplicitMT(128)
+    ROOT.ROOT.EnableImplicitMT(48)
     RDFtrees = {}
     
     samples = samplespreVFP
@@ -68,6 +74,8 @@ def main():
         sumwClippedDict=sumwDictpostVFP
 
     for sample in samples:
+        if helWeights:
+            if not 'WPlusJetsToMuNu' in sample or 'WMinusJetsToMuNu' in sample: continue
         print('analysing sample: %s'%sample)
         # if not ("WPlusJetsToMuNu" in sample or "WPlusJetsToTauNu" in sample): continue
         direc = samples[sample]['dir']
@@ -88,16 +96,18 @@ def main():
         if not 'data' in sample:
             sumw=sumwClippedDict[sample]
         print(sample, sumw)
-        RDFtrees[sample] = RDFprocess(fvec, outputDir, sample, xsec, systType, sumw, era, pretendJob)
+        RDFtrees[sample] = RDFprocess(fvec, outputDir, sample, xsec, systType, sumw, era, pretendJob, helWeights)
     #sys.exit(0)
     #now trigger all the event loops at the same time:
     objList = []
     cutFlowreportDict = {}
     for sample in samples:
+        if helWeights:
+            if not 'WPlusJetsToMuNu' in sample or 'WMinusJetsToMuNu' in sample: continue
         # if not ("WPlusJetsToMuNu" in sample or "WPlusJetsToTauNu" in sample): continue
         print(sample)
         RDFtreeDict = RDFtrees[sample].getObjects()
-        if args.report: cutFlowreportDict[sample] = RDFtrees[sample].getCutFlowReport()
+        if args.report: cutFlowreportDict[sample] = RDFtrees[sample].getCutFlowReport('defs')
         for node in RDFtreeDict:
             objList.extend(RDFtreeDict[node])
 
@@ -107,6 +117,8 @@ def main():
     #now write the histograms:
     
     for sample in samples:
+        if helWeights:
+            if not 'WPlusJetsToMuNu' in sample or 'WMinusJetsToMuNu' in sample: continue
         # if not ("WPlusJetsToMuNu" in sample or "WPlusJetsToTauNu" in sample): continue
         print(sample)
         RDFtrees[sample].gethdf5Output()

@@ -3,6 +3,7 @@ from math import pi
 
 # ROOT.gInterpreter.ProcessLine('auto qtBins = std::make_tuple<float,float,float,float,float,float,float,float,float,float,float,float,float>(0., 4., 8., 12., 16., 20., 24., 28., 32., 40., 60., 100., 200.);')
 # ROOT.gInterpreter.ProcessLine('auto yBins = std::make_tuple<float,float,float,float,float,float,float,float,float>(0, 0.4, 0.8, 1.2, 1.6, 2.0, 2.4, 3.0, 6.0);')
+# qtBins = [0.,2.,4.,6.,8.,10.,12.,16.,20.,26.,36.,60.,100.,200.] #Valerio's binning
 qtBins = [0., 4., 8., 12., 16., 20., 24., 28., 32., 40., 60., 100., 200.]
 yBins = [0., 0.4, 0.8, 1.2, 1.6, 2.0, 2.4, 3.0, 6.0]
 ptBins = [25.+i for i in range(31)]
@@ -19,3 +20,4 @@ zmassBins = [70. + i*1. for i in range(41)]
 pvBins = [9.5 + i*1. for i in range(50)]
 cosThetaBins = [round(-1. + 2.*i/100,2) for i in range(101)]
 phiBins = [round(0. + 2*pi*i/100,2) for i in range(101)]
+
