@@ -15,4 +15,5 @@
   <class name="zSelection"/>
   <class name="zVetoMuons"/>
   <class name="zHistosROOT"/>
+  <class name="mtDefinitions"/>
 </lcgdict>
