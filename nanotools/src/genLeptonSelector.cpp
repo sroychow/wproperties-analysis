@@ -59,10 +59,13 @@ RNode genLeptonSelector::run(RNode d) {
     int vtype=-1;
     if(idx1 != -1 && idx2 == -1) //only 1 lepton
       vtype=pdg[idx1];
-    else {//https://github.com/WMass/nanoAOD-tools/blob/master/python/postprocessing/wmass/genLepSelection.py#L78-L86
+    else if(std::abs(pdg[idx1]) == std::abs(pdg[idx2])) {
+      //https://github.com/WMass/nanoAOD-tools/blob/master/python/postprocessing/wmass/genLepSelection.py#L78-L86
       int vcharge = pdg[idx1]%2 ? -1*pdg[idx1]/std::abs(pdg[idx1]) : -1*pdg[idx2]/std::abs(pdg[idx2]);
       vtype = vcharge*int((abs(pdg[idx1])+abs(pdg[idx1]))/2.);
-    }
+    } else {//multiply -1 to the sign of the lepton to get  boson sign and assign boson pdg of lepton
+      vtype = (pdg[idx1]%2 == 0) ? -1*pdg[idx2] : -1*pdg[idx1];
+    }  
     return vtype;
   };
 
